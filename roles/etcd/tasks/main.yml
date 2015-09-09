@@ -1,0 +1,124 @@
+---
+- name: Check if this Etcd version is already on the fileserver
+  stat:
+    path: "/{{ download_dir }}/{{ etcd_pkgname }}"
+  register:    etcd_pkg_fileserver
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+
+- name: Download Etcd to the fileserver
+  get_url:
+    url:  "{{ etcd_url }}"
+    dest: "/{{ download_dir }}/{{ etcd_pkgname }}"
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+  when:        not etcd_pkg_fileserver.stat.exists
+
+- name: Check if we already have this Etcd version
+  stat:
+    path: "/{{ download_dir }}/{{ etcd_pkgname }}"
+  register: etcd_pkg
+
+- name: Download Etcd
+  command: scp -o StrictHostKeyChecking=no \
+           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ etcd_pkgname }} \
+           "/{{ download_dir }}/{{ etcd_pkgname }}"
+  when: not etcd_pkg.stat.exists
+
+- name: Extract Etcd
+  unarchive:
+    copy: no
+    src:  /{{ download_dir }}/{{ etcd_pkgname }}
+    dest: /{{ download_dir }}/
+
+- name: Create Etcd group
+  group:
+    name:  etcd
+    gid:   "{{ etcd_gid }}"
+    state: present
+
+- name: Create Etcd user
+  user:
+    name:    etcd
+    uid:     "{{ etcd_uid }}"
+    group:   etcd
+    shell:   /sbin/nologin
+    comment: "Etcd"
+    state:   present
+
+- name: Add Etcd group to the admin user
+  user: 
+    name:   "{{ admin_user }}"
+    append: yes
+    groups: etcd
+
+- name: Check for Etcd data directory
+  stat: 
+    path: /var/lib/etcd
+  register: etcd_data_dir
+  tags:
+    - etcd_dir
+
+- name: Stop Etcd service
+  service:
+    name:  etcd
+    state: stopped
+  when: etcd_data_dir.stat.exists
+  tags:
+    - etcd_dir
+
+- name: Create Etcd data directory
+  file:
+    dest:  /var/lib/etcd
+    state: directory
+    owner: etcd
+    group: etcd
+  when:     not etcd_data_dir.stat.exists
+  tags:
+    - etcd_dir
+
+- name: Copy Etcd binaries
+  command: cp /{{ download_dir }}/etcd-v{{ etcd_version }}-linux-amd64/{{ item }} /bin/
+  with_items:
+    - etcd
+    - etcdctl
+
+- name: Configure Etcd binary permissions
+  file:
+    path:  /bin/{{ item }}
+    state: file
+    mode:  0755
+    owner: etcd
+    group: etcd
+  with_items:
+    - etcd
+    - etcdctl
+
+- name: Copy Etcd service file
+  template:
+    src:  etcd.service.j2
+    dest: /usr/lib/systemd/system/etcd.service
+  notify: 
+    - Reload Systemd
+    - Restart Etcd
+  tags:
+    - copy_etcd_service_file
+
+- name: Enable and start Etcd service
+  service:
+    name:    etcd
+    enabled: yes
+    state:   started
+  ignore_errors: yes
+
+- name: Configure firewalld ports for etcd
+  firewalld: 
+    port:      "{{ item }}/tcp"
+    permanent: yes 
+    state:     enabled
+    immediate: yes
+  with_items:
+    - 2379
+    - 2380
+  when: use_firewalld

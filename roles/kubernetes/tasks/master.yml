@@ -1,0 +1,100 @@
+---
+- name: Stop master services
+  service:
+    name:  "{{ item }}"
+    state: stopped
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager
+
+- name: Copy master binaries
+  command: cp /{{ download_dir }}/kubernetes/server/bin/{{ item }} /usr/bin/
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager
+    - kubectl
+
+- name: Configure master binary permissions
+  file:
+    path:  /usr/bin/{{ item }}
+    state: file
+    mode:  0755
+    owner: kube
+    group: kube
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager
+    - kubectl
+
+- name: Copy master service files
+  copy:
+    src: "{{ item }}.service"
+    dest: /usr/lib/systemd/system/{{ item }}.service
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager
+  notify:
+    - Reload Systemd
+    - Restart master daemons
+  tags:
+    - copy_kubernetes_service_files
+
+- name: Copy master config files
+  template:
+    src: "{{ item }}.j2"
+    dest: /etc/kubernetes/{{ item }}
+  with_items:
+    - config
+    - apiserver
+    - scheduler
+    - controller-manager
+  notify:
+    - Reload Systemd
+    - Restart master daemons
+  tags:
+    - copy_kubernetes_config_files
+
+- name: Configure master config file permissions
+  file:
+    path:  /etc/kubernetes/{{ item }}
+    state: file
+    mode:  0644
+    owner: kube
+    group: kube
+  notify:
+    - Restart master daemons
+  with_items:
+    - config
+    - apiserver
+    - scheduler
+    - controller-manager
+
+- name: Reload Systemd
+  command: systemctl daemon-reload
+
+- name: Enable and start master services
+  service:
+    name:    "{{ item }}"
+    enabled: yes
+    state:   started
+  ignore_errors: yes
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager
+
+- name: Configure firewalld ports for Kubernetes
+  firewalld: 
+    port:      "{{ item }}/tcp"
+    permanent: yes 
+    state:     enabled
+    immediate: yes
+  with_items:
+    - 8080
+  when: use_firewalld
+
+

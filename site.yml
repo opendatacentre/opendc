@@ -1,0 +1,49 @@
+---
+- name: Test distribution
+  hosts: all
+  tasks:
+    - assert:
+        that: ansible_os_family == "RedHat"
+  tags: confirm_redhat
+
+- name: Configure common components
+  hosts: all
+  sudo:  yes
+  roles:
+    - common
+  tags: configure_common
+
+- name: Configure Etcd
+  hosts: 
+    - etcd
+  sudo:  yes
+  roles:
+    - etcd
+  tags: configure_etcd
+
+- name: Configure Flannel
+  hosts: 
+    - kub-master
+    - kub-nodes
+  sudo:  yes
+  roles:
+    - flannel
+  tags: configure_flannel
+
+- name: Configure Docker
+  hosts: 
+    - kub-master
+    - kub-nodes
+  sudo:  yes
+  roles:
+    - docker
+  tags: configure_docker
+
+- name: Configure Kubernetes
+  hosts: 
+    - kub-master
+    - kub-nodes
+  sudo:  yes
+  roles:
+    - kubernetes
+  tags: configure_kubernetes

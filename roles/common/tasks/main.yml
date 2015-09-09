@@ -1,0 +1,75 @@
+---
+- name: Upgrade all packages
+  dnf:
+    name=*
+    state=latest
+  when: upgrade_pkgs
+  tags:
+    - packages
+
+- name: Install packages
+  dnf:
+    name={{ item }}
+    state=latest
+  with_items: packages
+  when: install_pkgs
+  tags:
+    - packages
+
+- name: Create admin group
+  group: 
+    gid:   "{{ admin_gid }}"
+    name:  "{{ admin_group }}"
+    state: present
+
+- name: Create admin user
+  user:
+    uid:     "{{ admin_uid }}"
+    name:    "{{ admin_user }}"
+    group:   "{{ admin_group }}"
+    comment: "Kubernetes admin user"
+    state:   present
+
+- name: Create admin user .ssh directory
+  file:
+    path:  /home/{{ admin_user }}/.ssh
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+    mode:  0500
+
+- name: Copy over admin user private key
+  copy:
+    src:   "{{ private_key }}"
+    dest:  /home/{{ admin_user }}/.ssh/{{ private_key | basename }}
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+    mode:  0400
+
+- name: Add admin user public key to authorized keys
+  authorized_key:
+    user: "{{ admin_user }}"
+    key:  "{{ item }}"
+  with_file:
+    - "{{ public_key }}"
+
+- name: Create download directory
+  file:
+    path:  "{{ download_dir }}"
+    state: directory
+    mode:  0777
+
+- name: Ensure Firewalld service is enabled and running
+  service:
+    name:    firewalld
+    enabled: yes
+    state:   running
+  when: use_firewalld
+
+- name: Ensure Firewalld service is disabled and stopped
+  service:
+    name:    firewalld
+    enabled: no
+    state:   stopped
+  when: not use_firewalld
+

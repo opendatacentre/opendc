@@ -1,0 +1,23 @@
+---
+cluster_name:   kubernetes
+interface:      eth1
+main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
+api_server_ip:  "{{ hostvars[groups['kub-master'][0]]['ansible_' + interface].ipv4.address }}"
+use_firewalld:  no
+admin_user:     kubeadmin
+admin_uid:      5000
+admin_group:    kubeadmin
+admin_gid:      5000
+private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
+public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
+fileserver:     master.kub.io
+download_dir:   /var/download/
+install_sysdig: true
+upgrade_pkgs:   false
+install_pkgs:   false
+packages:
+  - lsof
+  #- rsync
+registries:
+  - gcr.io
+  - registry:5000

@@ -1,0 +1,97 @@
+---
+- name: Check if this Flannel version is already on the fileserver
+  stat:
+    path: "/{{ download_dir }}/{{ flannel_pkgname }}"
+  register:    flannel_pkg_fileserver
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+
+- name: Download Flannel to the fileserver
+  get_url: 
+    url:  "{{ flannel_url }}"
+    dest: "/{{ download_dir }}/{{ flannel_pkgname }}"
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+  when:        not flannel_pkg_fileserver.stat.exists
+
+- name: Check if we already have this Flannel version
+  stat:
+    path: "/{{ download_dir }}/{{ flannel_pkgname }}"
+  register: flannel_pkg
+
+- name: Download Etcd
+  command: scp -o StrictHostKeyChecking=no \
+           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ flannel_pkgname }} \
+           "/{{ download_dir }}/{{ flannel_pkgname }}"
+  when: not flannel_pkg.stat.exists
+
+- name: Extract Flannel
+  unarchive:
+    copy: no
+    src:  /{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+    dest: /{{ download_dir }}/
+
+- name: Check for Flannel binary
+  stat: 
+    path: /bin/flanneld
+  register: flannel_binary
+
+- name: Stop Flannel service
+  service:
+    name:  flannel
+    state: stopped
+  when: flannel_binary.stat.exists
+
+- name: Copy Flannel binary
+  command: cp /{{ download_dir }}/flannel-0.5.2/flanneld /bin/
+
+- name: Copy Flannel config file
+  template:
+    src:  flannel.json.j2
+    dest: /tmp/flannel.json
+  run_once: true
+  delegate_to: "{{ groups['etcd'][0] }}"
+  tags:
+    - config_flannel
+
+- name: Configure Flannel
+  shell: etcdctl set {{ cluster_name }}/network/config < /tmp/flannel.json
+  run_once: true
+  delegate_to: "{{ groups['etcd'][0] }}"
+  tags:
+    - config_flannel
+
+- name: Remove Flannel config file
+  file:
+    path:  /tmp/flannel.json
+    state: absent
+  run_once: true
+  delegate_to: "{{ groups['etcd'][0] }}"
+  tags:
+    - config_flannel
+
+- name: Copy Flannel service file
+  template:
+    src:  flannel.service.j2
+    dest: /usr/lib/systemd/system/flannel.service
+  notify: 
+    - Reload Systemd
+    - Restart Flannel
+  tags:
+    - copy_flannel_service_file
+
+- name: Enable and start Flannel service
+  service:
+    name:    flannel
+    enabled: yes
+    state:   started
+  ignore_errors: yes
+
+- name: Configure firewalld port for Flannel
+  firewalld: 
+    port:      "{{ flannel_udp_port }}/udp"
+    permanent: yes 
+    state:     enabled
+    immediate: yes
+  when: use_firewalld

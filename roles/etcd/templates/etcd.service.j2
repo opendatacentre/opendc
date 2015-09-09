@@ -1,0 +1,24 @@
+[Unit]
+Description=Etcd Server
+After=network.target
+
+[Service]
+Type=simple
+User=etcd
+PermissionsStartOnly=true
+Restart=always
+RestartSec=10s
+ExecStart=/usr/bin/etcd -name {{ ansible_fqdn }} \
+-data-dir /var/lib/etcd \
+-listen-peer-urls http://{{ main_ip }}:2380 \
+-listen-client-urls http://127.0.0.1:2379,http://{{ main_ip }}:2379 \
+--advertise-client-urls http://127.0.0.1:2379,http://{{ main_ip }}:2379 \
+-initial-cluster-token {{ cluster_name }} \
+-initial-cluster {% for node in groups['etcd'] %}{{ node }}=http://{{ hostvars[node]['ansible_' + interface].ipv4.address }}:2380{% if not loop.last %},{% endif %}{% endfor %} \
+-initial-advertise-peer-urls http://{{ main_ip }}:2380 \
+-initial-cluster-state new
+
+[Install]
+WantedBy=multi-user.target
+
+

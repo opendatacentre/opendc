@@ -1,0 +1,23 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+After=network.target docker.socket flannel.service
+Requires=docker.socket
+
+[Service]
+Type=notify
+EnvironmentFile=-/run/flannel/subnet.env
+ExecStart=/usr/bin/docker -d \
+          --bip=${FLANNEL_SUBNET} \
+          --mtu=${FLANNEL_MTU} \
+          --ip-masq=false \
+          {% for registry in registries %}--insecure-registry={{ registry }}{% if not loop.last %} \
+          {% endif %}{% endfor %}
+          
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+MountFlags=slave
+
+[Install]
+WantedBy=multi-user.target

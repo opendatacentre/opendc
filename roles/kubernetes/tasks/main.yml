@@ -1,0 +1,84 @@
+---
+- name: Check if this Kubernetes version is already on the fileserver
+  stat:
+    path: "{{ download_dir }}/{{ kubernetes_pkgname }}"
+  register:    kubernetes_pkg_fileserver
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+
+- name: Download Kubernetes to the fileserver
+  get_url:
+    url:  "{{ kubernetes_url }}"
+    dest: "{{ download_dir }}/{{ kubernetes_pkgname }}"
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+  when:        not kubernetes_pkg_fileserver.stat.exists
+
+- name: Check if we already have this Kubernetes version
+  stat:
+    path: "{{ download_dir }}/{{ kubernetes_pkgname }}"
+  register: kubernetes_pkg
+
+- name: Download Kubernetes
+  command: scp -o StrictHostKeyChecking=no \
+           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ kubernetes_pkgname }} \
+           "{{ download_dir }}/{{ kubernetes_pkgname }}"
+  when: not kubernetes_pkg.stat.exists
+
+- name: Extract Kubernetes
+  unarchive:
+    copy: no
+    src:  /{{ download_dir }}/{{ kubernetes_pkgname }}
+    dest: /{{ download_dir }}/
+
+- name: Extract Kubernetes server binaries
+  unarchive:
+    copy: no
+    src:  /{{ download_dir }}/{{ kubernetes_pkgname.split('.')[0] }}/server/kubernetes-server-linux-amd64.tar.gz
+    dest: /{{ download_dir }}/
+
+- name: Create Kubernetes group
+  group:
+    name:  kube
+    gid:   "{{ kubernetes_gid }}"
+    state: present
+
+- name: Create Kubernetes user
+  user:
+    name:    kube
+    uid:     "{{ kubernetes_uid }}"
+    group:   kube
+    shell:   /sbin/nologin
+    comment: "Kubernetes"
+    state:   present
+
+- name: Add Kubernetes group to the admin user
+  user: 
+    name:   "{{ admin_user }}"
+    append: yes
+    groups: kube
+
+- name: Create /etc/kubernetes/
+  file:
+    path: /etc/kubernetes/
+    state: directory
+    owner: kube
+    group: kube
+    mode:  0755
+
+- name: Create /var/run/kubernetes/
+  file:
+    path: /var/run/kubernetes/
+    state: directory
+    owner: kube
+    group: kube
+    mode:  0755
+
+- include: master.yml
+  when: '"kub-master" in group_names'
+  tags: configure_kubernetes_master
+
+- include: node.yml
+  when: '"kub-nodes" in group_names'
+  tags: configure_kubernetes_node

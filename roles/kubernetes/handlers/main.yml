@@ -1,0 +1,43 @@
+---
+- name: Reload Systemd
+  command: systemctl daemon-reload
+
+
+- name: Restart master daemons
+  command: /bin/true
+  notify:
+    - Restart kube-apiserver
+    - Restart kube-scheduler
+    - Restart kube-controller-manager
+
+- name: Restart kube-apiserver
+  service:
+    name:  kube-apiserver
+    state: restarted
+
+- name: Restart kube-scheduler
+  service:
+    name:  kube-scheduler
+    state: restarted
+
+- name: Restart kube-controller-manager
+  service:
+    name:  kube-controller-manager
+    state: restarted
+
+
+- name: Restart node daemons
+  command: /bin/true
+  notify:
+    - Restart kubelet
+    - Restart kube-proxy
+
+- name: Restart kubelet
+  service:
+    name:  kubelet
+    state: restarted
+
+- name: Restart kube-proxy
+  service:
+    name:  kube-proxy
+    state: restarted

@@ -1,0 +1,15 @@
+localhost ansible_ssh_host=127.0.0.1 ansible_connection=local
+
+[kub-master]
+master.kub.io
+
+[kub-nodes]
+node1.kub.io
+node2.kub.io
+
+[etcd]
+master.kub.io
+node1.kub.io
+node2.kub.io
+
+

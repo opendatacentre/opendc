@@ -1,0 +1,6 @@
+---
+kubernetes_version: 1.0.3
+kubernetes_pkgname: kubernetes.tar.gz
+kubernetes_url:     https://github.com/kubernetes/kubernetes/releases/download/v{{ kubernetes_version }}/{{ kubernetes_pkgname }}
+kubernetes_uid:     5003
+kubernetes_gid:     5013

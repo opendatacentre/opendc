@@ -1,0 +1,18 @@
+[Unit]
+Description=Flannel network
+Requires=etcd.service
+After=etcd.service
+
+[Service]
+ExecStart=/bin/flanneld \
+-public-ip={{ main_ip }} \
+-iface={{ main_ip }} \
+-etcd-prefix={{ cluster_name}}/network \
+-ip-masq={{ flannel_masq }} \
+-alsologtostderr=True 
+ExecStartPost=-/bin/bash -c "until [ -e /run/flannel/subnet.env ]; do echo \"waiting for write.\"; sleep 3; done"
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

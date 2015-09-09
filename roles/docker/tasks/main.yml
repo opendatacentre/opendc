@@ -1,0 +1,97 @@
+---
+- name: Check if this Docker version is already on the fileserver
+  stat:
+    path: "/{{ download_dir }}/{{ docker_pkgname }}"
+  register:    docker_pkg_fileserver
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+
+# For some reason the get_url module does not work for downloading Docker!
+- name: Download Docker to the fileserver
+  command: >
+    curl {{ docker_url }} -o /{{ download_dir }}/{{ docker_pkgname }}
+  delegate_to: "{{ fileserver }}"
+  run_once:    yes
+  when:        not docker_pkg_fileserver.stat.exists
+
+- name: Check if we already have this Docker version
+  stat:
+    path: "/{{ download_dir }}/{{ docker_pkgname }}"
+  register: etcd_pkg
+
+- name: Download Docker
+  command: scp -o StrictHostKeyChecking=no \
+           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ docker_pkgname }} \
+           "/{{ download_dir }}/{{ docker_pkgname }}"
+  when: not etcd_pkg.stat.exists
+
+- name: Create Docker group
+  group:
+    name:  docker
+    gid:   "{{ docker_gid }}"
+    state: present
+
+- name: Create Docker user
+  user:
+    name:    docker
+    uid:     "{{ docker_uid }}"
+    group:   docker
+    shell:   /sbin/nologin
+    comment: "Docker"
+    state:   present
+
+- name: Add Docker group to the admin user
+  user: 
+    name:   "{{ admin_user }}"
+    append: yes
+    groups: docker
+
+- name: Check for Docker binary
+  stat: 
+    path: /bin/docker
+  register: docker_binary
+
+- name: Stop Docker service
+  service:
+    name:  docker
+    state: stopped
+  when: docker_binary.stat.exists
+
+- name: Copy Docker binary
+  command: cp /{{ download_dir }}/{{ docker_pkgname }} /bin/docker
+
+- name: Configure Docker binary permissions
+  file:
+    path:  /bin/docker
+    state: file
+    mode:  0755
+    owner: docker
+    group: docker
+
+- name: Copy docker socket file
+  copy:
+    src: docker.socket
+    dest: /usr/lib/systemd/system/docker.socket
+  notify:
+    - Reload Systemd
+    - Restart Docker
+  tags:
+    - copy_docker_socket_file
+
+- name: Copy Docker service file
+  template:
+    src:  docker.service.j2
+    dest: /usr/lib/systemd/system/docker.service
+  notify: 
+    - Reload Systemd
+    - Restart Docker
+  tags:
+    - copy_docker_service_file
+
+- name: Enable and start Docker service
+  service:
+    name:    docker
+    enabled: yes
+    state:   started
+  ignore_errors: yes

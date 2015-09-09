@@ -1,0 +1,8 @@
+---
+- name: Reload Systemd
+  command: systemctl daemon-reload
+
+- name: Restart Flannel
+  service:
+    name:  flannel
+    state: restarted
