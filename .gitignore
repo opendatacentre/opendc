@@ -1,0 +1,6 @@
+.vagrant
+facts/
+roles/etcd/vars/
+roles/flannel/vars/
+roles/docker/vars/
+roles/kubernetes/vars/
