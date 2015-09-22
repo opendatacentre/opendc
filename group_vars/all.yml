@@ -18,6 +18,7 @@ install_pkgs:   false
 packages:
   - lsof
   #- rsync
-registries:
-  - gcr.io
-  - registry:5000
+kubernetes_dns_ip:       10.254.1.1
+kubernetes_dns_domain:   kub.local
+kubernetes_dns_replicas: 1
+

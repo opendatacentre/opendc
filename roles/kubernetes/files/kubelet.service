@@ -16,6 +16,8 @@ ExecStart=/usr/bin/kubelet \
 	    $KUBELET_PORT \
 	    $KUBELET_HOSTNAME \
 	    $KUBE_ALLOW_PRIV \
+      $KUBELET_DNS_IP \
+      $KUBELET_DNS_DOMAIN \
 	    $KUBELET_ARGS
 Restart=on-failure
 

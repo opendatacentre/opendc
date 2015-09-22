@@ -1,0 +1,11 @@
+---
+- name: Create cluster services directory
+  file:
+    path:  /home/{{ admin_user }}/cluster-services/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+# Create DNS service
+- include: dns.yml
+  tags: configure_dns

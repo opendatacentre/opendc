@@ -47,3 +47,10 @@
   roles:
     - kubernetes
   tags: configure_kubernetes
+
+- name: Configure Cluster Services
+  hosts: kub-master
+  sudo: yes
+  roles:
+    - cluster-services
+  tags: configure_cluster_services

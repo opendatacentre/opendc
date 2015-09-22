@@ -17,7 +17,7 @@ KUBE_API_ADDRESS="--address=0.0.0.0"
 KUBE_ETCD_SERVERS="--etcd_servers=http://127.0.0.1:2379"
 
 # Address range to use for services
-KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=10.254.0.0/16"
+KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range={{ kubernetes_srv_addr }}"
 
 # default admission control policies
 #KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"

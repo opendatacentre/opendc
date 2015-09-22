@@ -1,0 +1,26 @@
+---
+- name: Create dns directory
+  file:
+    path:  /home/{{ admin_user }}/cluster-services/dns/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+- name: Copy dns rc file
+  template:
+    src: dns/skydns-rc.yaml.j2
+    dest: /home/{{ admin_user }}/cluster-services/dns/skydns-rc.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+- name: Copy dns svc file
+  template:
+    src: dns/skydns-svc.yaml.j2
+    dest: /home/{{ admin_user }}/cluster-services/dns/skydns-svc.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+- name: Create dns services
+  command: kubectl create -f dns
+  args:
+    chdir: /home/{{ admin_user }}/cluster-services
