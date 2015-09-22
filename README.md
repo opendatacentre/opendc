@@ -29,7 +29,7 @@ The Kubernetes networking is configured using Flannel.
 
 ## Ansible
 
-Ansible is used to build and configure the k8sdc platform.  Instead of using an OS repository server, the binaries for Kubernetes, Flannel and Etcd are all downloaded directly.  This means that the latest version can be used.
+Ansible is used to build and configure the k8sdc platform.  Instead of using a distributions package manager the binaries for Kubernetes, Flannel, Docker and Etcd are all downloaded directly, meaning that the latest versions can be used.
 
 
 
