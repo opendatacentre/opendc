@@ -21,4 +21,7 @@ packages:
 kubernetes_dns_ip:       10.254.1.1
 kubernetes_dns_domain:   kub.local
 kubernetes_dns_replicas: 1
-
+kubernetes_registry_ip:  10.254.1.2
+registries:
+  - gcr.io
+  - kube-registry:5000

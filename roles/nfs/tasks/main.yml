@@ -1,0 +1,23 @@
+---
+- name: Create registry share
+  file:
+    path:  /var/exports/registry
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode:  0777
+
+- name: Copy exports file
+  copy:
+    src:  exports
+    dest: /etc/exports
+
+- name: Ensure rpcbind is running
+  service:
+    name:  rpcbind
+    state: running
+
+- name: Restart nfs
+  service:
+    name:  nfs
+    state: restarted

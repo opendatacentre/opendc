@@ -5,6 +5,4 @@ kubernetes_url:      https://github.com/kubernetes/kubernetes/releases/download/
 kubernetes_uid:      5003
 kubernetes_gid:      5013
 kubernetes_srv_addr: 10.254.0.0/16
-registries:
-  - gcr.io
-  - registry:5000
+

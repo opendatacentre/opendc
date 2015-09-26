@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: kube-system-kube-registry-pv
+  labels:
+    kubernetes.io/cluster-service: "true"
+spec:
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    path: /var/exports/registry
+    server: master.kub.io

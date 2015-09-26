@@ -16,6 +16,11 @@
   tags:
     - packages
 
+- name: Copy hosts file
+  template:
+    src:  hosts.j2
+    dest: /etc/hosts
+
 - name: Create admin group
   group: 
     gid:   "{{ admin_gid }}"

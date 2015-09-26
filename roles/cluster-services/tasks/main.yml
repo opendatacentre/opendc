@@ -9,3 +9,7 @@
 # Create DNS service
 - include: dns.yml
   tags: configure_dns
+
+# Create Registry service
+- include: registry.yml
+  tags: configure_registry

@@ -1,0 +1,24 @@
+---
+- name: Create registry directory
+  file:
+    path:  /home/{{ admin_user }}/cluster-services/registry/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+- name: Copy registry files
+  template:
+    src: registry/registry-{{ item }}.yaml.j2
+    dest: /home/{{ admin_user }}/cluster-services/registry/registry-{{ item }}.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  with_items:
+    - pv
+    - pvc
+    - rc
+    - svc
+
+- name: Create registry service
+  command: kubectl create -f registry
+  args:
+    chdir: /home/{{ admin_user }}/cluster-services
