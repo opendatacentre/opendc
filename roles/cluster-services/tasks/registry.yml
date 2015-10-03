@@ -22,3 +22,6 @@
   command: kubectl create -f registry
   args:
     chdir: /home/{{ admin_user }}/cluster-services
+  failed_when: false
+  register: kubectl
+  changed_when: 'service exists' not in kubectl.results.stdout

@@ -3,7 +3,7 @@
 
 <hr>
 
-k8sdc, prounounced Kubernetes DC, aka Kubernetes Data Center, is a project to create an entire data center infrastructure sat atop [Kubernetes](http://kubernetes.io).  This includes all of the software needed for CI/CD, source control, code review, artefact storage, centralised logging and alerting, user registry, mail server, load balancing, blogs, wiki, productivity tools, etc.
+k8sdc, prounounced Kubernetes DC, aka Kubernetes Data Center, is a project to create an entire data center infrastructure sat atop [Kubernetes](http://kubernetes.io).  This includes all of the software needed for CI/CD, source control, code review, artefact storage, centralised logging and alerting, user registry, mail server, load balancing, VPN, blogs, wiki, productivity tools, etc.
 
 The k8sdc platform will be cloud provider agnostic.  It may make use of some cloud provider capabilities, such as external load balancers, but this will be as an alternative to core capabilities.
 
