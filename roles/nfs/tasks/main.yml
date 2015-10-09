@@ -12,10 +12,11 @@
     src:  exports
     dest: /etc/exports
 
-- name: Ensure rpcbind is running
+- name: Ensure rpcbind is enabled and running
   service:
-    name:  rpcbind
-    state: running
+    name:    rpcbind
+    enabled: yes
+    state:   running
 
 - name: Restart nfs
   service:

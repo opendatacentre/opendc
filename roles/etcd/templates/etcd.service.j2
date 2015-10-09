@@ -14,7 +14,7 @@ ExecStart=/usr/bin/etcd -name {{ ansible_fqdn }} \
 -listen-client-urls http://127.0.0.1:2379,http://{{ main_ip }}:2379 \
 --advertise-client-urls http://127.0.0.1:2379,http://{{ main_ip }}:2379 \
 -initial-cluster-token {{ cluster_name }} \
--initial-cluster {% for node in groups['etcd'] %}{{ node }}=http://{{ hostvars[node]['ansible_' + interface].ipv4.address }}:2380{% if not loop.last %},{% endif %}{% endfor %} \
+-initial-cluster {% for node in groups['etcd'] %}{{ hostvars[node].ansible_fqdn }}=http://{{ hostvars[node]['ansible_' + interface].ipv4.address }}:2380{% if not loop.last %},{% endif %}{% endfor %} \
 -initial-advertise-peer-urls http://{{ main_ip }}:2380 \
 -initial-cluster-state new
 

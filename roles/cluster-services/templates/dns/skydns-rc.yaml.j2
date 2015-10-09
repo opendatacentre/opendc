@@ -7,6 +7,8 @@ metadata:
     k8s-app: kube-dns
     version: v9
     kubernetes.io/cluster-service: "true"
+  annotations:
+    k8sdc: "true"
 spec:
   replicas: {{ kubernetes_dns_replicas }}
   selector:

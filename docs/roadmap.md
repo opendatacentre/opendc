@@ -4,20 +4,35 @@
 
 ## Priority
 
+In roughly the order of priority.
+
+* Kubernetes cluster services
 * External facing HTTP/S load balancer
 * GlusterFS
 * Jenkins
 * Artifactory or Nexus
-* Centralised logging and alerting
+* Application logging and alerting
+* Microservices example application
 * LDAP
-* Openshift V3
+* Select Openshift V3 capabilities
 
 ## Secondary
 
-* Gitlab
+In no particular order.
+
+* Git
 * Code review
 * Blog
 * Wiki
+* CMS
+* Forum
 * Email
+* Project management
+* Reporting and analytics
+* VPN
 * Performance / usability testing
+* Messaging
+* Database
+* Caching
+* Batch
 

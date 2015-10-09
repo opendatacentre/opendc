@@ -5,6 +5,8 @@ metadata:
   namespace: kube-system
   labels:
     kubernetes.io/cluster-service: "true"
+  annotations:
+    k8sdc: "true"
 spec:
   accessModes:
     - ReadWriteOnce
