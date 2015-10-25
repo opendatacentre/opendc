@@ -42,6 +42,7 @@ Vagrant.configure(2) do |config|
       ansible.playbook = "site.yml"
       ansible.limit = 'all'
       ansible.groups = {
+          "all-nodes"   => ["master.kub.io", "node1.kub.io", "node2.kub.io"]
           "kub-master"  => ["master.kub.io"],
           "kub-nodes"   => ["node1.kub.io", "node2.kub.io"],
           "etcd"        => ["master.kub.io", "node1.kub.io", "node2.kub.io"]

@@ -10,14 +10,8 @@ admin_group:    kubeadmin
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
-fileserver:     master.kub.io
+fileserver:     "{{ groups.fileserver | first }}" #master.kub.io
 download_dir:   /var/download/
-install_sysdig: true
-upgrade_pkgs:   false
-install_pkgs:   false
-packages:
-  - lsof
-  #- rsync
 kubernetes_dns_ip:       10.254.1.1
 kubernetes_dns_domain:   kub.local
 kubernetes_dns_replicas: 1

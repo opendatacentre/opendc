@@ -1,13 +1,13 @@
 ---
 - name: Test distribution
-  hosts: all
+  hosts: all-nodes
   tasks:
     - assert:
         that: ansible_os_family == "RedHat"
   tags: confirm_redhat
 
 - name: Configure common components
-  hosts: all
+  hosts: all-nodes
   sudo:  yes
   roles:
     - common
