@@ -4,7 +4,7 @@
 
 ## Priority
 
-In roughly the order of priority.
+Roughly in order of priority.
 
 * Kubernetes cluster services
 * External facing HTTP/S load balancer
