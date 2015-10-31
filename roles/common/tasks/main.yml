@@ -1,4 +1,12 @@
 ---
+- name: Install packages
+  dnf:
+    name={{ item }}
+    state=latest
+  with_items: packages
+  when: install_pkgs
+  tags: packages
+
 - name: Copy hosts file
   template:
     src:  hosts.j2

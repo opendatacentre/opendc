@@ -5,10 +5,10 @@
 #
 
 # The address on the local server to listen to.
-KUBE_API_ADDRESS="--address=0.0.0.0"
+KUBE_API_ADDRESS="--insecure-bind-address=127.0.0.1"
 
 # The port on the local server to listen on.
-# KUBE_API_PORT="--port=8080"
+KUBE_API_PORT="--secure-port={{ kubernetes_api_port }}"
 
 # Port minions listen on
 # KUBELET_PORT="--kubelet_port=10250"
@@ -20,8 +20,8 @@ KUBE_ETCD_SERVERS="--etcd_servers=http://127.0.0.1:2379"
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range={{ kubernetes_srv_addr }}"
 
 # default admission control policies
-#KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
-KUBE_ADMISSION_CONTROL="--admission_control=AlwaysAdmit"
+KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
+#KUBE_ADMISSION_CONTROL="--admission_control=AlwaysAdmit"
 
 # Add your own!
-KUBE_API_ARGS=""
+KUBE_API_ARGS="--tls-cert-file=/etc/kubernetes/certs/server.crt --tls-private-key-file=/etc/kubernetes/certs/server.key --client-ca-file=/etc/kubernetes/certs/ca.crt --token-auth-file=/etc/kubernetes/tokens/known_tokens.csv --service-account-key-file=/etc/kubernetes/certs/server.crt"

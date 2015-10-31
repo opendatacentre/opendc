@@ -10,12 +10,16 @@ admin_group:    kubeadmin
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
-fileserver:     "{{ groups.fileserver | first }}" #master.kub.io
+fileserver:     "{{ groups.fileserver | first }}"
 download_dir:   /var/download/
+install_pkgs:   true
+packages:
+  - glusterfs-client
 kubernetes_dns_ip:       10.254.1.1
 kubernetes_dns_domain:   kub.local
 kubernetes_dns_replicas: 1
 kubernetes_registry_ip:  10.254.1.2
+kubernetes_api_port:     6443
 registries:
   - gcr.io
   - kube-registry:5000

@@ -11,11 +11,11 @@ KUBELET_ADDRESS="--address={{ main_ip }}"
 KUBELET_HOSTNAME="--hostname_override={{ ansible_fqdn }}"
 
 # location of the api-server
-KUBELET_API_SERVER="--api_servers=http://{{ api_server_ip }}:8080"
+KUBELET_API_SERVER="--api_servers=https://{{ api_server_ip }}:{{ kubernetes_api_port }}"
 
 # DNS
 KUBELET_DNS_IP="--cluster-dns={{ kubernetes_dns_ip }}"
 KUBELET_DNS_DOMAIN="--cluster-domain={{ kubernetes_dns_domain }}"
 
 # Add your own!
-KUBELET_ARGS=""
+KUBELET_ARGS="--kubeconfig=/etc/kubernetes/kubelet.kubeconfig --config=/etc/kubernetes/manifest --host-network-sources=*"
