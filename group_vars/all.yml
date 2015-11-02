@@ -15,6 +15,7 @@ download_dir:   /var/download/
 install_pkgs:   true
 packages:
   - glusterfs-client
+  - git
 kubernetes_dns_ip:       10.254.1.1
 kubernetes_dns_domain:   kub.local
 kubernetes_dns_replicas: 1

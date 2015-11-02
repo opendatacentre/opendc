@@ -20,8 +20,7 @@ KUBE_ETCD_SERVERS="--etcd_servers=http://127.0.0.1:2379"
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range={{ kubernetes_srv_addr }}"
 
 # default admission control policies
-KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota"
-#KUBE_ADMISSION_CONTROL="--admission_control=AlwaysAdmit"
+KUBE_ADMISSION_CONTROL="{{ kubernetes_admission }}"
 
 # Add your own!
 KUBE_API_ARGS="--tls-cert-file=/etc/kubernetes/certs/server.crt --tls-private-key-file=/etc/kubernetes/certs/server.key --client-ca-file=/etc/kubernetes/certs/ca.crt --token-auth-file=/etc/kubernetes/tokens/known_tokens.csv --service-account-key-file=/etc/kubernetes/certs/server.crt"

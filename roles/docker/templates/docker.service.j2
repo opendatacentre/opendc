@@ -7,10 +7,11 @@ Requires=docker.socket
 [Service]
 Type=notify
 EnvironmentFile=-/run/flannel/subnet.env
-ExecStart=/usr/bin/docker -d \
+ExecStart=/usr/bin/docker daemon \
           --bip=${FLANNEL_SUBNET} \
           --mtu=${FLANNEL_MTU} \
           --ip-masq=false \
+          --selinux-enabled=false \
           {% for registry in registries %}--insecure-registry={{ registry }}{% if not loop.last %} \
           {% endif %}{% endfor %}
           
