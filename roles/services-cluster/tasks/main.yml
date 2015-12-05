@@ -1,0 +1,42 @@
+---
+- name: Create cluster services directory
+  file:
+    path:  /home/{{ admin_user }}/services-cluster/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+# Create namespace
+- name: Copy namespace.yaml
+  copy:
+    src:   namespace.yaml
+    dest:  /home/{{ admin_user }}/services-cluster/namespace.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  delegate_to: "{{ groups['kub-master'] | first }}"
+  run_once: yes
+
+- name: Check if cluster services namespace already exists
+  command: kubectl get namespace kube-system
+  failed_when: false
+  register: kubectl
+
+- name: Create cluster services namespace if required
+  command: kubectl create -f namespace.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/
+  when: "'kube-system' not in kubectl.stdout"
+
+# Create DNS service
+- include: dns.yml
+  tags: configure_dns
+
+# Create Registry service
+- include: registry.yml
+  tags: configure_registry
+
+# Create kube-ui
+
+# Create Logging service (including fluentd-es on each node)
+
+# Create monitoring

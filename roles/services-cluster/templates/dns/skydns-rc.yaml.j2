@@ -50,7 +50,7 @@ spec:
             memory: 50Mi
         args:
         # command = "/kube2sky"
-        - -kube_master_url=https://{{ api_server_ip }}:{{ kubernetes_api_port }}
+        #- -kube_master_url=https://{{ api_server_ip }}:{{ kubernetes_api_port }}
         - -domain={{ kubernetes_dns_domain }}
       - name: skydns
         image: gcr.io/google_containers/skydns:2015-03-11-001

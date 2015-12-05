@@ -85,13 +85,19 @@
   register: ca_cert
   delegate_to: "{{ groups['kub-master'][0] }}"
   run_once: yes
-  tags: security
+  tags: 
+    - configure_kubernetes_node_security
+    - security
 
 - name: Register the CA certificate as a fact so it can be used later
   set_fact:
     kube_ca_cert: "{{ ca_cert.content|b64decode }}"
-  tags: security
+  tags: 
+    - configure_kubernetes_node_security
+    - security
 
 - include: node.yml
   when: '"kub-nodes" in group_names'
-  tags: configure_kubernetes_node
+  tags: 
+    - configure_kubernetes_node_security
+    - security

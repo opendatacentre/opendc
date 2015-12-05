@@ -59,5 +59,27 @@
   hosts: kub-master
   sudo: yes
   roles:
-    - cluster-services
-  tags: configure_cluster_services
+    - services-cluster
+  tags: configure_services_cluster
+
+- name: Configure Infrastucture Services
+  hosts: kub-master
+  sudo: yes
+  roles:
+    - services-infrastructure
+  tags: configure_services_infrastructure
+
+# - name: Configure Development Services
+#   hosts: kub-master
+#   sudo: yes
+#   roles:
+#     - services-development
+#   tags: configure_services_development
+
+# - name: Configure Productivity Services
+#   hosts: kub-master
+#   sudo: yes
+#   roles:
+#     - services-productivity
+#   tags: configure_services_productivity
+

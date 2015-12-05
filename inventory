@@ -12,4 +12,6 @@ master.kub.io
 node1.kub.io
 node2.kub.io
 
+[fileserver]
+master.kub.io
 
