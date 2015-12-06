@@ -1,0 +1,32 @@
+---
+- name: Create development services directory
+  file:
+    path:  /home/{{ admin_user }}/services-development/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+
+# Create namespace
+- name: Copy namespace.yaml
+  template:
+    src:   namespace.yaml.j2
+    dest:  /home/{{ admin_user }}/services-development/namespace.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  delegate_to: "{{ groups['kub-master'] | first }}"
+  run_once: yes
+
+- name: Check if development services namespace already exists
+  command: kubectl get namespace {{ development_namespace }}
+  failed_when: false
+  register: kubectl
+
+- name: Create development services namespace if required
+  command: kubectl create -f namespace.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/
+  when: "'{{ development_namespace }}' not in kubectl.stdout"
+
+
+

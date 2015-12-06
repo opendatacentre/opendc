@@ -1,0 +1,33 @@
+---
+- name: Create OpenDJ NFS share
+  file:
+    path:  /var/exports/{{ infrastructure_namespace }}/opendj
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode:  0777
+
+- name: Add OpenDJ NFS share to exports
+  lineinfile:
+    dest:  /etc/exports
+    state: present
+    line:  "/var/exports/{{ infrastructure_namespace }}/opendj *(rw,all_squash)"
+  notify: Restart NFS
+
+- name: Create OpenDJ directory
+  file:
+    path:  /home/{{ admin_user }}/{{ infrastructure_namespace }}/opendj/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+- name: Copy OpenDJ files
+  template:
+    src: opendj/opendj-{{ item }}.yaml.j2
+    dest: /home/{{ admin_user }}/{{ infrastructure_namespace }}/opendj/opendj-{{ item }}.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  with_items:
+    - rc
+    - svc
+    - pv

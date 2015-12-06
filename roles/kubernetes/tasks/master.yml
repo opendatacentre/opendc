@@ -76,6 +76,10 @@
 - name: Reload Systemd
   command: systemctl daemon-reload
 
+- name: Include security configuration
+  include: security.yml
+  tags: security
+
 - name: Enable and start master services
   service:
     name:    "{{ item }}"

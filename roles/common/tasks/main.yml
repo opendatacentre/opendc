@@ -1,20 +1,11 @@
 ---
-- name: Upgrade all packages
-  dnf:
-    name=*
-    state=latest
-  when: upgrade_pkgs
-  tags:
-    - packages
-
 - name: Install packages
   dnf:
     name={{ item }}
     state=latest
   with_items: packages
   when: install_pkgs
-  tags:
-    - packages
+  tags: packages
 
 - name: Copy hosts file
   template:

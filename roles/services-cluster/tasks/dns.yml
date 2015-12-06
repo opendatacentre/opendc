@@ -1,7 +1,7 @@
 ---
 - name: Create dns directory
   file:
-    path:  /home/{{ admin_user }}/cluster-services/dns/
+    path:  /home/{{ admin_user }}/services-cluster/dns/
     state: directory
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
@@ -9,7 +9,7 @@
 - name: Copy dns files
   template:
     src: dns/skydns-{{ item }}.yaml.j2
-    dest: /home/{{ admin_user }}/cluster-services/dns/skydns-{{ item }}.yaml
+    dest: /home/{{ admin_user }}/services-cluster/dns/skydns-{{ item }}.yaml
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
   with_items:
@@ -20,7 +20,7 @@
 - name: Create dns replication controller if it does not currently exist
   command: kubectl create -f skydns-rc.yaml
   args:
-    chdir: /home/{{ admin_user }}/cluster-services/dns
+    chdir: /home/{{ admin_user }}/services-cluster/dns
   failed_when: false
   register: kubectl
   changed_when: "'already exists' not in kubectl.stderr"
@@ -28,14 +28,14 @@
 - name: Replace dns replication controller if it already exists
   command: kubectl replace -f skydns-rc.yaml
   args:
-    chdir: /home/{{ admin_user }}/cluster-services/dns
+    chdir: /home/{{ admin_user }}/services-cluster/dns
   when: not kubectl.changed
 
 # Service
 - name: Create dns service if it does not currently exist
   command: kubectl create -f skydns-svc.yaml
   args:
-    chdir: /home/{{ admin_user }}/cluster-services/dns
+    chdir: /home/{{ admin_user }}/services-cluster/dns
   failed_when: false
   register: kubectl
   changed_when: "'provided IP is already allocated' not in kubectl.stderr"
@@ -43,5 +43,5 @@
 - name: Replace dns service if it already exists
   command: kubectl replace -f skydns-svc.yaml
   args:
-    chdir: /home/{{ admin_user }}/cluster-services/dns
+    chdir: /home/{{ admin_user }}/services-cluster/dns
   when: not kubectl.changed

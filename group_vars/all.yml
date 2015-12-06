@@ -4,24 +4,37 @@ interface:      eth1
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['kub-master'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
-admin_user:     kubeadmin
+admin_user:     k8admin
 admin_uid:      5000
-admin_group:    kubeadmin
+admin_group:    k8admin
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
-fileserver:     master.kub.io
+fileserver:     "{{ groups.fileserver | first }}"
 download_dir:   /var/download/
-install_sysdig: true
-upgrade_pkgs:   false
-install_pkgs:   false
+install_pkgs:   true
 packages:
-  - lsof
-  #- rsync
+  #- glusterfs-client
+  - git
 kubernetes_dns_ip:       10.254.1.1
-kubernetes_dns_domain:   kub.local
+kubernetes_dns_domain:   k8sdc.io
 kubernetes_dns_replicas: 1
 kubernetes_registry_ip:  10.254.1.2
+kubernetes_api_port:     6443
 registries:
   - gcr.io
   - kube-registry:5000
+
+# Cluster Services
+
+
+# Infrastructure Services
+
+
+# Development Services
+
+
+# Productivity Services
+
+
+# Application Examples
