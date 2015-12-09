@@ -6,6 +6,7 @@
     owner: nfsnobody
     group: nfsnobody
     mode:  0777
+  tags: opendj
 
 - name: Add OpenDJ NFS share to exports
   lineinfile:
@@ -13,6 +14,7 @@
     state: present
     line:  "/var/exports/{{ infrastructure_namespace }}/opendj *(rw,all_squash)"
   notify: Restart NFS
+  tags: opendj
 
 - name: Create OpenDJ directory
   file:
@@ -20,6 +22,7 @@
     state: directory
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
+  tags: opendj
 
 - name: Copy OpenDJ files
   template:
@@ -30,4 +33,84 @@
   with_items:
     - rc
     - svc
-    - pv
+    #- pv
+  tags: 
+    - opendj
+    - opendj_rc
+    - opendj_svc
+
+# Persistent Volume
+# - name: Create opendj persistent volume if it does not currently exist
+#   command: kubectl create -f opendj-pv.yaml
+#   args:
+#     chdir: /home/{{ admin_user }}/services-infrastructure/opendj
+#   failed_when: false
+#   register: kubectl
+#   changed_when: "'already exists' not in kubectl.stderr"
+
+# - name: Replace opendj persistent volume if it already exists
+#   command: kubectl replace -f opendj-pv.yaml
+#   args:
+#     chdir: /home/{{ admin_user }}/services-infrastructure/opendj
+#   when: not kubectl.changed
+
+# Replication Controller
+- name: Create opendj replication controller if it does not currently exist
+  command: kubectl create -f opendj-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/opendj
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+  tags:
+    - opendj
+    - opendj_rc
+
+- name: Delete opendj replication controller if it already exists
+  command: kubectl delete rc opendj --namespace={{ infrastructure_namespace }}
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/opendj
+  when: not kubectl.changed
+
+# This pause is probably needed to give the scheduler enough time to release and
+# reassign the NFS share??
+- pause:
+    seconds: 20
+  when: not kubectl.changed
+  tags:
+    - opendj
+    - opendj_rc
+
+- name: Re-create opendj replication controller 
+  command: kubectl create -f opendj-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/opendj
+  when: not kubectl.changed
+  tags:
+    - opendj
+    - opendj_rc
+
+# Service
+- name: Create opendj service if it does not currently exist
+  command: kubectl create -f opendj-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/opendj/
+  failed_when: false
+  register: kubectl
+  changed_when: "'provided IP is already allocated' not in kubectl.stderr"
+  tags: 
+    - opendj
+    - opendj_svc
+
+- name: Replace opendj service if it already exists
+  command: kubectl replace -f opendj-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/opendj/
+  when: not kubectl.changed
+  tags:
+    - opendj 
+    - opendj_svc
+
+
+
+

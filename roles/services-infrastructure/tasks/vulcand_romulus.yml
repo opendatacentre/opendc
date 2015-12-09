@@ -1,0 +1,17 @@
+---
+- name: Copy Vulcand files
+  template:
+    src: vulcand/vulcand-pod.yaml.j2
+    dest: /etc/kubernetes/manifest/vulcand-pod.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  delegate_to: "{{ node }}"
+
+- name: Copy Romulus files
+  template:
+    src: romulus/romulus-pod.yaml.j2
+    dest: /home/{{ admin_user }}/{{ infrastructure_namespace }}/romulus/romulus-{{ location }}-pod.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+# Add pod!

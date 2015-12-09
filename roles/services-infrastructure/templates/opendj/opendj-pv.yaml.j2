@@ -1,0 +1,19 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: opendj-pv
+  namespace: "{{ infrastructure_namespace }}"
+  labels:
+    k8sdc-app: opendj
+    k8sdc.io/services-infrastructure: "true"
+    service: "opendj"
+  annotations:
+    k8sdc: "true"
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    path: /var/exports/services-infrastructure/opendj
+    server: "{{ groups['kub-master'] | first }}"

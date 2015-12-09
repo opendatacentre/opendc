@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: romulus-{{ location }}
+  namespace: {{ infrastructure_namespace }}
+  labels:
+    k8sdc-app: romulus-{{ location }}
+    k8sdc.io/services-infrastructure: "true"
+    version: v0
+  annotations:
+    k8sdc: "true"
+spec:
+  containers:
+    - name: romulus-{{ location }}
+      image: k8sdc/romulus
+      args:
+        - --etcd=http://{{ api_server_ip }}:2379 
+        - --kube=https://{{ api_server_ip }}:{{ kubernetes_api_port }}
+        - --kube-ca-file=/secrets/ca.crt
+        - --kube-cert-file=/secrets/kubecfg.crt
+        - --kube-key-file=/secrets/kubecfg.key
+        - --svc-selector=type={{ location }}
+        - --vulcan-key=vulcand-{{ location }}
+        - --debug
+      volumeMounts:
+        - name: romulus-secret
+          readOnly: true
+          mountPath: /secrets
+  volumes:
+    - name: romulus-secret
+      secret:
+        secretName: romulus-secret

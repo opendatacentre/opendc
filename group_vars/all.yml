@@ -16,20 +16,19 @@ install_pkgs:   true
 packages:
   #- glusterfs-client
   - git
-kubernetes_dns_ip:       10.254.1.1
-kubernetes_dns_domain:   k8sdc.io
-kubernetes_dns_replicas: 1
-kubernetes_registry_ip:  10.254.1.2
 kubernetes_api_port:     6443
 registries:
   - gcr.io
   - kube-registry:5000
 
 # Cluster Services
-
+kubernetes_dns_ip:       10.254.1.1
+kubernetes_dns_domain:   k8sdc.io
+kubernetes_dns_replicas: 1
+kubernetes_registry_ip:  10.254.1.2
 
 # Infrastructure Services
-
+k8sdc_opendj_ip:         10.254.2.1
 
 # Development Services
 

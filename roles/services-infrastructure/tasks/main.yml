@@ -6,7 +6,6 @@
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
 
-
 # Create namespace
 - name: Copy namespace.yaml
   template:
@@ -14,8 +13,8 @@
     dest:  /home/{{ admin_user }}/services-infrastructure/namespace.yaml
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
-  delegate_to: "{{ groups['kub-master'] | first }}"
-  run_once: yes
+  #delegate_to: "{{ groups['kub-master'] | first }}"
+  #run_once: yes
 
 - name: Check if infrastructure services namespace already exists
   command: kubectl get namespace {{ infrastructure_namespace }}
@@ -30,3 +29,18 @@
 
 # OpenDJ
 - include: opendj.yml
+  tags: opendj
+
+# Romulus Secret
+- include: romulus_secret.yml
+  tags:
+    - vulcand_internal
+    - vulcand_external
+
+# Vulcand and Romulus - Internal
+- include: vulcand_romulus.yml node="{{ groups['kub-nodes'][0] }}" location=internal
+  tags: vulcand_internal
+
+# Vulcand and Romulus - External
+- include: vulcand_romulus.yml node="{{ groups['kub-nodes'][1] }}" location=external
+  tags: vulcand_external
