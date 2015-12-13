@@ -12,10 +12,10 @@ private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
 fileserver:     "{{ groups.fileserver | first }}"
 download_dir:   /var/download/
-install_pkgs:   true
+install_pkgs:   no
 packages:
-  #- glusterfs-client
-  #- git
+  - glusterfs-client
+  - git
 kubernetes_api_port:     6443
 registries:
   - gcr.io
