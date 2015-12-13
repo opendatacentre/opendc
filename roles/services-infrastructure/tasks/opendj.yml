@@ -71,6 +71,9 @@
   args:
     chdir: /home/{{ admin_user }}/services-infrastructure/opendj
   when: not kubectl.changed
+  tags:
+  - opendj
+  - opendj_rc
 
 # This pause is probably needed to give the scheduler enough time to release and
 # reassign the NFS share??

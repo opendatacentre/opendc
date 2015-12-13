@@ -14,4 +14,23 @@
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
 
-# Add pod!
+# Pod
+- name: Create Romulus Pod if it does not currently exist
+  command: kubectl create -f romulus-{{ location }}-pod.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/romulus
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+
+- name: Delete Romulus Pod if it already exists
+  command: kubectl delete po romulus-{{ location }} --namespace={{ development_namespace }}
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/romulus
+  when: not kubectl.changed
+
+- name: Re-create Romulus Pod
+  command: kubectl create -f romulus-{{ location }}-pod.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-infrastructure/romulus
+  when: not kubectl.changed

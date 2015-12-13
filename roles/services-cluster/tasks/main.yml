@@ -36,7 +36,13 @@
   tags: configure_registry
 
 # Create kube-ui
+- include: kube-ui.yml
+  when: kubernetes_install_kube_ui
+  tags: configure_kube_ui
 
-# Create Logging service (including fluentd-es on each node)
+# Create Logging service
+- include: logging.yml
+  when: kubernetes_install_logging
+  tags: configure_logging
 
 # Create monitoring

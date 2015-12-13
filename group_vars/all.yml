@@ -15,23 +15,34 @@ download_dir:   /var/download/
 install_pkgs:   true
 packages:
   #- glusterfs-client
-  - git
+  #- git
 kubernetes_api_port:     6443
 registries:
   - gcr.io
   - kube-registry:5000
 
 # Cluster Services
-kubernetes_dns_ip:       10.254.1.1
-kubernetes_dns_domain:   k8sdc.io
-kubernetes_dns_replicas: 1
-kubernetes_registry_ip:  10.254.1.2
+kubernetes_dns_ip:          10.254.1.1
+kubernetes_dns_domain:      k8sdc.io
+kubernetes_dns_replicas:    1
+kubernetes_registry_ip:     10.254.1.2
+kubernetes_install_logging: yes
+kubernetes_logging_ip:      10.254.1.3
+kubernetes_logging_fqdn:    logging.cluster.k8sdc.io
+kubernetes_install_kube_ui: yes
+kubernetes_kube_ui_ip:      10.254.1.4
+kubernetes_kube_ui_fqdn:    kube-ui.cluster.k8sdc.io
 
 # Infrastructure Services
 k8sdc_opendj_ip:         10.254.2.1
 
 # Development Services
-
+k8sdc_install_jenkins:     yes
+k8sdc_jenkins_ip:          10.254.3.1
+k8sdc_jenkins_fqdn:        jenkins.development.k8sdc.io
+k8sdc_install_artifactory: yes
+k8sdc_artifactory_ip:      10.254.3.2
+k8sdc_artifactory_fqdn:    artifactory.development.k8sdc.io
 
 # Productivity Services
 

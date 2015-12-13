@@ -44,4 +44,10 @@
   command: kubectl replace -f skydns-svc.yaml
   args:
     chdir: /home/{{ admin_user }}/services-cluster/dns
+  register: kubectl
   when: not kubectl.changed
+
+# A lot of subsequent services depend on DNS running.  So to give Docker a chance
+# to download the images and get them running we have the following pause.
+- pause:
+    minutes: 2

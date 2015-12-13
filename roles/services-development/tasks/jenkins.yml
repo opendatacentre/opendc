@@ -1,0 +1,100 @@
+---
+- name: Create Jenkins NFS share
+  file:
+    path:  /var/exports/{{ development_namespace }}/jenkins
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode:  0777
+  tags: jenkins
+
+- name: Add Jenkins NFS share to exports
+  lineinfile:
+    dest:  /etc/exports
+    state: present
+    line:  "/var/exports/{{ development_namespace }}/jenkins *(rw,all_squash)"
+  notify: Restart NFS
+  tags: jenkins
+
+- name: Create Jenkins directory
+  file:
+    path:  /home/{{ admin_user }}/{{ development_namespace }}/jenkins/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  tags: jenkins
+
+- name: Copy Jenkins files
+  template:
+    src: jenkins/jenkins-{{ item }}.yaml.j2
+    dest: /home/{{ admin_user }}/{{ development_namespace }}/jenkins/jenkins-{{ item }}.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  with_items:
+    - rc
+    - svc
+  tags: 
+    - jenkins
+    - jenkins_rc
+    - jenkins_svc
+
+# Replication Controller
+- name: Create Jenkins replication controller if it does not currently exist
+  command: kubectl create -f jenkins-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/jenkins
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+  tags:
+    - jenkins
+    - jenkins_rc
+
+- name: Delete Jenkins replication controller if it already exists
+  command: kubectl delete rc jenkins-master --namespace={{ development_namespace }}
+  args:
+    chdir: /home/{{ admin_user }}/services-development/jenkins
+  when: not kubectl.changed
+  tags:
+    - jenkins
+    - jenkins_rc
+
+# This pause is probably needed to give the scheduler enough time to release and
+# reassign the NFS share??
+- pause:
+    seconds: 20
+  when: not kubectl.changed
+  tags:
+    - jenkins
+    - jenkins_rc
+
+- name: Re-create Jenkins replication controller 
+  command: kubectl create -f jenkins-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/jenkins
+  when: not kubectl.changed
+  tags:
+    - jenkins
+    - jenkins_rc
+
+# Service
+- name: Create Jenkins service if it does not currently exist
+  command: kubectl create -f jenkins-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/jenkins/
+  failed_when: false
+  register: kubectl
+  changed_when: "'provided IP is already allocated' not in kubectl.stderr"
+  tags: 
+    - jenkins
+    - jenkins_svc
+
+- name: Replace Jenkins service if it already exists
+  command: kubectl replace -f jenkins-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/jenkins/
+  when: not kubectl.changed
+  tags:
+    - jenkins 
+    - jenkins_svc
+

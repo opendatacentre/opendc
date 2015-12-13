@@ -1,0 +1,71 @@
+---
+- name: Create kube-ui directory
+  file:
+    path:  /home/{{ admin_user }}/services-cluster/kube-ui/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  tags: kube_ui
+
+- name: Copy kube-ui files
+  template:
+    src: kube-ui/kube-ui-{{ item }}.yaml.j2
+    dest: /home/{{ admin_user }}/services-cluster/kube-ui/kube-ui-{{ item }}.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  with_items:
+    - rc
+    - svc
+  tags: kube_ui
+
+# Replication Controller
+- name: Create kube-ui replication controller if it does not currently exist
+  command: kubectl create -f kube-ui-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/kube-ui
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+  tags:
+    - kube_ui
+    - kube_ui_rc
+
+- name: Delete kube-ui replication controller if it already exists
+  command: kubectl delete rc kube-ui-v3 --namespace=kube-system
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/kube-ui
+  when: not kubectl.changed
+  tags:
+    - kube_ui
+    - kube_ui_rc
+
+- name: Re-create kube-ui replication controller 
+  command: kubectl create -f kube-ui-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/kube-ui
+  when: not kubectl.changed
+  tags:
+    - kube_ui
+    - kube_ui_rc
+
+# Service
+- name: Create kube-ui service if it does not currently exist
+  command: kubectl create -f kube-ui-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/kube-ui/
+  failed_when: false
+  register: kubectl
+  changed_when: "'provided IP is already allocated' not in kubectl.stderr"
+  tags: 
+    - kube_ui
+    - kube_ui_svc
+
+- name: Replace kube-ui service if it already exists
+  command: kubectl replace -f kube-ui-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/kube-ui/
+  when: not kubectl.changed
+  tags:
+    - kube_ui 
+    - kube_ui_svc
+

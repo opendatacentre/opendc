@@ -31,16 +31,27 @@
 - include: opendj.yml
   tags: opendj
 
+# Romulus
+- name: Create Romulus directory
+  file:
+    path:  /home/{{ admin_user }}/{{ infrastructure_namespace }}/romulus/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  tags: romulus
+
 # Romulus Secret
 - include: romulus_secret.yml
-  tags:
-    - vulcand_internal
-    - vulcand_external
+  tags: romulus
 
 # Vulcand and Romulus - Internal
 - include: vulcand_romulus.yml node="{{ groups['kub-nodes'][0] }}" location=internal
-  tags: vulcand_internal
+  tags: 
+    - romulus
+    - vulcand_internal
 
 # Vulcand and Romulus - External
 - include: vulcand_romulus.yml node="{{ groups['kub-nodes'][1] }}" location=external
-  tags: vulcand_external
+  tags: 
+    - romulus
+    - vulcand_external

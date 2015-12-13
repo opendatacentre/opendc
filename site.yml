@@ -69,12 +69,12 @@
     - services-infrastructure
   tags: configure_services_infrastructure
 
-# - name: Configure Development Services
-#   hosts: kub-master
-#   sudo: yes
-#   roles:
-#     - services-development
-#   tags: configure_services_development
+- name: Configure Development Services
+  hosts: kub-master
+  sudo: yes
+  roles:
+    - services-development
+  tags: configure_services_development
 
 # - name: Configure Productivity Services
 #   hosts: kub-master
