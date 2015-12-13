@@ -38,7 +38,7 @@
 
 # Replication Controller - Elasticsearch
 - name: Create Elasticsearch replication controller if it does not currently exist
-  command: kubectl create -f logging-kibana-rc.yaml
+  command: kubectl create -f logging-es-rc.yaml
   args:
     chdir: /home/{{ admin_user }}/services-cluster/logging
   failed_when: false
