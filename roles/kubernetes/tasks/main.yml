@@ -86,6 +86,7 @@
   delegate_to: "{{ groups['kub-master'][0] }}"
   run_once: yes
   tags: 
+    - configure_kubernetes_node
     - configure_kubernetes_node_security
     - security
 
@@ -93,11 +94,13 @@
   set_fact:
     kube_ca_cert: "{{ ca_cert.content|b64decode }}"
   tags: 
+    - configure_kubernetes_node
     - configure_kubernetes_node_security
     - security
 
 - include: node.yml
   when: '"kub-nodes" in group_names'
   tags: 
+    - configure_kubernetes_node
     - configure_kubernetes_node_security
     - security

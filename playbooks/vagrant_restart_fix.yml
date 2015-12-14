@@ -1,0 +1,12 @@
+---
+- name: Restart services
+  hosts: ungrouped
+  sudo: yes
+  gather_facts: no
+
+  tasks:
+    - debug: msg="hi"
+      when: inventory_hostname in groups['kub-master']
+    # - service:
+    #     name: rpcbind
+    #     state: started
