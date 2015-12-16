@@ -1,0 +1,65 @@
+site_name: k8sdc documentation
+site_description: k8sdc documentation
+site_author: Des Drury (des@drury-family.com)
+pages:
+  - Home: index.md
+  - Project: 
+    - Purpose: project/purpose.md
+    - Overview: project/overview.md
+    - Roadmap: project/roadmap.md
+    - Installation: 
+      - Vagrant: project/installation/vagrant.md
+      - Digital Ocean: project/installation/digital_ocean.md
+      - AWS: project/installation/aws.md
+    - Verifying Installation: project/verify_install.md
+    - Customising Installation: project/custom_install.md
+  - Services:
+    - Cluster: 
+      - Overview: services/cluster/overview.md
+      - DNS: services/cluster/dns.md
+      - Docker Registry: services/cluster/registry.md
+      - Logging: services/cluster/logging.md
+      - Monitoring: services/cluster/monitoring.md
+      - Kube-UI: services/cluster/kube-ui.md
+    - Infrastructure: 
+      - Overview: services/infrastructure/overview.md
+      - Load Balancing: services/infrastructure/load-balancing.md
+      - LDAP: services/infrastructure/ldap.md
+      - Roadmap: services/infrastructure/roadmap.md
+    - Development: 
+      - Overview: services/development/overview.md
+      - Job Management: services/development/job-management.md
+      - Artifact Management: services/development/artifact-management.md
+      - Roadmap: services/development/roadmap.md
+    - Productivity: 
+      - Overview: services/development/overview.md
+      - Roadmap: services/development/roadmap.md
+  #   - Application:
+  #     - Overview:
+  #     - Web Server:
+  #     - Application Server:
+  #     - Caching:
+  #     - Database:
+  #     - Messaging:
+  #     - Roadmap:
+   
+  - Examples: 
+    - Overview: examples/overview.md
+    - Static Web Site: examples/static-web-site.md
+    - Dynamic Web Site: examples/dynamic-web-site.md
+    - Microservice: examples/microservice.md
+    - Microservice Collection: examples/microservice-collection.md
+    - Complex App: examples/complex-app.md
+  - Workflow:
+    - Overview: workflow/overview.md
+    - Infrastructure: workflow/infrastructure.md
+    - Development: workflow/development.md
+    - Productivity: workflow/productivity.md
+  - Reference:
+    - Utilities: reference/utilities.md
+    - Capabilities: reference/capabilities.md
+    - Solutions: reference/solutions.md
+    - Products: reference/products.md
+repo_url: https://github.com/desdrury/k8sdc/
+# google_analytics: ['UA-36723568-3', 'mkdocs.org']
+
