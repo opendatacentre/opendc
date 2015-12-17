@@ -11,6 +11,7 @@ pages:
       - Digital Ocean: project/installation/digital_ocean.md
       - AWS: project/installation/aws.md
       - Verifying Installation: project/installation/verify_install.md
+      - Accessing Services: project/installation/services.md
       - Customising Installation: project/installation/custom_install.md
     - Services:
       - Cluster: 
@@ -51,6 +52,7 @@ pages:
     - Utilities: reference/utilities.md
     - Capabilities: reference/capabilities.md
     - Solutions: reference/solutions.md
+    - Services: reference/services.md
     - Products: reference/products.md
 # repo_url: https://github.com/desdrury/k8sdc/
 # google_analytics: ['UA-36723568-3', 'mkdocs.org']
