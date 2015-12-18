@@ -6,13 +6,18 @@
 
 k8sdc has been tested using the following products.
 
-Ansible 1.9.2
+* Ansible 1.9.2
 
-Virtualbox 5.0.0
+* Virtualbox 5.0.0
 
-Vagrant 1.7.4 and vagrant-hostmanager 1.6.1 plugin
+* Vagrant 1.7.4 and vagrant-hostmanager 1.6.1 plugin
 
-Mac OSX 10
+* Mac OSX 10
+
+**Note**
+
+* The Macs that have tested the install have had 16GB RAM.  However, k8sdc should run in 8GB if not running any large programs.
+
 
 ## Instructions
 

@@ -5,18 +5,17 @@
 Use the following instructions to validate that the install has succeeded.  The hostnames used are the default Vagrant ones, replace as appropriate.
 
 ```console
-$ vagrant ssh master.kub.io
+$ vagrant ssh master.k8sdc.io
 
 $ sudo su -
 
 $ kubectl get node
 NAME           LABELS                                STATUS
-node1.kub.io   kubernetes.io/hostname=node1.kub.io   Ready
-node2.kub.io   kubernetes.io/hostname=node2.kub.io   Ready
+node1.k8sdc.io   kubernetes.io/hostname=node1.k8sdc.io   Ready
+node2.k8sdc.io   kubernetes.io/hostname=node2.k8sdc.io   Ready
 
 $ kubectl run nginx --image=nginx --replicas=5
-CONTROLLER   CONTAINER(S)   IMAGE(S)   SELECTOR    REPLICAS
-nginx        nginx          nginx      run=nginx   5
+replicationcontroller "nginx" created
 ```
 
 It will take a while for Docker to download the nginx container.  Periodically check if the pods have been launched.
@@ -35,20 +34,19 @@ Create a service endpoint for the pods.
 
 ```console
 $ kubectl expose rc nginx --port=80 --target-port=80
-NAME      LABELS      SELECTOR    IP(S)     PORT(S)
-nginx     run=nginx   run=nginx             80/TCP
+service "nginx" exposed
 
-$ kubectl get se nginx
-NAME      LABELS      SELECTOR    IP(S)           PORT(S)
-nginx     run=nginx   run=nginx   10.254.105.42   80/TCP
+$ kubectl get svc nginx
+NAME      CLUSTER_IP     EXTERNAL_IP   PORT(S)   SELECTOR    AGE
+nginx     10.254.4.181   <none>        80/TCP    run=nginx   1m
 ```
 
-Make a note of the assigned service IP address and log into node01.  This is required as only nodes running the kube-proxy service can access service IPs.
+Make a note of the assigned cluster IP address and log into node1.  This is required as only nodes running the kube-proxy service can access service IPs.
 
 ```console
-$ vagrant ssh node1.kub.io
+$ vagrant ssh node1.k8sdc.io
 
-$ curl 10.254.105.42
+$ curl 10.254.4.181
 <!DOCTYPE html>
 <html>
 <head>

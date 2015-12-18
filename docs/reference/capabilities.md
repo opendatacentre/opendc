@@ -16,3 +16,9 @@ A capability is ..... It can have many solutions and can be composed of a number
   - NOSQL
 
 #### Messaging
+
+
+### Job Management
+
+#### Solutions
+

@@ -7,11 +7,14 @@ The following lists contain items that are intended to make it into the k8sdc pl
 ## Done but needs more work
 
 * Kubernetes cluster services (as per Kubernetes standards)
+    - DNS
+    - Docker registry
+    - Logging
+    - Kube-UI
 * External facing HTTP/S load balancer (Vulcand and Romulus)
 * Job Management (Jenkins)
 * Artifact Management (Artifactory)
 * LDAP (OpenDJ)
-
 
 ## Priority
 

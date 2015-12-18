@@ -24,7 +24,7 @@
   changed_when: "'already exists' not in kubectl.stderr"
 
 - name: Delete Romulus Pod if it already exists
-  command: kubectl delete po romulus-{{ location }} --namespace={{ development_namespace }}
+  command: kubectl delete po romulus-{{ location }} --namespace={{ infrastructure_namespace }}
   args:
     chdir: /home/{{ admin_user }}/services-infrastructure/romulus
   when: not kubectl.changed
