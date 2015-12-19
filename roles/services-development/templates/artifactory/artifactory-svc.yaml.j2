@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: artifactory
+  namespace: "{{ development_namespace }}"
+  labels:
+    k8sdc-app: artifactory
+    k8sdc.io/services-development: "true"
+    romulus/type: internal
+  annotations:
+    k8sdc: "true"
+    romulus/host: '{{ k8sdc_artifactory_fqdn }}'
+    romulus/pathRegexp: '.*'
+    romulus/frontendSettings: '{"FailoverPredicate":"(IsNetworkError() || ResponseCode() == 503) && Attempts() <= 2", "PassHostHeader": true, "TrustForwardHeader": true, "Hostname": "{{ k8sdc_artifactory_fqdn }}"}'
+    romulus/backendSettings: '{"KeepAlive": {"MaxIdleConnsPerHost": 128, "Period": "4s"}}'
+
+spec:
+  selector:
+    k8sdc-app: artifactory
+  clusterIP:  {{ k8sdc_artifactory_ip }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP

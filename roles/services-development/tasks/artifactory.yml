@@ -1,0 +1,108 @@
+---
+- name: Create Artifactory NFS shares
+  file:
+    path:  /var/exports/{{ development_namespace }}/artifactory/{{ item }}
+    state: directory
+    owner: nfsnobody
+    group: nfsnobody
+    mode:  0777
+  with_items:
+    - data
+    - logs
+    - backup
+  tags: artifactory
+
+- name: Add Artifactory NFS share to exports
+  lineinfile:
+    dest:  /etc/exports
+    state: present
+    line:  "/var/exports/{{ development_namespace }}/artifactory/{{ item }} *(rw,all_squash)"
+  with_items:
+    - data
+    - logs
+    - backup
+  notify: Restart NFS
+  tags: artifactory
+
+- name: Create Artifactory directory
+  file:
+    path:  /home/{{ admin_user }}/{{ development_namespace }}/artifactory/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  tags: artifactory
+
+- name: Copy Artifactory files
+  template:
+    src: artifactory/artifactory-{{ item }}.yaml.j2
+    dest: /home/{{ admin_user }}/{{ development_namespace }}/artifactory/artifactory-{{ item }}.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  with_items:
+    - rc
+    - svc
+  tags: 
+    - artifactory
+    - artifactory_rc
+    - artifactory_svc
+
+# Replication Controller
+- name: Create Artifactory replication controller if it does not currently exist
+  command: kubectl create -f artifactory-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/artifactory
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+  tags:
+    - artifactory
+    - artifactory_rc
+
+- name: Delete Artifactory replication controller if it already exists
+  command: kubectl delete rc artifactory --namespace={{ development_namespace }}
+  args:
+    chdir: /home/{{ admin_user }}/services-development/artifactory
+  when: not kubectl.changed
+  tags:
+    - artifactory
+    - artifactory_rc
+
+# This pause is probably needed to give the scheduler enough time to release and
+# reassign the NFS share??
+- pause:
+    seconds: 20
+  when: not kubectl.changed
+  tags:
+    - artifactory
+    - artifactory_rc
+
+- name: Re-create Artifactory replication controller 
+  command: kubectl create -f artifactory-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/artifactory
+  when: not kubectl.changed
+  tags:
+    - artifactory
+    - artifactory_rc
+
+# Service
+- name: Create Artifactory service if it does not currently exist
+  command: kubectl create -f artifactory-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/artifactory/
+  failed_when: false
+  register: kubectl
+  changed_when: "'provided IP is already allocated' not in kubectl.stderr"
+  tags: 
+    - artifactory
+    - artifactory_svc
+
+- name: Replace Artifactory service if it already exists
+  command: kubectl replace -f artifactory-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-development/artifactory/
+  when: not kubectl.changed
+  tags:
+    - artifactory 
+    - artifactory_svc
+

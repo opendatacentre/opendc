@@ -8,6 +8,7 @@ end
 Vagrant.configure(2) do |config|
 
   config.vm.box = "box-cutter/fedora22"
+  config.vm.box_version = "3.0.1"
 
   num_nodes = (ENV['NUM_NODES'] || 2).to_i
 

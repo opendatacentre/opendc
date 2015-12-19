@@ -1,0 +1,23 @@
+---
+- name: Restart services
+  hosts: ungrouped
+  user: vagrant
+  gather_facts: no
+
+  tasks:
+    - service:
+        name: "{{ item }}"
+        state: started
+      when: inventory_hostname in groups['kub-master']
+      sudo: yes
+      with_items:
+        - rpcbind
+        - kube-apiserver
+        - kube-controller-manager
+        - kube-scheduler
+
+    - service:
+        name: rpcbind
+        state: started
+      when: inventory_hostname in groups['kub-nodes']
+      sudo: yes

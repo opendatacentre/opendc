@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vulcand-{{ location }}
+  namespace: {{ infrastructure_namespace }}
+  labels:
+    k8sdc-app: vulcand-{{ location }}
+    k8sdc.io/services-infrastructure: "true"
+    version: v0
+  annotations:
+    k8sdc: "true"
+spec:
+  containers:
+    - name: vulcand-{{ location }}
+      image: k8sdc/vulcand
+      args:
+        - -apiInterface=0.0.0.0
+        - -etcd=http://{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}:2379
+        - -etcdKey=/vulcand-{{ location }}
+        - -logSeverity=INFO
+      ports:
+        - name: web
+          containerPort: 8181
+          hostPort: 80
+      securityContext:
+       privileged: true

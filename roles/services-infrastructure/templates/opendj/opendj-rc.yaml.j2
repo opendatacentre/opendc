@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: opendj
+  namespace: {{ infrastructure_namespace }}
+  labels:
+    k8sdc-app: opendj
+    k8sdc.io/services-infrastructure: "true"
+    version: v0
+  annotations:
+    k8sdc: "true"
+spec:
+  replicas: 1
+  selector:
+    k8sdc-app: opendj
+    version: v0
+  template:
+    metadata:
+      labels:
+        k8sdc-app: opendj
+        k8sdc.io/services-infrastructure: "true"
+        version: v0
+    spec:
+      containers:
+      - name: opendj
+        image: k8sdc/opendj:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: opendj-volume
+          mountPath: /opt/opendj/instance
+        ports:
+        - name: ldap
+          containerPort: 389
+          protocol: TCP
+      volumes:
+      - name: opendj-volume
+        nfs:
+          server: "{{ groups['kub-master'] | first }}"
+          path: /var/exports/services-infrastructure/opendj
+          readOnly: false

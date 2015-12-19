@@ -1,0 +1,152 @@
+---
+# the following multiple calls to create the Fluentd Pod on each node is a hack
+# until Ansible 2 brings back include and with_items.
+# Note: Will only work for the first 2 nodes.
+- name: Copy Fluentd Pods
+  include: logging_fluentd.yml node={{ groups['kub-nodes'][0] }}
+
+- name: Copy Fluentd Pods
+  include: logging_fluentd.yml node={{ groups['kub-nodes'][1] }}
+
+- name: Create logging directory
+  file:
+    path:  /home/{{ admin_user }}/services-cluster/logging/
+    state: directory
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+
+- name: Copy non templated logging files
+  copy:
+    src: logging/logging-{{ item }}.yaml
+    dest: /home/{{ admin_user }}/services-cluster/logging/logging-{{ item }}.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  with_items:
+    - es-rc
+    - es-svc
+    - kibana-rc
+
+- name: Copy Kibana Service file
+  template:
+    src: logging/logging-kibana-svc.yaml.j2
+    dest: /home/{{ admin_user }}/services-cluster/logging/logging-kibana-svc.yaml
+    owner: "{{ admin_user }}"
+    group: "{{ admin_group }}"
+  tags:
+    - logging_kibana
+    - logging_kibana_svc
+
+# Replication Controller - Elasticsearch
+- name: Create Elasticsearch replication controller if it does not currently exist
+  command: kubectl create -f logging-es-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+  tags:
+    - logging
+    - logging_es
+    - logging_es_rc
+
+- name: Delete Elasticsearch replication controller if it already exists
+  command: kubectl delete rc elasticsearch-logging-v1 --namespace=kube-system
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  when: not kubectl.changed
+  tags:
+    - logging
+    - logging_es
+    - logging_es_rc
+
+- name: Re-create Elasticsearch replication controller 
+  command: kubectl create -f logging-es-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  when: not kubectl.changed
+  tags:
+    - logging
+    - logging_es
+    - logging_es_rc
+
+# Service - Elasticsearch
+- name: Create Elasticsearch service if it does not currently exist
+  command: kubectl create -f logging-es-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  failed_when: false
+  register: kubectl
+  changed_when: "'provided IP is already allocated' not in kubectl.stderr"
+  tags:
+    - logging
+    - logging_es
+    - logging_es_svc
+
+- name: Replace Elasticsearch service if it already exists
+  command: kubectl replace -f logging-es-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  when: not kubectl.changed
+  tags:
+    - logging
+    - logging_es
+    - logging_es_svc
+
+
+# Replication Controller - Kibana
+- name: Create Kibana replication controller if it does not currently exist
+  command: kubectl create -f logging-kibana-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  failed_when: false
+  register: kubectl
+  changed_when: "'already exists' not in kubectl.stderr"
+  tags:
+    - logging
+    - logging_kibana
+    - logging_kibana_rc
+
+- name: Delete Kibana replication controller if it already exists
+  command: kubectl delete rc kibana-logging-v1 --namespace=kube-system
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  when: not kubectl.changed
+  tags:
+    - logging
+    - logging_kibana
+    - logging_kibana_rc
+
+- name: Re-create Kibana replication controller 
+  command: kubectl create -f logging-kibana-rc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  when: not kubectl.changed
+  tags:
+    - logging
+    - logging_kibana
+    - logging_kibana_rc
+
+# Service - Kibana
+- name: Create Kibana service if it does not currently exist
+  command: kubectl create -f logging-kibana-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  failed_when: false
+  register: kubectl
+  changed_when: "'provided IP is already allocated' not in kubectl.stderr"
+  tags:
+    - logging
+    - logging_kibana
+    - logging_kibana_svc
+
+- name: Replace Kibana service if it already exists
+  command: kubectl replace -f logging-kibana-svc.yaml
+  args:
+    chdir: /home/{{ admin_user }}/services-cluster/logging
+  when: not kubectl.changed
+  tags:
+    - logging
+    - logging_kibana
+    - logging_kibana_svc
+
+
