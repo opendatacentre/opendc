@@ -11,6 +11,7 @@
       when: inventory_hostname in groups['kub-master']
       sudo: yes
       with_items:
+        - nfs
         - rpcbind
         - kube-apiserver
         - kube-controller-manager
