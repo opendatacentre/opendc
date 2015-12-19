@@ -5,7 +5,6 @@ site_author: Des Drury (des@drury-family.com)
 pages:
   - Home: index.md
   - Project: 
-    - Overview: project/overview.md
     - Installation: 
       - Vagrant: project/installation/vagrant.md
       - Digital Ocean: project/installation/digital_ocean.md
@@ -47,13 +46,11 @@ pages:
       - Dynamic Web Site: guides/examples/dynamic-web-site.md
       - Microservice: guides/examples/microservice.md
       - Microservice Collection: guides/examples/microservice-collection.md
-      - Complex App: guides/examples/complex-app.md
+      - Complex Application: guides/examples/complex-app.md
   - Reference:
     - Utilities: reference/utilities.md
     - Capabilities: reference/capabilities.md
     - Solutions: reference/solutions.md
     - Services: reference/services.md
     - Products: reference/products.md
-# repo_url: https://github.com/desdrury/k8sdc/
-# google_analytics: ['UA-36723568-3', 'mkdocs.org']
-#theme: flatly 
+google_analytics: ['UA-71453622-2', 'k8sdc.github.io'] 

@@ -1,0 +1,23 @@
+---
+- name: Setuplocal hosts file with k8sdc services
+  hosts: localhost
+  sudo: yes
+  gather_facts: yes
+
+  # Temporary Hack (only works for default Vagrant settings)
+  tasks:
+    - name: logging.cluster.k8sdc.io
+      lineinfile:
+        dest: /etc/hosts
+        line: "192.168.100.110 logging.cluster.k8sdc.io"
+
+    - name: artifactory.development.k8sdc.io
+      lineinfile:
+        dest: /etc/hosts
+        line: "192.168.100.110 artifactory.development.k8sdc.io"
+
+    - name: jenkins.development.k8sdc.io
+      lineinfile:
+        dest: /etc/hosts
+        line: "192.168.100.110 jenkins.development.k8sdc.io"
+

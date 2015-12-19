@@ -40,6 +40,13 @@ If for any reason the Vagrant provisioning fails due to a timeout then rerun the
 $ vagrant provision
 ```
 
-Once the Vagrant command completes test that Kubernetes is running.
+Once the Vagrant command completes, k8sdc will begin pulling down the Docker images required to build the services.  This will take some time (at least 20 minutes).  Once this is done you can test the installation uisng either of the following guides.
 
-[Verifying Installation](/project/installation/verify_install/)
+* [Verifying Installation](verify_install.md)
+
+* [Accessing Services](services.md)
+
+
+## Important Note
+
+Please see the [Vagrant Restart Fix](../../reference/utilities.md#vagrant_restart_fix) for details about restarting k8sdc when using Vagrant.

@@ -20,10 +20,10 @@ The following lists contain items that are intended to make it into the k8sdc pl
 
 Roughly in order of priority.
 
-* Distributed storage (GlusterFS)
 * Highly available SQL database (PotgreSQL)
 * Instant Messaging (Mattermost)
 * Project management (Taiga)
+* Distributed storage (GlusterFS)
 * Application logging and alerting (ELK and Prometheus)
 * Microservices example application
 * PaaS (Select Openshift V3 capabilities)

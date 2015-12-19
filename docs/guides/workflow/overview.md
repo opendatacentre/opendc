@@ -1,3 +1,5 @@
 # Workflow Guides
 
-Ways to use the various solutions together to create combined workflows.
+<hr>
+
+Guides describing ways to use the various services in combination to create combined workflows.
