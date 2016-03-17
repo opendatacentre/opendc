@@ -1,6 +1,6 @@
 ---
 - name: Restart services
-  hosts: ungrouped
+  hosts: all
   user: vagrant
   gather_facts: no
 
