@@ -6,4 +6,4 @@ kubernetes_uid:        5003
 kubernetes_gid:        5013
 kubernetes_srv_addr:   10.254.0.0/16
 kubernetes_privileged: true
-kubernetes_admission: --admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
+kubernetes_admission: --admission_control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
