@@ -5,19 +5,21 @@
   gather_facts: no
 
   tasks:
-    - service:
+    - name: Restart Master services
+      service:
         name: "{{ item }}"
         state: started
       when: inventory_hostname in groups['kub-master']
       sudo: yes
       with_items:
-        - nfs
         - rpcbind
+        - nfs
         - kube-apiserver
         - kube-controller-manager
         - kube-scheduler
 
-    - service:
+    - name: Restart rpcbind
+      service:
         name: rpcbind
         state: started
       when: inventory_hostname in groups['kub-nodes']

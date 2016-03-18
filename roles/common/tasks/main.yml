@@ -11,6 +11,7 @@
   template:
     src:  hosts.j2
     dest: /etc/hosts
+  tags: copy_hosts_file
 
 - name: Create admin group
   group: 

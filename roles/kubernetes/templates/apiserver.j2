@@ -26,4 +26,5 @@ KUBE_ADMISSION_CONTROL="{{ kubernetes_admission }}"
 KUBE_CLUSTER_ADVERTISE="--advertise-address={{ api_server_ip }}"
 
 # Add your own!
-KUBE_API_ARGS="--tls-cert-file=/etc/kubernetes/certs/server.crt --tls-private-key-file=/etc/kubernetes/certs/server.key --client-ca-file=/etc/kubernetes/certs/ca.crt --token-auth-file=/etc/kubernetes/tokens/known_tokens.csv --service-account-key-file=/etc/kubernetes/certs/server.crt --basic-auth-file=/etc/kubernetes/basic_auth.csv --authorization-mode=ABAC --authorization-policy-file=/etc/kubernetes/policy.json"
+#KUBE_API_ARGS="--tls-cert-file=/etc/kubernetes/certs/server.crt --tls-private-key-file=/etc/kubernetes/certs/server.key --client-ca-file=/etc/kubernetes/certs/ca.crt --token-auth-file=/etc/kubernetes/tokens/known_tokens.csv --service-account-key-file=/etc/kubernetes/certs/server.crt --basic-auth-file=/etc/kubernetes/basic_auth.csv --authorization-mode=ABAC --authorization-policy-file=/etc/kubernetes/policy.json"
+KUBE_API_ARGS="--tls-cert-file=/etc/kubernetes/certs/server.crt --tls-private-key-file=/etc/kubernetes/certs/server.key --client-ca-file=/etc/kubernetes/certs/ca.crt --token-auth-file=/etc/kubernetes/tokens/known_tokens.csv --service-account-key-file=/etc/kubernetes/certs/server.crt"

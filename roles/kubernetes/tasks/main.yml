@@ -1,42 +1,43 @@
 ---
-- name: Check if this Kubernetes version is already on the fileserver
-  stat:
-    path: "{{ download_dir }}/{{ kubernetes_pkgname }}"
-  register:    kubernetes_pkg_fileserver
-  delegate_to: "{{ fileserver }}"
-  run_once:    yes
+# - name: Check if this Kubernetes version is already on the fileserver
+#   stat:
+#     path: "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
+#   register:    kubernetes_pkg_fileserver
+#   delegate_to: "{{ fileserver }}"
+#   run_once:    yes
 
-- name: Download Kubernetes to the fileserver
-  get_url:
-    url:  "{{ kubernetes_url }}"
-    dest: "{{ download_dir }}/{{ kubernetes_pkgname }}"
-  delegate_to: "{{ fileserver }}"
-  run_once:    yes
-  when:        not kubernetes_pkg_fileserver.stat.exists
+# - name: Download Kubernetes to the fileserver
+#   get_url:
+#     url:  "{{ kubernetes_url }}"
+#     dest: "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
+#   delegate_to: "{{ fileserver }}"
+#   run_once:    yes
+#   when:        not kubernetes_pkg_fileserver.stat.exists
 
 - name: Check if we already have this Kubernetes version
   stat:
-    path: "{{ download_dir }}/{{ kubernetes_pkgname }}"
+    path: "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
   register: kubernetes_pkg
 
 - name: Download Kubernetes
   command: scp -o StrictHostKeyChecking=no \
            -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
-           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ kubernetes_pkgname }} \
-           "{{ download_dir }}/{{ kubernetes_pkgname }}"
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ kubernetes_full_pkgname }} \
+           "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
   when: not kubernetes_pkg.stat.exists
 
-- name: Extract Kubernetes
-  unarchive:
-    copy: no
-    src:  /{{ download_dir }}/{{ kubernetes_pkgname }}
-    dest: /{{ download_dir }}/
+## Should I delete the previously extraced directory first, if this is a new download?  
+# - name: Extract Kubernetes
+#   unarchive:
+#     copy: no
+#     src:  /{{ download_dir }}/{{ kubernetes_full_pkgname }}
+#     dest: /{{ download_dir }}/
 
-- name: Extract Kubernetes server binaries
-  unarchive:
-    copy: no
-    src:  /{{ download_dir }}/{{ kubernetes_pkgname.split('.')[0] }}/server/kubernetes-server-linux-amd64.tar.gz
-    dest: /{{ download_dir }}/
+# - name: Extract Kubernetes server binaries
+#   unarchive:
+#     copy: no
+#     src:  /{{ download_dir }}/{{ kubernetes_pkgname.split('.')[0] }}/server/kubernetes-server-linux-amd64.tar.gz
+#     dest: /{{ download_dir }}/
 
 - name: Create Kubernetes group
   group:
@@ -98,9 +99,12 @@
     - configure_kubernetes_node_security
     - security
 
+
+- debug:
+    var: group_names
+
 - include: node.yml
   when: '"kub-nodes" in group_names'
   tags: 
     - configure_kubernetes_node
     - configure_kubernetes_node_security
-    - security
