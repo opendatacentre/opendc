@@ -24,3 +24,6 @@
         state: started
       when: inventory_hostname in groups['kub-nodes']
       sudo: yes
+      with_items:
+        - kubelet
+        - kube-proxy
