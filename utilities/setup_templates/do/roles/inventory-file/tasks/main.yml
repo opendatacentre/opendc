@@ -1,0 +1,5 @@
+---
+- name: Generate Inventory File
+  template:
+    src:  inventory.j2
+    dest: "{{ playbook_dir }}/inventory"

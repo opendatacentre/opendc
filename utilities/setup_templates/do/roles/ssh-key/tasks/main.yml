@@ -1,0 +1,9 @@
+---
+- name: Check if public key already exists
+  stat:
+    path: "{{ playbook_dir }}/keys/{{ ssh_key_name }}.pub"
+  register: public_key
+
+- name: Generate SSH public / private key
+  command: ssh-keygen -b 2048 -t rsa -C "k8sdc" -N "" -f {{ playbook_dir }}/keys/{{ ssh_key_name }}
+  when: generate_keys and not public_key.stat.exists

@@ -1,13 +1,21 @@
 ---
 - name: Test distribution
-  hosts: all-nodes
+  hosts:
+    - kub-master
+    - kub-nodes
+    - etcd
+    - fileserver
   tasks:
     - assert:
         that: ansible_os_family == "RedHat"
   tags: confirm_redhat
 
 - name: Configure common components
-  hosts: all-nodes
+  hosts:
+    - kub-master
+    - kub-nodes
+    - etcd
+    - fileserver
   sudo:  yes
   roles:
     - common

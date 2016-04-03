@@ -1,0 +1,55 @@
+---
+# Digital Ocean defaults
+# REMOVE TOKEN!!!!!
+do_token: XXXXXXXXXX
+do_region: sgp1
+
+do_masters:
+  nodes:
+    - master.k8sdc-do.io
+  do_size: 1gb
+  packages:
+    - lsof   
+
+do_nodes:
+  nodes:
+    - node1.k8sdc-do.io
+    #- node2.k8sdc-do.io
+    # - node3.k8sdc-do.io
+    # - node4.k8sdc-do.io
+  do_size: 2gb
+
+do_etcd:
+  nodes:
+    - master.k8sdc-do.io
+    - node1.k8sdc-do.io
+    # - node2.k8sdc-do.io
+    # - node3.k8sdc-do.io
+  do_size: 2gb
+
+do_fileserver:
+  nodes:
+    - fileserver.k8sdc-do.io
+  do_size: 2gb
+
+kube-system_lb:
+  - node1.k8sdc-do.io
+
+infrastructure_lb:
+  - node2.k8sdc-do.io
+
+development_lb:
+  - node3.k8sdc-do.io
+
+productivity_lb:
+  - node4.k8sdc-do.io
+
+generate_keys: true 
+ssh_key_name: k8admin
+
+
+# Overrides of k8sdc defaults
+interface: eth0
+kubernetes_install_kube_ui: false
+k8sdc_install_jenkins: false
+k8sdc_install_artifactory: false

@@ -1,0 +1,46 @@
+---
+- name: Generate SSH Keys
+  hosts: localhost
+  gather_facts: false
+  roles: 
+    - ssh-key
+  tags: ssh-keys
+
+- name: Create Digital Ocean Resources
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - digital-ocean
+  tags: digital-ocean
+
+- name: Create Inventory File
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - inventory-file
+  tags: inventory-file
+
+- name: Common Node Configuration
+  hosts:
+    - kub-master
+    - kub-nodes
+    - etcd
+    - fileserver
+  gather_facts: true
+  roles:
+    - common
+  tags: common
+
+
+# - name: Configure Master Nodes
+
+
+# - name: Configure Nodes
+
+
+# - name: Configure Etcd Nodes
+
+
+# - name: Configure Fileserver Node
+
+# Create local kubconfig and kubectl
