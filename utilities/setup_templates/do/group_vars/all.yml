@@ -1,7 +1,7 @@
 ---
 # Digital Ocean defaults
 # REMOVE TOKEN!!!!!
-do_token: XXXXXXXXXX
+do_token: 5fa1c756083caaf0eea785d51f07535b30d425d4ba8054271dfc82e488823878
 do_region: sgp1
 
 do_masters:
@@ -14,22 +14,22 @@ do_masters:
 do_nodes:
   nodes:
     - node1.k8sdc-do.io
-    #- node2.k8sdc-do.io
-    # - node3.k8sdc-do.io
-    # - node4.k8sdc-do.io
+    - node2.k8sdc-do.io
+    #- node3.k8sdc-do.io
+    #- node4.k8sdc-do.io
   do_size: 2gb
 
 do_etcd:
   nodes:
     - master.k8sdc-do.io
     - node1.k8sdc-do.io
-    # - node2.k8sdc-do.io
-    # - node3.k8sdc-do.io
+    - node2.k8sdc-do.io
+    #- node3.k8sdc-do.io
   do_size: 2gb
 
 do_fileserver:
   nodes:
-    - fileserver.k8sdc-do.io
+    - master.k8sdc-do.io
   do_size: 2gb
 
 kube-system_lb:
@@ -44,8 +44,13 @@ development_lb:
 productivity_lb:
   - node4.k8sdc-do.io
 
-generate_keys: true 
-ssh_key_name: k8admin
+do_admin_user:  doadmin
+do_admin_uid:   4000
+do_admin_group: doadmin
+do_admin_gid:   4000
+generate_keys:  true
+ssh_key_name:   doadmin
+timezone:       "Australia/Melbourne"
 
 
 # Overrides of k8sdc defaults

@@ -1,3 +1,64 @@
 ---
-- debug:
-    var: play_hosts
+- name: Set timezone
+  command: timedatectl set-timezone {{ timezone }}
+
+- name: Install NTPD daemon
+  yum:
+    name: ntp
+    state: installed
+
+- name: Start NTPD and ensure it runs on startup
+  service:
+    enabled: yes
+    name:    ntpd
+    state:   started
+
+- name: Create Admin Group
+  group: 
+    name:  "{{ do_admin_group }}"
+    gid:   "{{ do_admin_gid }}"
+    state: present
+
+- name: Create Admin User
+  user:
+    name:    "{{ do_admin_user }}"
+    uid:     "{{ do_admin_uid }}"
+    group:   "{{ do_admin_group }}"
+    comment: "Digital Ocean Admin User"
+    state:   present
+
+- name: Make .ssh directory
+  file:
+    path:  /home/{{ do_admin_user }}/.ssh
+    state: directory
+    owner: "{{ do_admin_user }}"
+    group: "{{ do_admin_group }}"
+    mode:  0500
+
+- name: Copy over private key
+  copy:
+    src:   "{{ playbook_dir }}/keys/{{ ssh_key_name }}"
+    dest:  /home/{{ do_admin_user }}/.ssh/{{ ssh_key_name }}
+    owner: "{{ do_admin_user }}"
+    group: "{{ do_admin_group }}"
+    mode:  0400
+
+- name: Add public key to authorized keys
+  authorized_key:
+    user: "{{ do_admin_user }}"
+    key:  "{{ lookup('file', '{{ playbook_dir }}/keys/{{ ssh_key_name }}.pub') }}"
+
+- name: Add admin user to sudoers.d
+  lineinfile:
+    create: yes
+    dest:   /etc/sudoers.d/{{ do_admin_user }}
+    line:   "{{ do_admin_user }} ALL=NOPASSWD:ALL"
+    state:  present
+
+- name: Set permissions on admin sudoers file
+  file:
+    mode: 0440
+    dest: /etc/sudoers.d/{{ do_admin_user }}
+
+# Disable root login
+
