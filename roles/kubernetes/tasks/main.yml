@@ -32,6 +32,7 @@
     copy: no
     src:  /{{ download_dir }}/{{ kubernetes_full_pkgname }}
     dest: /{{ download_dir }}/
+  when: not kubernetes_pkg.stat.exists
 
 - name: Extract Kubernetes server binaries
   unarchive:

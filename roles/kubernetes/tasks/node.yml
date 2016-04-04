@@ -3,6 +3,7 @@
   service:
     name:  "{{ item }}"
     state: stopped
+  ignore_errors: true
   with_items:
     - kubelet
     - kube-proxy

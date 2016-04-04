@@ -1,3 +1,4 @@
+127.0.0.1  localhost
 {{ kubernetes_registry_ip }}  kube-registry
 {% for host in play_hosts %}
 {{ hostvars[host]['ansible_' + interface]['ipv4']['address'] }} {{ host }} {{ hostvars[host]['ansible_hostname'] }}

@@ -18,13 +18,13 @@
 
 # Fix for Ansible and DNF issues
 # https://github.com/ansible/ansible-modules-extras/issues/471
-- name: Install Yum utilities
-  command: dnf install yum-utils -y
-  args:
-    creates: /usr/bin/repomanage
+# - name: Install Yum utilities
+#   command: dnf install yum-utils -y
+#   args:
+#     creates: /usr/bin/repomanage
 
 - name: Install openssl
-  dnf:
+  yum:
     name:  openssl
     state: installed
 
