@@ -1,4 +1,9 @@
 ---
+- name: Install NFS
+  yum:
+    name: nfs-utils
+    state: present
+
 - name: Create registry share
   file:
     path:  /var/exports/registry
@@ -6,11 +11,15 @@
     owner: nfsnobody
     group: nfsnobody
     mode:  0777
+  delegate_to: "{{ groups['kub-master'][0] }}"
+  run_once: yes
 
 - name: Copy exports file
   copy:
     src:  exports
     dest: /etc/exports
+  delegate_to: "{{ groups['kub-master'][0] }}"
+  run_once: yes
 
 - name: Ensure rpcbind is enabled and running
   service:
@@ -22,3 +31,5 @@
   service:
     name:  nfs
     state: restarted
+  delegate_to: "{{ groups['kub-master'][0] }}"
+  run_once: yes

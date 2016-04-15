@@ -56,12 +56,14 @@
     - kubernetes
   tags: configure_kubernetes
 
-- name: Configure NFS on Master 
-  hosts: kub-master
-  sudo: yes
+- name:  Configure Network Filesystem
+  hosts: 
+    - kub-master
+    - kub-nodes
+  sudo:  yes
   roles:
-    - nfs
-  tags: configure_nfs
+    - { role: nfs, when: install_nfs }
+  tags: configure_nw_filesystem
 
 - name: Configure Cluster Services
   hosts: kub-master

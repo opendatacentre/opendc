@@ -1,7 +1,6 @@
 ---
 # Digital Ocean defaults
-# REMOVE TOKEN!!!!!
-do_token: 5fa1c756083caaf0eea785d51f07535b30d425d4ba8054271dfc82e488823878
+do_token: XXXXXXXXXXXXXX
 do_region: sgp1
 
 do_masters:
@@ -17,7 +16,7 @@ do_nodes:
     - node2.k8sdc-do.io
     #- node3.k8sdc-do.io
     #- node4.k8sdc-do.io
-  do_size: 2gb
+  do_size: 4gb
 
 do_etcd:
   nodes:

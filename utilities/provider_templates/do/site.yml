@@ -27,6 +27,10 @@
     - etcd
     - fileserver
   gather_facts: false
+  pre_tasks:
+    - name: Pause for 20 seconds for nodes to fully come up
+      pause:
+        seconds: 20
   roles:
     - common
   tags: common
