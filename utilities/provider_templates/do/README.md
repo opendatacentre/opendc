@@ -6,8 +6,8 @@
 *dopy 0.3.5*
 
 ```
-$ pip install 'ansible==2.0.1.0'
-$ pip install 'dopy>=0.3.5,<=0.3.5'
+$ pip install ansible==2.0.1.0
+$ pip install dopy==0.3.5
 ```
 
 
