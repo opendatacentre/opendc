@@ -44,7 +44,7 @@
   when: flannel_binary.stat.exists
 
 - name: Copy Flannel binary
-  command: cp /{{ download_dir }}/flannel-0.5.2/flanneld /bin/
+  command: cp /{{ download_dir }}/flannel-{{ flannel_version }}/flanneld /bin/
 
 - name: Copy Flannel config file
   template:

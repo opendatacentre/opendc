@@ -1,12 +1,7 @@
 ---
-# the following multiple calls to create the Fluentd Pod on each node is a hack
-# until Ansible 2 brings back include and with_items.
-# Note: Will only work for the first 2 nodes.
 - name: Copy Fluentd Pods
-  include: logging_fluentd.yml node={{ groups['kub-nodes'][0] }}
-
-- name: Copy Fluentd Pods
-  include: logging_fluentd.yml node={{ groups['kub-nodes'][1] }}
+  include: logging_fluentd.yml node={{ item }}
+  with_items: groups['kub-nodes']
 
 - name: Create logging directory
   file:

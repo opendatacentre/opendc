@@ -1,6 +1,6 @@
 ---
 # Digital Ocean defaults
-do_token: XXXXXXXXXXXXXX
+do_token: XXXXXXXXXXXXXXXXXXXXXX
 do_region: sgp1
 
 do_masters:
@@ -14,7 +14,7 @@ do_nodes:
   nodes:
     - node1.k8sdc-do.io
     - node2.k8sdc-do.io
-    #- node3.k8sdc-do.io
+    - node3.k8sdc-do.io
     #- node4.k8sdc-do.io
   do_size: 4gb
 
@@ -23,7 +23,7 @@ do_etcd:
     - master.k8sdc-do.io
     - node1.k8sdc-do.io
     - node2.k8sdc-do.io
-    #- node3.k8sdc-do.io
+    - node3.k8sdc-do.io
   do_size: 2gb
 
 do_fileserver:
@@ -54,6 +54,7 @@ timezone:       "Australia/Melbourne"
 
 # Overrides of k8sdc defaults
 interface: eth0
+kubernetes_dns_domain:      k8sdc-do.io
 kubernetes_install_kube_ui: false
-k8sdc_install_jenkins: false
-k8sdc_install_artifactory: false
+k8sdc_install_jenkins:      false
+k8sdc_install_artifactory:  false

@@ -28,9 +28,9 @@
     - fileserver
   gather_facts: false
   pre_tasks:
-    - name: Pause for 20 seconds for nodes to fully come up
+    - name: Pause for 60 seconds for nodes to fully come up
       pause:
-        seconds: 20
+        seconds: 60
   roles:
     - common
   tags: common

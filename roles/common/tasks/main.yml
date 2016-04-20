@@ -1,6 +1,6 @@
 ---
 - name: Install packages
-  dnf:
+  yum:
     name={{ item }}
     state=latest
   with_items: packages

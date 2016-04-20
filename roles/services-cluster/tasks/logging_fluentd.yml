@@ -6,3 +6,4 @@
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
   delegate_to: "{{ node }}"
+  tags: copy_fluentd

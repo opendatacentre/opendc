@@ -1,5 +1,5 @@
 ---
-kubernetes_version:      1.2.0
+kubernetes_version:      1.2.2
 kubernetes_pkgname:      kubernetes.tar.gz
 kubernetes_full_pkgname: kubernetes_{{ kubernetes_version }}.tar.gz
 kubernetes_url:          https://github.com/kubernetes/kubernetes/releases/download/v{{ kubernetes_version }}/{{ kubernetes_pkgname }}
