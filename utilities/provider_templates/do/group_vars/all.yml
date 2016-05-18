@@ -1,14 +1,14 @@
 ---
 # Digital Ocean defaults
-do_token: XXXXXXXXXXXXXXXXXXXXXX
+do_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 do_region: sgp1
 
 do_masters:
   nodes:
     - master.k8sdc-do.io
   do_size: 1gb
-  packages:
-    - lsof   
+  # packages:
+  #   - lsof   
 
 do_nodes:
   nodes:
