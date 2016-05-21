@@ -1,4 +1,5 @@
 .vagrant
+site.retry
 facts/
 roles/etcd/vars/
 roles/flannel/vars/
