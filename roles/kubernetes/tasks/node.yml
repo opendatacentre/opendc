@@ -27,46 +27,107 @@
     - kube-proxy
     - kubectl
 
-- name: Copy node service files
-  copy:
-    src: "{{ item }}.service"
-    dest: /usr/lib/systemd/system/{{ item }}.service
-  with_items:
-    - kubelet
-    - kube-proxy
-  notify:
-    - Reload Systemd
-    - Restart node daemons
-  tags:
-    - copy_kubernetes_service_files
 
+# Configure node
 - name: Copy node config files
   template:
-    src: "{{ item }}.j2"
-    dest: /etc/kubernetes/{{ item }}
-  with_items:
-    - config
-    - kubelet
-    - proxy
+    src: config.j2
+    dest: /etc/kubernetes/config
   notify:
     - Reload Systemd
     - Restart node daemons
   tags:
-    - copy_kubernetes_config_files
+    - configure_kubernetes
+    - configure_node
 
 - name: Configure node config file permissions
   file:
-    path:  /etc/kubernetes/{{ item }}
+    path:  /etc/kubernetes/config
     state: file
     mode:  0644
     owner: kube
     group: kube
+  tags:
+    - configure_kubernetes
+    - configure_node
+
+
+# Configure kubelet
+- name: Copy kubelet service file
+  copy:
+    src: kubelet.service
+    dest: /usr/lib/systemd/system/kubelet.service
   notify:
-    - Restart node daemons
-  with_items:
-    - config
-    - kubelet
-    - proxy
+    - Reload Systemd
+    - Restart kubelet
+  tags:
+    - configure_kubernetes
+    - configure_node
+    - configure_kubelet
+
+- name: Copy kubelet config file
+  template:
+    src: kubelet.j2
+    dest: /etc/kubernetes/kubelet
+  notify:
+    - Reload Systemd
+    - Restart kubelet
+  tags:
+    - configure_kubernetes
+    - configure_node
+    - configure_kubelet
+
+- name: Configure kubelet config file permissions
+  file:
+    path:  /etc/kubernetes/kubelet
+    state: file
+    mode:  0644
+    owner: kube
+    group: kube
+  tags:   
+    - configure_kubernetes
+    - configure_node
+    - configure_kubelet
+
+
+# Configure kube-proxy
+- name: Copy kube-proxy service file
+  copy:
+    src: kube-proxy.service
+    dest: /usr/lib/systemd/system/kube-proxy.service
+  notify:
+    - Reload Systemd
+    - Restart kube-proxy
+  tags:
+    - configure_kubernetes
+    - configure_node
+    - configure_kube_proxy
+
+- name: Copy kube-proxy config file
+  template:
+    src: kube-proxy.j2
+    dest: /etc/kubernetes/kube-proxy
+  notify:
+    - Reload Systemd
+    - Restart kube-proxy
+  tags:
+    - configure_kubernetes
+    - configure_node
+    - configure_kube_proxy
+
+- name: Configure kube-proxy config file permissions
+  file:
+    path:  /etc/kubernetes/kube-proxy
+    state: file
+    mode:  0644
+    owner: kube
+    group: kube
+  tags:   
+    - configure_kubernetes
+    - configure_node
+    - configure_kube_proxy
+
+
 
 - name: Create certs and manifest directories
   file:

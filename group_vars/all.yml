@@ -1,5 +1,5 @@
 ---
-cluster_name:   kubernetes
+cluster_name:   k8sdc
 interface:      eth0
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['kub-master'][0]]['ansible_' + interface].ipv4.address }}"
