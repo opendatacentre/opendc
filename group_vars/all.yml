@@ -1,6 +1,6 @@
 ---
 cluster_name:   kubernetes
-interface:      eth1
+interface:      eth0
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['kub-master'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
@@ -18,6 +18,7 @@ packages:
   - ceph-common
 install_nfs: true
 kubernetes_api_port:     6443
+docker_registry_cache: 192.168.1.201:5000
 registries:
   - gcr.io
   - kube-registry:5000

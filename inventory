@@ -1,17 +1,38 @@
 localhost ansible_ssh_host=127.0.0.1 ansible_connection=local
 
+[k8sdc:children]
+kub-master
+kub-nodes
+etcd
+fileserver
+
+[k8sdc:vars]
+ansible_user=XXXXX
+ansible_ssh_pass=XXXXX
+
 [kub-master]
-master.kub.io
+master.k8sdc.io
 
 [kub-nodes]
-node1.kub.io
-node2.kub.io
+node1.k8sdc.io
+node2.k8sdc.io
+node3.k8sdc.io
+node4.k8sdc.io
+node5.k8sdc.io
+node6.k8sdc.io
+node7.k8sdc.io
 
+# Need to have etcd master and etcd slaves as seperate groups
 [etcd]
-master.kub.io
-node1.kub.io
-node2.kub.io
+master.k8sdc.io
+node1.k8sdc.io
+node2.k8sdc.io
+node3.k8sdc.io
+node4.k8sdc.io
+node5.k8sdc.io
+node6.k8sdc.io
+node7.k8sdc.io
 
 [fileserver]
-master.kub.io
+master.k8sdc.io
 

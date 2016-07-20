@@ -19,7 +19,7 @@ ExecStart=/usr/bin/kubelet \
       $KUBELET_DNS_IP \
       $KUBELET_DNS_DOMAIN \
 	    $KUBELET_ARGS
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
