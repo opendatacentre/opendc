@@ -22,8 +22,8 @@
 
 - name: Common Node Configuration
   hosts:
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
     - etcd
     - fileserver
   gather_facts: false

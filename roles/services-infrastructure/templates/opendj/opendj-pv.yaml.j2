@@ -16,4 +16,4 @@ spec:
     - ReadWriteOnce
   nfs:
     path: /var/exports/services-infrastructure/opendj
-    server: "{{ groups['kub-master'] | first }}"
+    server: "{{ groups['k8sdc-master'] | first }}"

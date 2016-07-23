@@ -26,11 +26,11 @@
   register: k8sdc_master_node_droplets
   with_items: "{{ do_masters.nodes }}"
 
-- name: Add Master Node Droplets to 'kub-master' Group
+- name: Add Master Node Droplets to 'k8sdc-master' Group
   add_host: 
     hostname:         "{{ item.droplet.name }}"
     ansible_host: "{{ item.droplet.ip_address }}"
-    groups:           kub-master
+    groups:           k8sdc-master
     ansible_ssh_user: root
     ansible_ssh_private_key_file: "{{ playbook_dir }}/keys/{{ ssh_key_name }}"
   with_items: "{{ k8sdc_master_node_droplets.results }}"
@@ -53,11 +53,11 @@
   register: k8sdc_node_droplets
   with_items: "{{ do_nodes.nodes }}"
 
-- name: Add Node Droplets to 'kub-nodes' Group
+- name: Add Node Droplets to 'k8sdc-nodes' Group
   add_host: 
     hostname:         "{{ item.droplet.name }}"
     ansible_host: "{{ item.droplet.ip_address }}"
-    groups:           kub-nodes
+    groups:           k8sdc-nodes
     ansible_ssh_user: root
     ansible_ssh_private_key_file: "{{ playbook_dir }}/keys/{{ ssh_key_name }}"
   with_items: "{{ k8sdc_node_droplets.results }}"

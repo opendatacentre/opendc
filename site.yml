@@ -1,8 +1,8 @@
 ---
 - name: Test distribution
   hosts:
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
     - etcd
     - fileserver
   tasks:
@@ -12,8 +12,8 @@
 
 - name: Configure common components
   hosts:
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
     - etcd
     - fileserver
   sudo:  yes
@@ -31,8 +31,8 @@
 
 - name: Configure Flannel
   hosts: 
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
   sudo:  yes
   roles:
     - flannel
@@ -40,8 +40,8 @@
 
 - name: Configure Docker
   hosts: 
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
   sudo:  yes
   roles:
     - docker
@@ -49,8 +49,8 @@
 
 - name: Configure Kubernetes
   hosts: 
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
   sudo:  yes
   roles:
     - kubernetes
@@ -58,36 +58,36 @@
 
 - name:  Configure Network Filesystem
   hosts: 
-    - kub-master
-    - kub-nodes
+    - k8sdc-master
+    - k8sdc-nodes
   sudo:  yes
   roles:
     - { role: nfs, when: install_nfs }
   tags: configure_nw_filesystem
 
 - name: Configure Cluster Services
-  hosts: kub-master
+  hosts: k8sdc-master
   sudo: yes
   roles:
     - services-cluster
   tags: configure_services_cluster
 
 - name: Configure Infrastucture Services
-  hosts: kub-master
+  hosts: k8sdc-master
   sudo: yes
   roles:
     - services-infrastructure
   tags: configure_services_infrastructure
 
 - name: Configure Development Services
-  hosts: kub-master
+  hosts: k8sdc-master
   sudo: yes
   roles:
     - services-development
   tags: configure_services_development
 
 # - name: Configure Productivity Services
-#   hosts: kub-master
+#   hosts: k8sdc-master
 #   sudo: yes
 #   roles:
 #     - services-productivity

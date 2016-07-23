@@ -36,16 +36,16 @@ spec:
       volumes:
       - name: artifactory-data-volume
         nfs:
-          server: "{{ groups['kub-master'] | first }}"
+          server: "{{ groups['k8sdc-master'] | first }}"
           path: /var/exports/services-development/artifactory/data
           readOnly: false
       - name: artifactory-logs-volume
         nfs:
-          server: "{{ groups['kub-master'] | first }}"
+          server: "{{ groups['k8sdc-master'] | first }}"
           path: /var/exports/services-development/artifactory/logs
           readOnly: false
       - name: artifactory-backup-volume
         nfs:
-          server: "{{ groups['kub-master'] | first }}"
+          server: "{{ groups['k8sdc-master'] | first }}"
           path: /var/exports/services-development/artifactory/backup
           readOnly: false

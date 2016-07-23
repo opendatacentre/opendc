@@ -38,6 +38,6 @@ spec:
       volumes:
       - name: opendj-volume
         nfs:
-          server: "{{ groups['kub-master'] | first }}"
+          server: "{{ groups['k8sdc-master'] | first }}"
           path: /var/exports/services-infrastructure/opendj
           readOnly: false

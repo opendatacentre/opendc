@@ -33,6 +33,6 @@ spec:
       volumes:
       - name: jenkins-master-volume
         nfs:
-          server: "{{ groups['kub-master'] | first }}"
+          server: "{{ groups['k8sdc-master'] | first }}"
           path: /var/exports/services-development/jenkins
           readOnly: false

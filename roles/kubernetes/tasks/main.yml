@@ -77,31 +77,14 @@
     group: kube
     mode:  0755
 
+# k8s masters
 - include: master.yml
-  when: '"kub-master" in group_names'
-  tags: configure_kubernetes_master
-
-- name: Read the CA certificate
-  slurp:
-    src: "/etc/kubernetes/certs/ca.crt"
-  register: ca_cert
-  delegate_to: "{{ groups['kub-master'][0] }}"
-  run_once: yes
+  when: '"k8sdc-master" in group_names'
   tags: 
-    - configure_kubernetes_node
-    - configure_kubernetes_node_security
-    - security
+    - k8s_master
 
-- name: Register the CA certificate as a fact so it can be used later
-  set_fact:
-    kube_ca_cert: "{{ ca_cert.content|b64decode }}"
-  tags: 
-    - configure_kubernetes_node
-    - configure_kubernetes_node_security
-    - security
-
+# k8s nodes
 - include: node.yml
-  when: '"kub-nodes" in group_names'
+  when: '"k8sdc-nodes" in group_names'
   tags: 
-    - configure_kubernetes_node
-    - configure_kubernetes_node_security
+    - k8s_node

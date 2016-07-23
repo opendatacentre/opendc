@@ -2,7 +2,7 @@
 cluster_name:   k8sdc
 interface:      eth0
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
-api_server_ip:  "{{ hostvars[groups['kub-master'][0]]['ansible_' + interface].ipv4.address }}"
+api_server_ip:  "{{ hostvars[groups['k8sdc-master'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
 admin_user:     k8admin
 admin_uid:      5000

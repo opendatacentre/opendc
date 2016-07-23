@@ -1,7 +1,7 @@
 ---
 - name: Copy Fluentd Pods
   include: logging_fluentd.yml node={{ item }}
-  with_items: groups['kub-nodes']
+  with_items: groups['k8sdc-nodes']
 
 - name: Create logging directory
   file:

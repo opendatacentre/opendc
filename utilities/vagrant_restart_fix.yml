@@ -9,7 +9,7 @@
       service:
         name: "{{ item }}"
         state: started
-      when: inventory_hostname in groups['kub-master']
+      when: inventory_hostname in groups['k8sdc-master']
       sudo: yes
       with_items:
         - rpcbind
@@ -22,7 +22,7 @@
       service:
         name: rpcbind
         state: started
-      when: inventory_hostname in groups['kub-nodes']
+      when: inventory_hostname in groups['k8sdc-nodes']
       sudo: yes
       with_items:
         - kubelet

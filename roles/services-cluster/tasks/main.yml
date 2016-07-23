@@ -13,7 +13,7 @@
     dest:  /home/{{ admin_user }}/services-cluster/namespace.yaml
     owner: "{{ admin_user }}"
     group: "{{ admin_group }}"
-  delegate_to: "{{ groups['kub-master'] | first }}"
+  delegate_to: "{{ groups['k8sdc-master'] | first }}"
   run_once: yes
 
 - name: Check if cluster services namespace already exists
