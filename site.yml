@@ -56,35 +56,35 @@
     - kubernetes
   tags: configure_kubernetes
 
-- name:  Configure Network Filesystem
-  hosts: 
-    - k8sdc-master
-    - k8sdc-nodes
-  sudo:  yes
-  roles:
-    - { role: nfs, when: install_nfs }
-  tags: configure_nw_filesystem
+# - name:  Configure Network Filesystem
+#   hosts: 
+#     - k8sdc-master
+#     - k8sdc-nodes
+#   sudo:  yes
+#   roles:
+#     - { role: nfs, when: install_nfs }
+#   tags: configure_nw_filesystem
 
-- name: Configure Cluster Services
-  hosts: k8sdc-master
-  sudo: yes
-  roles:
-    - services-cluster
-  tags: configure_services_cluster
+# - name: Configure Cluster Services
+#   hosts: k8sdc-master
+#   sudo: yes
+#   roles:
+#     - services-cluster
+#   tags: configure_services_cluster
 
-- name: Configure Infrastucture Services
-  hosts: k8sdc-master
-  sudo: yes
-  roles:
-    - services-infrastructure
-  tags: configure_services_infrastructure
+# - name: Configure Infrastucture Services
+#   hosts: k8sdc-master
+#   sudo: yes
+#   roles:
+#     - services-infrastructure
+#   tags: configure_services_infrastructure
 
-- name: Configure Development Services
-  hosts: k8sdc-master
-  sudo: yes
-  roles:
-    - services-development
-  tags: configure_services_development
+# - name: Configure Development Services
+#   hosts: k8sdc-master
+#   sudo: yes
+#   roles:
+#     - services-development
+#   tags: configure_services_development
 
 # - name: Configure Productivity Services
 #   hosts: k8sdc-master

@@ -1,45 +1,5 @@
 ---
-- name: Check if this Kubernetes version is already on the fileserver
-  stat:
-    path: "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
-  register:    kubernetes_pkg_fileserver
-  delegate_to: "{{ fileserver }}"
-  run_once:    yes
-
-- name: Download Kubernetes to the fileserver
-  get_url:
-    url:  "{{ kubernetes_url }}"
-    dest: "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
-  delegate_to: "{{ fileserver }}"
-  run_once:    yes
-  when:        not kubernetes_pkg_fileserver.stat.exists
-
-- name: Check if we already have this Kubernetes version
-  stat:
-    path: "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
-  register: kubernetes_pkg
-
-- name: Download Kubernetes
-  command: scp -o StrictHostKeyChecking=no \
-           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
-           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ kubernetes_full_pkgname }} \
-           "{{ download_dir }}/{{ kubernetes_full_pkgname }}"
-  when: not kubernetes_pkg.stat.exists
-
-## Should I delete the previously extracted directory first, if this is a new download?  
-- name: Extract Kubernetes
-  unarchive:
-    copy: no
-    src:  /{{ download_dir }}/{{ kubernetes_full_pkgname }}
-    dest: /{{ download_dir }}/
-  #when: not kubernetes_pkg.stat.exists
-
-- name: Extract Kubernetes server binaries
-  unarchive:
-    copy: no
-    src:  /{{ download_dir }}/{{ kubernetes_pkgname.split('.')[0] }}/server/kubernetes-server-linux-amd64.tar.gz
-    dest: /{{ download_dir }}/
-
+# Configure Kubernetes
 - name: Create Kubernetes group
   group:
     name:  kube
@@ -77,14 +37,25 @@
     group: kube
     mode:  0755
 
-# k8s masters
-- include: master.yml
+# Download Kubernetes binaries
+- name: Download Kubernetes binaries
+  include: download.yaml
+  delegate_to: "{{ fileserver }}"
+  run_once: yes
+  tags:
+    - k8s_download
+    - k8s_binaries
+
+# Configure Kubernetes masters
+- name: Configure Kubernetes masters
+  include: master.yml
   when: '"k8sdc-master" in group_names'
   tags: 
     - k8s_master
 
-# k8s nodes
-- include: node.yml
+# Configure Kubernetes nodes
+- name: Configure Kubernetes nodes
+  include: node.yml
   when: '"k8sdc-nodes" in group_names'
   tags: 
     - k8s_node

@@ -1,0 +1,40 @@
+---
+# Download Kubernetes binaries
+- name: Check if this Kubernetes version already has a directory
+  stat:
+    path:   "{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}"
+  register: kubernetes_binaries_dir
+
+- name: Create the Kubernetes binaries directory
+  file:
+    path:  "{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}"
+    state: directory
+    owner: kube
+    group: kube
+    mode:  0755
+  when:    not kubernetes_binaries_dir.stat.exists
+
+- name: Download the Kubernetes binaries
+  get_url:
+    url:    "{{ kubernetes_url }}{{ item }}"
+    dest:   "{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }}"
+  when:     not kubernetes_binaries_dir.stat.exists
+  async:    960
+  poll:     0
+  register: kubernetes_binary_downloads
+  with_items:
+    - kubectl
+    - kubelet
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-proxy
+    - kube-scheduler
+
+- name: Wait for Kubernetes binaries to download
+  async_status: jid={{ item.ansible_job_id }}
+  when:         not kubernetes_binaries_dir.stat.exists
+  register:     job_result
+  until:        job_result.finished
+  retries:      96
+  delay:        10
+  with_items:   "{{ kubernetes_binary_downloads.results }}"

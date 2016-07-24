@@ -1,5 +1,5 @@
 ---
-# k8s node binaries
+# Kubernetes node binaries
 - name: Stop node services
   service:
     name:  "{{ item }}"
@@ -9,17 +9,22 @@
     - kubelet
     - kube-proxy
   tags:
+    - k8s_binaries
     - k8s_node_binaries
 
-- name: Copy node binaries
-  command: cp /{{ download_dir }}/kubernetes/server/bin/{{ item }} /usr/bin/
-  notify: 
+- name: Fetch Kubernetes binaries from fileserver
+  command: scp -o StrictHostKeyChecking=no \
+           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }} \
+           /usr/bin/{{ item }}
+  notify:
     - Restart node daemons
   with_items:
     - kubelet
     - kube-proxy
     - kubectl
   tags:
+    - k8s_binaries
     - k8s_node_binaries
 
 - name: Configure node binary permissions
@@ -34,6 +39,7 @@
     - kube-proxy
     - kubectl
   tags:
+    - k8s_binaries
     - k8s_node_binaries
 
 - name: Create /var/lib/kubelet/
@@ -44,10 +50,11 @@
     group: kube
     mode:  0755
   tags:
+    - k8s_binaries
     - k8s_node_binaries
 
 
-# k8s node config
+# Kubernetes node config
 - name: Copy node config files
   template:
     src: config.j2
@@ -69,7 +76,7 @@
     - k8s_node_config
 
 
-# k8s kubelet config
+# Kubernetes kubelet config
 - name: Copy kubelet service file
   copy:
     src: kubelet.service
@@ -108,7 +115,7 @@
     - k8s_kubelet_config
 
 
-# k8s kube-proxy config
+# Kubernetes kube-proxy config
 - name: Copy kube-proxy service file
   copy:
     src: kube-proxy.service
@@ -147,8 +154,8 @@
     - k8s_kube_proxy_config
 
 
-# k8s node security
-- name: Read the CA certificate from a k8s master
+# Kubernetes node security
+- name: Read the CA certificate from a Kubernetes master
   slurp:
     src: "/etc/kubernetes/certs/ca.crt"
   register: ca_cert
@@ -187,7 +194,7 @@
     - k8s_security
     - k8s_node_security
 
-- name: Get the kubelet and kube-proxy tokens from a k8s master
+- name: Get the kubelet and kube-proxy tokens from a Kubernetes master
   slurp:
     src: "/etc/kubernetes/tokens/{{ item }}-{{ inventory_hostname }}.token"
   with_items:
@@ -232,7 +239,7 @@
     - k8s_node_security
 
 
-# # k8s node firewalld
+# # Kubernetes node firewalld
 # - name: Configure firewalld
 #   firewalld: 
 #     port:      "{{ item }}/tcp"
