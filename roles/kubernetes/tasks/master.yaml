@@ -1,4 +1,5 @@
 ---
+# Kubernetes master binaries
 - name: Stop master services
   service:
     name:  "{{ item }}"
@@ -8,14 +9,25 @@
     - kube-apiserver
     - kube-scheduler
     - kube-controller-manager
+  tags:
+    - k8s_binaries
+    - k8s_master_binaries
 
-- name: Copy master binaries
-  command: cp /{{ download_dir }}/kubernetes/server/bin/{{ item }} /usr/bin/
+- name: Fetch Kubernetes binaries from fileserver
+  command: scp -o StrictHostKeyChecking=no \
+           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
+           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }} \
+           /usr/bin/{{ item }}
+  notify:
+    - Restart master daemons
   with_items:
     - kube-apiserver
     - kube-scheduler
     - kube-controller-manager
     - kubectl
+  tags:
+    - k8s_binaries
+    - k8s_master_binaries
 
 - name: Configure master binary permissions
   file:
@@ -29,6 +41,11 @@
     - kube-scheduler
     - kube-controller-manager
     - kubectl
+  tags:
+    - k8s_binaries
+    - k8s_master_binaries
+
+    
 
 - name: Copy master service files
   copy:

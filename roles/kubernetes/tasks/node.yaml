@@ -55,7 +55,7 @@
 
 
 # Kubernetes node config
-- name: Copy node config files
+- name: Copy node config file
   template:
     src: config.j2
     dest: /etc/kubernetes/config
@@ -87,13 +87,6 @@
   tags:
     - k8s_kubelet_config
 
-- name: Enable kubelet service
-  service:
-    name:    kubelet
-    enabled: yes
-  tags:
-    - k8s_kubelet_config
-
 - name: Copy kubelet config file
   template:
     src: kubelet.j2
@@ -114,6 +107,13 @@
   tags:   
     - k8s_kubelet_config
 
+- name: Enable kubelet service
+  service:
+    name:    kubelet
+    enabled: yes
+  tags:
+    - k8s_kubelet_config
+
 
 # Kubernetes kube-proxy config
 - name: Copy kube-proxy service file
@@ -123,13 +123,6 @@
   notify:
     - Reload Systemd
     - Restart kube-proxy
-  tags:
-    - k8s_kube_proxy_config
-
-- name: Enable kube-proxy service
-  service:
-    name:    kube-proxy
-    enabled: yes
   tags:
     - k8s_kube_proxy_config
 
@@ -151,6 +144,13 @@
     owner: kube
     group: kube
   tags:   
+    - k8s_kube_proxy_config
+
+- name: Enable kube-proxy service
+  service:
+    name:    kube-proxy
+    enabled: yes
+  tags:
     - k8s_kube_proxy_config
 
 
@@ -214,7 +214,7 @@
     - k8s_security
     - k8s_node_security
 
-- name: write the kubecfg (auth) file for kubelet
+- name: Write the kubecfg (auth) file for kubelet
   template: 
     src:  kubelet.kubeconfig.j2 
     dest: /etc/kubernetes/kubelet.kubeconfig
@@ -226,9 +226,9 @@
     - k8s_security
     - k8s_node_security
 
-- name: write the kubecfg (auth) file for kube-proxy
+- name: Write the kubecfg (auth) file for kube-proxy
   template: 
-    src:  proxy.kubeconfig.j2 
+    src:  proxy.kubeconfig.j2
     dest: /etc/kubernetes/proxy.kubeconfig
     owner: kube
     group: kube

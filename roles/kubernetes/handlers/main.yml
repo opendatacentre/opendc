@@ -3,6 +3,7 @@
   command: systemctl daemon-reload
 
 
+# Restart master daemons
 - name: Restart master daemons
   command: /bin/true
   notify:
@@ -26,6 +27,7 @@
     state: restarted
 
 
+# Restart node daemons
 - name: Restart node daemons
   command: /bin/true
   notify:

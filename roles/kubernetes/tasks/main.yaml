@@ -15,7 +15,7 @@
     comment: "Kubernetes"
     state:   present
 
-- name: Add Kubernetes group to the admin user
+- name: Add Kubernetes group to the k8sdc admin user
   user: 
     name:   "{{ admin_user }}"
     append: yes
@@ -48,14 +48,14 @@
 
 # Configure Kubernetes masters
 - name: Configure Kubernetes masters
-  include: master.yml
+  include: master.yaml
   when: '"k8sdc-master" in group_names'
   tags: 
     - k8s_master
 
 # Configure Kubernetes nodes
 - name: Configure Kubernetes nodes
-  include: node.yml
+  include: node.yaml
   when: '"k8sdc-nodes" in group_names'
   tags: 
     - k8s_node

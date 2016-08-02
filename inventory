@@ -10,7 +10,7 @@ fileserver
 ansible_user=XXXXX
 ansible_ssh_pass=XXXXX
 
-[k8sdc-master]
+[k8sdc-masters]
 master.k8sdc.io
 
 [k8sdc-nodes]
@@ -36,3 +36,5 @@ node7.k8sdc.io
 [fileserver]
 master.k8sdc.io
 
+[docker-registry-mirror]
+master.k8sdc.io
