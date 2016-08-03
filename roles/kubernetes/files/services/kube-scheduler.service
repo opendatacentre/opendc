@@ -1,15 +1,17 @@
 [Unit]
-Description=Kubernetes Scheduler Plugin
-Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+Description=Kubernetes Scheduler Server
 
 [Service]
 EnvironmentFile=-/etc/kubernetes/config
-EnvironmentFile=-/etc/kubernetes/scheduler
+EnvironmentFile=-/etc/kubernetes/kube-scheduler
 User=kube
 ExecStart=/usr/bin/kube-scheduler \
 	    $KUBE_LOGTOSTDERR \
 	    $KUBE_LOG_LEVEL \
 	    $KUBE_MASTER \
+      $KUBE_SCHEDULER_ADDRESS \
+      $KUBE_SCHEDULER_KUBECONFIG \
+      $KUBE_SCHEDULER_LEADER_ELECT \
 	    $KUBE_SCHEDULER_ARGS
 Restart=on-failure
 LimitNOFILE=65536

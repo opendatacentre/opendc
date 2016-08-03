@@ -1,4 +1,5 @@
 ---
+# TODO: Ensure that version 7 of CentOS / RHEL is being used
 - name: Test distribution
   hosts:
     - k8sdc-master

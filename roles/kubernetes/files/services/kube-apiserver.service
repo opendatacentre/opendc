@@ -1,24 +1,27 @@
 [Unit]
 Description=Kubernetes API Server
-Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 EnvironmentFile=-/etc/kubernetes/config
-EnvironmentFile=-/etc/kubernetes/apiserver
+EnvironmentFile=-/etc/kubernetes/kube-apiserver
 User=kube
 ExecStart=/usr/bin/kube-apiserver \
 	    $KUBE_LOGTOSTDERR \
 	    $KUBE_LOG_LEVEL \
-	    $KUBE_ETCD_SERVERS \
-	    $KUBE_API_ADDRESS \
-	    $KUBE_API_PORT \
-	    $KUBELET_PORT \
 	    $KUBE_ALLOW_PRIV \
+	    $KUBE_INSECURE_API_ADDRESS \
+	    $KUBE_SECURE_API_PORT \
+	    $KUBE_ETCD_SERVERS \
 	    $KUBE_SERVICE_ADDRESSES \
 	    $KUBE_ADMISSION_CONTROL \
 	    $KUBE_CLUSTER_ADVERTISE \
+	    $KUBE_TLS_CERT \
+	    $KUBE_PRIVATE_KEY \
+	    $KUBE_CLIENT_CA \
+	    $KUBE_TOKEN_AUTH \
+	    $KUBE_SERVICE_ACCOUNT_KEY \
 	    $KUBE_API_ARGS
-Restart=on-failure
+Restart=always
 Type=notify
 LimitNOFILE=65536
 

@@ -1,16 +1,17 @@
 [Unit]
-Description=Kubernetes Kube-Proxy Server
-Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+Description=Kubernetes Proxy Server
 After=network.target
 
 [Service]
 EnvironmentFile=-/etc/kubernetes/config
 EnvironmentFile=-/etc/kubernetes/kube-proxy
 ExecStart=/usr/bin/kube-proxy \
-	    $KUBE_LOGTOSTDERR \
-	    $KUBE_LOG_LEVEL \
-	    $KUBE_MASTER \
-	    $KUBE_PROXY_ARGS
+      $KUBE_LOGTOSTDERR \
+      $KUBE_LOG_LEVEL \
+      $KUBE_MASTER \
+      $KUBE_PROXY_KUBECONFIG \
+      $KUBE_PROXY_MODE \
+      $KUBE_PROXY_ARGS
 Restart=on-failure
 LimitNOFILE=65536
 

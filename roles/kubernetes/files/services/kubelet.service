@@ -1,6 +1,5 @@
 [Unit]
 Description=Kubernetes Kubelet Server
-Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 After=docker.service
 Requires=docker.service
 
@@ -9,16 +8,16 @@ WorkingDirectory=/var/lib/kubelet
 EnvironmentFile=-/etc/kubernetes/config
 EnvironmentFile=-/etc/kubernetes/kubelet
 ExecStart=/usr/bin/kubelet \
-	    $KUBE_LOGTOSTDERR \
-	    $KUBE_LOG_LEVEL \
-	    $KUBELET_API_SERVER \
-	    $KUBELET_ADDRESS \
-	    $KUBELET_PORT \
-	    $KUBELET_HOSTNAME \
-	    $KUBE_ALLOW_PRIV \
+      $KUBE_LOGTOSTDERR \
+      $KUBE_LOG_LEVEL \
+      $KUBE_ALLOW_PRIV \
+      $KUBELET_ADDRESS \
+      $KUBELET_HOSTNAME \
+      $KUBELET_API_SERVER \
       $KUBELET_DNS_IP \
       $KUBELET_DNS_DOMAIN \
-	    $KUBELET_ARGS
+      $KUBELET_KUBECONFIG \
+      $KUBELET_ARGS
 Restart=always
 
 [Install]
