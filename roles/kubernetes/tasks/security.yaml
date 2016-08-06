@@ -1,5 +1,6 @@
 ---
-- name: Create certs and tokens directories
+# On master
+- name: Create certs, tokens and users directories
   file:
     path: /etc/kubernetes/{{ item }}
     state: directory
@@ -9,12 +10,30 @@
   with_items:
     - certs
     - tokens
+    - users
+  tags:
+    - k8s_master_dirs
 
+# On master
 - name: Ensure that a token auth file exists
   file: 
     path:  /etc/kubernetes/tokens/known_tokens.csv
     state: touch
   changed_when: false
+
+
+# - name: Populate users for basic auth in API
+#   lineinfile:
+#     dest: "{{ kube_users_dir }}/known_users.csv"
+#     create: yes
+#     line: '{{ item.value.pass }},{{ item.key }},{{ item.value.role }}'
+#     backup: yes
+#   with_dict: "{{ kube_users }}"
+#   when: inventory_hostname in "{{ groups['kube-master'] }}"
+#   notify: set secret_changed
+
+
+
 
 # Fix for Ansible and DNF issues
 # https://github.com/ansible/ansible-modules-extras/issues/471
@@ -23,6 +42,7 @@
 #   args:
 #     creates: /usr/bin/repomanage
 
+# On master
 - name: Install openssl
   yum:
     name:  openssl

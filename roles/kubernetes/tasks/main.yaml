@@ -37,6 +37,18 @@
     group: kube
     mode:  0755
 
+
+
+# Test
+- include: ../../k8sdc-ca/tasks/certificate.yaml test="hello there Des!"
+  delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+  run_once: yes
+  tags:
+    - test
+
+
+
+
 # Download Kubernetes binaries
 - name: Download Kubernetes binaries
   include: download.yaml

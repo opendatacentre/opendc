@@ -19,6 +19,7 @@ ExecStart=/usr/bin/kube-apiserver \
 	    $KUBE_PRIVATE_KEY \
 	    $KUBE_CLIENT_CA \
 	    $KUBE_TOKEN_AUTH \
+	    $KUBE_BASIC_AUTH \
 	    $KUBE_SERVICE_ACCOUNT_KEY \
 	    $KUBE_API_ARGS
 Restart=always

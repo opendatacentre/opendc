@@ -18,6 +18,8 @@
     gid:   "{{ admin_gid }}"
     name:  "{{ admin_group }}"
     state: present
+  tags:
+    - admin_group
 
 - name: Create admin user
   user:

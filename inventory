@@ -4,6 +4,7 @@ localhost ansible_ssh_host=127.0.0.1 ansible_connection=local
 k8sdc-master
 k8sdc-nodes
 etcd
+k8sdc-ca
 fileserver
 
 [k8sdc:vars]
@@ -23,7 +24,7 @@ node6.k8sdc.io
 node7.k8sdc.io
 
 # Need to have etcd master and etcd slaves as seperate groups
-[etcd]
+[etcd-peers]
 master.k8sdc.io
 node1.k8sdc.io
 node2.k8sdc.io
@@ -32,6 +33,13 @@ node4.k8sdc.io
 node5.k8sdc.io
 node6.k8sdc.io
 node7.k8sdc.io
+
+[etcd-proxies]
+
+
+
+[k8sdc-ca]
+master.k8sdc.io
 
 [fileserver]
 master.k8sdc.io

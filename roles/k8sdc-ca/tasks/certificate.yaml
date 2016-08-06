@@ -1,0 +1,10 @@
+---
+# Pass arguments to generate a key, csr and cert 
+# (will template get template from within this role if it is include from another role?)
+
+- debug:
+    var: role_path
+
+- template:
+    src: "{{ role_path }}/../k8sdc-ca/templates/test.j2"
+    dest: /tmp/test

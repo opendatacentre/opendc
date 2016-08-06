@@ -2,57 +2,51 @@
 # TODO: Ensure that version 7 of CentOS / RHEL is being used
 - name: Test distribution
   hosts:
-    - k8sdc-master
-    - k8sdc-nodes
-    - etcd
-    - fileserver
+    - k8sdc
   tasks:
     - assert:
         that: ansible_os_family == "RedHat"
-  tags: confirm_redhat
+  tags: confirm_os
 
 - name: Configure common components
   hosts:
-    - k8sdc-master
-    - k8sdc-nodes
-    - etcd
-    - fileserver
-  sudo:  yes
+    - k8sdc
+  become:  yes
   roles:
     - common
   tags: configure_common
 
-- name: Configure Etcd
-  hosts: 
-    - etcd
-  sudo:  yes
-  roles:
-    - etcd
-  tags: configure_etcd
+# - name: Configure Etcd
+#   hosts: 
+#     - etcd
+#   sudo:  yes
+#   roles:
+#     - etcd
+#   tags: configure_etcd
 
-- name: Configure Flannel
-  hosts: 
-    - k8sdc-master
-    - k8sdc-nodes
-  sudo:  yes
-  roles:
-    - flannel
-  tags: configure_flannel
+# - name: Configure Flannel
+#   hosts: 
+#     - k8sdc-master
+#     - k8sdc-nodes
+#   sudo:  yes
+#   roles:
+#     - flannel
+#   tags: configure_flannel
 
-- name: Configure Docker
-  hosts: 
-    - k8sdc-master
-    - k8sdc-nodes
-  sudo:  yes
-  roles:
-    - docker
-  tags: configure_docker
+# - name: Configure Docker
+#   hosts: 
+#     - k8sdc-master
+#     - k8sdc-nodes
+#   sudo:  yes
+#   roles:
+#     - docker
+#   tags: configure_docker
 
 - name: Configure Kubernetes
   hosts: 
     - k8sdc-master
     - k8sdc-nodes
-  sudo:  yes
+  become:  yes
   roles:
     - kubernetes
   tags: configure_kubernetes

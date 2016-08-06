@@ -1,0 +1,11 @@
+---
+# Create CA dir
+
+# Stat k8sdc-ca.key and k8sdc-ca.crt
+
+# Generate key and crt if they don't already exist or variable says to do it anyway
+# -e regen_certs=true
+
+- debug:
+    msg: Test
+
