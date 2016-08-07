@@ -23,30 +23,11 @@
 
 - name: Create /etc/kubernetes/
   file:
-    path: /etc/kubernetes/
+    path:  /etc/kubernetes/
     state: directory
     owner: kube
     group: kube
     mode:  0755
-
-- name: Create /var/run/kubernetes/
-  file:
-    path: /var/run/kubernetes/
-    state: directory
-    owner: kube
-    group: kube
-    mode:  0755
-
-
-
-# Test
-- include: ../../k8sdc-ca/tasks/certificate.yaml test="hello there Des!"
-  delegate_to: "{{ groups['k8sdc-ca'][0] }}"
-  run_once: yes
-  tags:
-    - test
-
-
 
 
 # Download Kubernetes binaries
@@ -58,12 +39,23 @@
     - k8s_download
     - k8s_binaries
 
+
+# Generate Kubernetes certificates, tokens and basic auth users
+- name: Generate Kubernetes certificates, tokens and basic auth users
+  include: security2.yaml
+  delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+  run_once: yes
+  tags:
+    - k8s_security
+
+
 # Configure Kubernetes masters
 - name: Configure Kubernetes masters
   include: master.yaml
   when: '"k8sdc-master" in group_names'
   tags: 
     - k8s_master
+
 
 # Configure Kubernetes nodes
 - name: Configure Kubernetes nodes

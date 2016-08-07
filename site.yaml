@@ -8,13 +8,23 @@
         that: ansible_os_family == "RedHat"
   tags: confirm_os
 
+# TODO: Add NTP so that service like Ceph work properly
 - name: Configure common components
   hosts:
     - k8sdc
   become:  yes
   roles:
     - common
-  tags: configure_common
+  tags: common
+
+- name: Create k8sdc-ca certificate authority
+  hosts:
+    - k8sdc-ca
+  become: yes
+  roles:
+    - k8sdc-ca
+  tags: k8sdc_ca
+
 
 # - name: Configure Etcd
 #   hosts: 

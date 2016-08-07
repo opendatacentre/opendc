@@ -16,6 +16,7 @@ install_pkgs:   true
 packages:
   - socat
   - ceph-common
+regen_certs: false
 install_nfs: true
 kubernetes_api_port:     6443
 docker_registry_cache: 192.168.1.201:5000

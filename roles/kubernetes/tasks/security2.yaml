@@ -1,0 +1,36 @@
+---
+# Generate Kubernetes certificates, tokens and basic auth users
+
+# But only if they don't already exist or if regen_certs is true, i.e. do stat beforehand
+# Just check kube-apiserver.key
+
+- set_fact:
+    ip_values_fact: ['192.168.1.210', '192.168.1.211']
+
+- name: Generate certificates
+  include: ../../k8sdc-ca/tasks/certificate.yaml
+  vars:
+    cn:         "{{ item.cn }}"
+    cert_name:  "{{ item.cert_name }}"
+    dns_values: "{{ item.dns_values }}"
+    ip_values:  "{{ item.ip_values }}"
+  with_items:
+    - { cn:         'one', 
+        cert_name:  'one', 
+        dns_values: ['one','two'], 
+        ip_values:  "{{ ip_values_fact }}" }
+    - { cn:         'two', 
+        cert_name:  'two', 
+        dns_values: ['three','four'], 
+        ip_values:  "{{ ip_values_fact }}" }
+     
+
+
+- debug:
+    var: "{{ item }}_cert"
+  with_items:
+    - one
+    - two
+
+
+

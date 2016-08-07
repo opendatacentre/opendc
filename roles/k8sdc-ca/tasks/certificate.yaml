@@ -1,10 +1,40 @@
 ---
-# Pass arguments to generate a key, csr and cert 
-# (will template get template from within this role if it is include from another role?)
+# Generate a private key and certificate
 
 - debug:
-    var: role_path
+    var: cn
+- debug:
+    var: dns_values
+- debug:
+    var: ip_values
 
-- template:
-    src: "{{ role_path }}/../k8sdc-ca/templates/test.j2"
-    dest: /tmp/test
+
+- name: Create certificate temp directory
+  file:
+    path:  /tmp/k8sdc-ca/
+    state: directory
+    mode:  0750
+
+- name: Create openssl.conf
+  template:
+    src: "{{ role_path }}/../k8sdc-ca/templates/openssl.conf.j2"
+    dest: /tmp/k8sdc-ca/openssl.conf
+
+# generate key
+
+# generate csr
+
+# generate cert
+
+- name: Set key fact
+  set_fact:
+    "{{ cert_name }}_key": "{{ cert_name }}"
+
+- name: Set certificate fact
+  set_fact:
+    "{{ cert_name }}_cert": "{{ cert_name }}"
+
+- name: Remove certificate temp directory
+  file:
+    path:  /tmp/k8sdc-ca/
+    state: absent

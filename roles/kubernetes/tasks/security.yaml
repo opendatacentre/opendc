@@ -1,20 +1,8 @@
 ---
-# On master
-- name: Create certs, tokens and users directories
-  file:
-    path: /etc/kubernetes/{{ item }}
-    state: directory
-    owner: kube
-    group: kube
-    mode:  0770
-  with_items:
-    - certs
-    - tokens
-    - users
-  tags:
-    - k8s_master_dirs
 
-# On master
+
+
+
 - name: Ensure that a token auth file exists
   file: 
     path:  /etc/kubernetes/tokens/known_tokens.csv
@@ -34,19 +22,6 @@
 
 
 
-
-# Fix for Ansible and DNF issues
-# https://github.com/ansible/ansible-modules-extras/issues/471
-# - name: Install Yum utilities
-#   command: dnf install yum-utils -y
-#   args:
-#     creates: /usr/bin/repomanage
-
-# On master
-- name: Install openssl
-  yum:
-    name:  openssl
-    state: installed
 
 - name: Copy make-ca-cert.sh
   copy:

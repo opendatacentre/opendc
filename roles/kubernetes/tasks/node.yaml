@@ -1,4 +1,22 @@
 ---
+# Configure Kubernetes nodes
+- name: Create /var/run/kubernetes/
+  file:
+    path: /var/run/kubernetes/
+    state: directory
+    owner: kube
+    group: kube
+    mode:  0755
+
+- name: Create /var/lib/kubelet/
+  file:
+    path: /var/lib/kubelet/
+    state: directory
+    owner: kube
+    group: kube
+    mode:  0755
+
+
 # Kubernetes node binaries
 - name: Stop node services
   service:
@@ -13,16 +31,16 @@
     - k8s_node_binaries
 
 - name: Fetch Kubernetes binaries from fileserver
-  command: scp -o StrictHostKeyChecking=no \
-           -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
-           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }} \
-           /usr/bin/{{ item }}
+  command: >
+      scp -o StrictHostKeyChecking=no
+          -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }}
+          {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }}
+          /usr/bin/{{ item }}
   notify:
     - Restart node daemons
   with_items:
     - kubelet
     - kube-proxy
-    - kubectl
   tags:
     - k8s_binaries
     - k8s_node_binaries
@@ -37,18 +55,6 @@
   with_items:
     - kubelet
     - kube-proxy
-    - kubectl
-  tags:
-    - k8s_binaries
-    - k8s_node_binaries
-
-- name: Create /var/lib/kubelet/
-  file:
-    path: /var/lib/kubelet/
-    state: directory
-    owner: kube
-    group: kube
-    mode:  0755
   tags:
     - k8s_binaries
     - k8s_node_binaries
@@ -79,7 +85,7 @@
 # Kubernetes kubelet config
 - name: Copy kubelet service file
   copy:
-    src: services/kubelet.service
+    src:  services/kubelet.service
     dest: /usr/lib/systemd/system/kubelet.service
   notify:
     - Reload Systemd
@@ -89,7 +95,7 @@
 
 - name: Copy kubelet config file
   template:
-    src: config/kubelet.j2
+    src:  config/kubelet.j2
     dest: /etc/kubernetes/kubelet
   notify:
     - Reload Systemd
@@ -118,7 +124,7 @@
 # Kubernetes kube-proxy config
 - name: Copy kube-proxy service file
   copy:
-    src: services/kube-proxy.service
+    src:  services/kube-proxy.service
     dest: /usr/lib/systemd/system/kube-proxy.service
   notify:
     - Reload Systemd
@@ -128,7 +134,7 @@
 
 - name: Copy kube-proxy config file
   template:
-    src: config/kube-proxy.j2
+    src:  config/kube-proxy.j2
     dest: /etc/kubernetes/kube-proxy
   notify:
     - Reload Systemd
@@ -174,7 +180,7 @@
 
 - name: Create certs directory
   file:
-    path: /etc/kubernetes/certs/
+    path:  /etc/kubernetes/certs/
     state: directory
     owner: kube
     group: kube
@@ -216,8 +222,8 @@
 
 - name: Write the kubecfg (auth) file for kubelet
   template: 
-    src:  kubelet.kubeconfig.j2 
-    dest: /etc/kubernetes/kubelet.kubeconfig
+    src:   kubelet.kubeconfig.j2 
+    dest:  /etc/kubernetes/kubelet.kubeconfig
     owner: kube
     group: kube
   notify:
@@ -228,8 +234,8 @@
 
 - name: Write the kubecfg (auth) file for kube-proxy
   template: 
-    src:  proxy.kubeconfig.j2
-    dest: /etc/kubernetes/proxy.kubeconfig
+    src:   proxy.kubeconfig.j2
+    dest:  /etc/kubernetes/proxy.kubeconfig
     owner: kube
     group: kube
   notify:
