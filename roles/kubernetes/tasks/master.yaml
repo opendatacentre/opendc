@@ -200,6 +200,38 @@
     - k8s_kube_controller_manager_config
 
 
+# Security
+- name: Create kube-apiserver certificate
+  copy:
+    dest: /tmp/kube_apiserver.crt
+    content: "{{ kube_apiserver_cert.content | b64decode }}"
+  notify: Restart kube-apiserver
+  when: kube_apiserver_cert is defined
+  tags: k8s_security2
+
+- name: Create kube-apiserver private key
+  copy:
+    dest: /tmp/kube_apiserver.key
+    content: "{{ kube_apiserver_key.content | b64decode }}"
+  notify: Restart kube-apiserver
+  when: kube_apiserver_key is defined
+  tags: k8s_security2
+
+- name: Create kube-controller-manager certificate
+  copy:
+    dest: /tmp/kube_controller_manager.crt
+    content: "{{ kube_controller_manager_cert.content | b64decode }}"
+  notify: Restart kube-controller-manager
+  when: kube_controller_manager_cert is defined
+  tags: k8s_security2
+
+- name: Create kube-controller-manager private key
+  copy:
+    dest: /tmp/kube_controller_manager.key
+    content: "{{ kube_controller_manager_key.content | b64decode }}"
+  notify: Restart kube-controller-manager
+  when: kube_controller_manager_key is defined
+  tags: k8s_security2
 
 
 

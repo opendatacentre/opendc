@@ -45,6 +45,7 @@
   include: security2.yaml
   delegate_to: "{{ groups['k8sdc-ca'][0] }}"
   run_once: yes
+  when: regen_certs
   tags:
     - k8s_security2
 

@@ -70,7 +70,7 @@
 #     - { role: nfs, when: install_nfs }
 #   tags: configure_nw_filesystem
 
-# - name: Configure Cluster Services
+# - name: Configure Cluster Services, i.e. DNS in k8s-system
 #   hosts: k8sdc-master
 #   sudo: yes
 #   roles:

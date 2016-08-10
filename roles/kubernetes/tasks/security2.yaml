@@ -10,22 +10,29 @@
 
 - name: Set fact for k8sdc masters DNS values
   set_fact:
-    k8sdc_master_dns_values: >
-      ['kubernetes'],
-      ['kubernetes.default'],
-      ['kubernetes.default.svc'],
-      ['{{ k8sdc_fqdn }}']
+    k8sdc_master_dns_values: >-
+      kubernetes,
+      kubernetes.default,
+      kubernetes.default.svc,
+      {{ k8sdc_fqdn }}
+
+- name: Convert fact for k8sdc masters DNS values to a list
+  set_fact:
+    k8sdc_master_dns_values: >-
+      {{ k8sdc_master_dns_values.split(',') | map('regex_replace', ' ', '') | list }}
 
 - name: Set fact for k8sdc masters IP addresses
   set_fact:
-    k8sdc_master_ips: >-
+    k8sdc_master_ip_values: >-
       {%- for apiserver in groups['k8sdc-masters'] -%}
-      ['{{ hostvars[apiserver]['ansible_' + interface].ipv4.address }}'],
+      {{ hostvars[apiserver]['ansible_' + interface].ipv4.address }}
+      {%- if not loop.last -%},{%- endif -%}
       {%- endfor -%}
 
 - name: Convert fact for k8sdc masters IP addresses to a list
   set_fact:
-    k8sdc_master_ips: "{{ k8sdc_master_ips | list }}"
+    k8sdc_master_ip_values: >-
+      {{ k8sdc_master_ip_values.split(',') | list }}
 
 - name: Generate certificates
   include: ../../k8sdc-ca/tasks/certificate.yaml
@@ -37,25 +44,27 @@
   with_items:
     - { cn:         'kube-apiserver', 
         cert_name:  'kube_apiserver', 
-        dns_values: "{{ k8sdc_master_dns_values | list}}", 
-        ip_values:  "{{ k8sdc_master_ips }}" }
+        dns_values: "{{ k8sdc_master_dns_values }}", 
+        ip_values:  "{{ k8sdc_master_ip_values }}" }
     - { cn:         'kube-controller-manager', 
         cert_name:  'kube_controller_manager', 
-        dns_values: "{{ k8sdc_master_dns_values | list}}", 
-        ip_values:  "{{ k8sdc_master_ips }}" }
+        dns_values: "{{ k8sdc_master_dns_values }}", 
+        ip_values:  "{{ k8sdc_master_ip_values }}" }
+
+    
 
 
-- debug:
-    var: "{{ item }}_key.content"
-  with_items:
-    - kube_apiserver
-    - kube_controller_manager
 
-- debug:
-    var: "{{ item }}_cert.content"
-  with_items:
-    - kube_apiserver
-    - kube_controller_manager
+# - name: Populate users for basic auth in API
+#   lineinfile:
+#     dest: "{{ kube_users_dir }}/known_users.csv"
+#     create: yes
+#     line: '{{ item.value.pass }},{{ item.key }},{{ item.value.role }}'
+#     backup: yes
+#   with_dict: "{{ kube_users }}"
+#   when: inventory_hostname in "{{ groups['kube-master'] }}"
+#   notify: set secret_changed
+
 
 
 

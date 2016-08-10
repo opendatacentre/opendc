@@ -8,8 +8,8 @@ keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 [alt_names]
 {% for dns in dns_values %}
-DNS.{{ loop.index }} = {{ dns[0] }}
+DNS.{{ loop.index }} = {{ dns }}
 {% endfor %}
 {% for ip in ip_values %}
-IP.{{ loop.index }} = {{ ip[0] }}
+IP.{{ loop.index }} = {{ ip }}
 {% endfor %}
