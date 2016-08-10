@@ -165,7 +165,7 @@
   slurp:
     src: "/etc/kubernetes/certs/ca.crt"
   register: ca_cert
-  delegate_to: "{{ groups['k8sdc-master'][0] }}"
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
   run_once: yes
   tags:
     - k8s_security
@@ -207,7 +207,7 @@
     - "system:kubelet"
     - "system:proxy"
   register: tokens
-  delegate_to: "{{ groups['k8sdc-master'][0] }}"
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
   tags:
     - k8s_security
     - k8s_node_security

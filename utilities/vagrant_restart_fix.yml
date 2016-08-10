@@ -9,7 +9,7 @@
       service:
         name: "{{ item }}"
         state: started
-      when: inventory_hostname in groups['k8sdc-master']
+      when: inventory_hostname in groups['k8sdc-masters']
       sudo: yes
       with_items:
         - rpcbind

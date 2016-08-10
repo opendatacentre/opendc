@@ -46,13 +46,13 @@
   delegate_to: "{{ groups['k8sdc-ca'][0] }}"
   run_once: yes
   tags:
-    - k8s_security
+    - k8s_security2
 
 
 # Configure Kubernetes masters
 - name: Configure Kubernetes masters
   include: master.yaml
-  when: '"k8sdc-master" in group_names'
+  when: '"k8sdc-masters" in group_names'
   tags: 
     - k8s_master
 

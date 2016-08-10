@@ -4,8 +4,28 @@
 # But only if they don't already exist or if regen_certs is true, i.e. do stat beforehand
 # Just check kube-apiserver.key
 
-- set_fact:
-    ip_values_fact: ['192.168.1.210', '192.168.1.211']
+- name: Set fact for k8sdc masters FQDN 
+  set_fact:
+    k8sdc_fqdn: "kubernetes.default.svc.{{ kubernetes_dns_domain }}"
+
+- name: Set fact for k8sdc masters DNS values
+  set_fact:
+    k8sdc_master_dns_values: >
+      ['kubernetes'],
+      ['kubernetes.default'],
+      ['kubernetes.default.svc'],
+      ['{{ k8sdc_fqdn }}']
+
+- name: Set fact for k8sdc masters IP addresses
+  set_fact:
+    k8sdc_master_ips: >-
+      {%- for apiserver in groups['k8sdc-masters'] -%}
+      ['{{ hostvars[apiserver]['ansible_' + interface].ipv4.address }}'],
+      {%- endfor -%}
+
+- name: Convert fact for k8sdc masters IP addresses to a list
+  set_fact:
+    k8sdc_master_ips: "{{ k8sdc_master_ips | list }}"
 
 - name: Generate certificates
   include: ../../k8sdc-ca/tasks/certificate.yaml
@@ -15,22 +35,29 @@
     dns_values: "{{ item.dns_values }}"
     ip_values:  "{{ item.ip_values }}"
   with_items:
-    - { cn:         'one', 
-        cert_name:  'one', 
-        dns_values: ['one','two'], 
-        ip_values:  "{{ ip_values_fact }}" }
-    - { cn:         'two', 
-        cert_name:  'two', 
-        dns_values: ['three','four'], 
-        ip_values:  "{{ ip_values_fact }}" }
-     
+    - { cn:         'kube-apiserver', 
+        cert_name:  'kube_apiserver', 
+        dns_values: "{{ k8sdc_master_dns_values | list}}", 
+        ip_values:  "{{ k8sdc_master_ips }}" }
+    - { cn:         'kube-controller-manager', 
+        cert_name:  'kube_controller_manager', 
+        dns_values: "{{ k8sdc_master_dns_values | list}}", 
+        ip_values:  "{{ k8sdc_master_ips }}" }
 
 
 - debug:
-    var: "{{ item }}_cert"
+    var: "{{ item }}_key.content"
   with_items:
-    - one
-    - two
+    - kube_apiserver
+    - kube_controller_manager
+
+- debug:
+    var: "{{ item }}_cert.content"
+  with_items:
+    - kube_apiserver
+    - kube_controller_manager
+
+
 
 
 

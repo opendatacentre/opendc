@@ -36,7 +36,7 @@
 
 # - name: Configure Flannel
 #   hosts: 
-#     - k8sdc-master
+#     - k8sdc-masters
 #     - k8sdc-nodes
 #   sudo:  yes
 #   roles:
@@ -45,7 +45,7 @@
 
 # - name: Configure Docker
 #   hosts: 
-#     - k8sdc-master
+#     - k8sdc-masters
 #     - k8sdc-nodes
 #   sudo:  yes
 #   roles:
@@ -54,7 +54,7 @@
 
 - name: Configure Kubernetes
   hosts: 
-    - k8sdc-master
+    - k8sdc-masters
     - k8sdc-nodes
   become:  yes
   roles:

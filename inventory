@@ -1,7 +1,7 @@
 localhost ansible_ssh_host=127.0.0.1 ansible_connection=local
 
 [k8sdc:children]
-k8sdc-master
+k8sdc-masters
 k8sdc-nodes
 etcd
 k8sdc-ca

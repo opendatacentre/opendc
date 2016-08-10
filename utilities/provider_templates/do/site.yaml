@@ -22,7 +22,7 @@
 
 - name: Common Node Configuration
   hosts:
-    - k8sdc-master
+    - k8sdc-masters
     - k8sdc-nodes
     - etcd
     - fileserver
