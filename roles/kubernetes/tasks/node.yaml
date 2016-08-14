@@ -161,88 +161,88 @@
 
 
 # Kubernetes node security
-- name: Read the CA certificate from a Kubernetes master
-  slurp:
-    src: "/etc/kubernetes/certs/ca.crt"
-  register: ca_cert
-  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
-  run_once: yes
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Read the CA certificate from a Kubernetes master
+#   slurp:
+#     src: "/etc/kubernetes/certs/ca.crt"
+#   register: ca_cert
+#   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+#   run_once: yes
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Decode the CA certificate and register it as a fact
-  set_fact:
-    kube_ca_cert: "{{ ca_cert.content|b64decode }}"
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Decode the CA certificate and register it as a fact
+#   set_fact:
+#     kube_ca_cert: "{{ ca_cert.content|b64decode }}"
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Create certs directory
-  file:
-    path:  /etc/kubernetes/certs/
-    state: directory
-    owner: kube
-    group: kube
-    mode:  0770
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Create certs directory
+#   file:
+#     path:  /etc/kubernetes/certs/
+#     state: directory
+#     owner: kube
+#     group: kube
+#     mode:  0770
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Create CA certificate
-  copy: 
-    content: "{{ kube_ca_cert }}" 
-    dest:    /etc/kubernetes/certs/ca.crt
-    group:   kube
-    owner:   kube
-    mode:    0440
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Create CA certificate
+#   copy: 
+#     content: "{{ kube_ca_cert }}" 
+#     dest:    /etc/kubernetes/certs/ca.crt
+#     group:   kube
+#     owner:   kube
+#     mode:    0440
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Get the kubelet and kube-proxy tokens from a Kubernetes master
-  slurp:
-    src: "/etc/kubernetes/tokens/{{ item }}-{{ inventory_hostname }}.token"
-  with_items:
-    - "system:kubelet"
-    - "system:proxy"
-  register: tokens
-  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Get the kubelet and kube-proxy tokens from a Kubernetes master
+#   slurp:
+#     src: "/etc/kubernetes/tokens/{{ item }}-{{ inventory_hostname }}.token"
+#   with_items:
+#     - "system:kubelet"
+#     - "system:proxy"
+#   register: tokens
+#   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Set token facts
-  set_fact:
-    kubelet_token: "{{ tokens.results[0].content|b64decode }}"
-    proxy_token: "{{ tokens.results[1].content|b64decode }}"
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Set token facts
+#   set_fact:
+#     kubelet_token: "{{ tokens.results[0].content|b64decode }}"
+#     proxy_token: "{{ tokens.results[1].content|b64decode }}"
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Write the kubecfg (auth) file for kubelet
-  template: 
-    src:   kubelet.kubeconfig.j2 
-    dest:  /etc/kubernetes/kubelet.kubeconfig
-    owner: kube
-    group: kube
-  notify:
-    - Restart kubelet
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Write the kubecfg (auth) file for kubelet
+#   template: 
+#     src:   kubelet.kubeconfig.j2 
+#     dest:  /etc/kubernetes/kubelet.kubeconfig
+#     owner: kube
+#     group: kube
+#   notify:
+#     - Restart kubelet
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
-- name: Write the kubecfg (auth) file for kube-proxy
-  template: 
-    src:   proxy.kubeconfig.j2
-    dest:  /etc/kubernetes/proxy.kubeconfig
-    owner: kube
-    group: kube
-  notify:
-    - Restart kube-proxy
-  tags:
-    - k8s_security
-    - k8s_node_security
+# - name: Write the kubecfg (auth) file for kube-proxy
+#   template: 
+#     src:   proxy.kubeconfig.j2
+#     dest:  /etc/kubernetes/proxy.kubeconfig
+#     owner: kube
+#     group: kube
+#   notify:
+#     - Restart kube-proxy
+#   tags:
+#     - k8s_security
+#     - k8s_node_security
 
 
 # # Kubernetes node firewalld

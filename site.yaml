@@ -20,10 +20,13 @@
 - name: Create k8sdc-ca certificate authority
   hosts:
     - k8sdc-ca
+  #strategy: debug
   become: yes
   roles:
     - k8sdc-ca
-  tags: k8sdc_ca
+  tags: 
+    - k8sdc_ca
+    - k8sdc_security
 
 
 # - name: Configure Etcd
@@ -52,14 +55,14 @@
 #     - docker
 #   tags: configure_docker
 
-- name: Configure Kubernetes
+- name: Kubernetes setup
   hosts: 
     - k8sdc-masters
     - k8sdc-nodes
-  become:  yes
-  roles:
+  become: yes
+  roles:  
     - kubernetes
-  tags: configure_kubernetes
+  tags: k8s_setup
 
 # - name:  Configure Network Filesystem
 #   hosts: 

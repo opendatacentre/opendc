@@ -4,9 +4,9 @@ interface:      eth0
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['k8sdc-masters'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
-admin_user:     k8sdc
+admin_user:     k8admin #k8sdc
 admin_uid:      5000
-admin_group:    k8sdc
+admin_group:    k8admin #k8sdc
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
@@ -16,7 +16,12 @@ install_pkgs:   true
 packages:
   - socat
   - ceph-common
-regen_certs: false
+
+# Security
+regen_certs:  false
+regen_tokens: false
+regen_users:  false
+
 install_nfs: true
 kubernetes_api_port:     6443
 docker_registry_cache: 192.168.1.201:5000

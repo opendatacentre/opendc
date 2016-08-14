@@ -1,6 +1,6 @@
 ---
 # Configure Kubernetes masters
-- name: Create certs, tokens and users directories
+- name: Create directories
   file:
     path: /etc/kubernetes/{{ item }}
     state: directory
@@ -11,234 +11,255 @@
     - certs
     - tokens
     - users
+    - config
+    - kubeconfig
 
 
 # Kubernetes master binaries
-- name: Stop master services
-  service:
-    name:  "{{ item }}"
-    state: stopped
-  ignore_errors: true
-  with_items:
-    - kube-apiserver
-    - kube-scheduler
-    - kube-controller-manager
+- block:
+
+  - name: Stop master services
+    service:
+      name:  "{{ item }}"
+      state: stopped
+    ignore_errors: true
+    with_items:
+      - kube-apiserver
+      - kube-scheduler
+      - kube-controller-manager
+
+  - name: Fetch Kubernetes binaries from fileserver
+    command: >
+        scp -o StrictHostKeyChecking=no
+            -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} 
+            {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }}
+            /usr/bin/{{ item }}
+    notify:
+      - Restart master daemons
+    with_items:
+      - kube-apiserver
+      - kube-scheduler
+      - kube-controller-manager
+      - kubectl
+
+  - name: Configure master binary permissions
+    file:
+      path:  /usr/bin/{{ item }}
+      state: file
+      mode:  0750
+      owner: kube
+      group: kube
+    with_items:
+      - kube-apiserver
+      - kube-scheduler
+      - kube-controller-manager
+      - kubectl
+
   tags:
     - k8s_binaries
     - k8s_master_binaries
 
-- name: Fetch Kubernetes binaries from fileserver
-  command: >
-      scp -o StrictHostKeyChecking=no
-          -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} 
-          {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }}
-          /usr/bin/{{ item }}
-  notify:
-    - Restart master daemons
-  with_items:
-    - kube-apiserver
-    - kube-scheduler
-    - kube-controller-manager
-    - kubectl
-  tags:
-    - k8s_binaries
-    - k8s_master_binaries
 
-- name: Configure master binary permissions
-  file:
-    path:  /usr/bin/{{ item }}
-    state: file
-    mode:  0755
-    owner: kube
-    group: kube
-  with_items:
-    - kube-apiserver
-    - kube-scheduler
-    - kube-controller-manager
-    - kubectl
-  tags:
-    - k8s_binaries
-    - k8s_master_binaries
-
-
-# Kubernetes master config
-- name: Copy master config file
+# Kubernetes config
+- name: Copy config file
   template:
     src:  config/config.j2
-    dest: /etc/kubernetes/config
+    dest: /etc/kubernetes/config/config
+    mode:  0640
+    owner: kube
+    group: kube
   notify:
     - Reload Systemd
     - Restart master daemons
+  tags: k8s_master_config    
+
+
+# Kubernetes kube-apiserver
+- block:
+
+  - name: Copy kube-apiserver service file
+    copy:
+      src:  services/kube-apiserver.service
+      dest: /usr/lib/systemd/system/kube-apiserver.service
+    notify:
+      - Reload Systemd
+      - Restart kube-apiserver
+
+  - name: Copy kube-apiserver config file
+    template:
+      src:   config/kube-apiserver.j2
+      dest:  /etc/kubernetes/config/kube-apiserver
+      mode:  0640
+      owner: kube
+      group: kube
+    notify: Restart kube-apiserver
+      
+  - name: Enable kube-apiserver service
+    service:
+      name:    kube-apiserver
+      enabled: yes
+
+  tags: k8s_kube_apiserver
+
+
+# Kubernetes kube-scheduler
+- block:
+
+  - name: Copy kube-scheduler service file
+    copy:
+      src:  services/kube-scheduler.service
+      dest: /usr/lib/systemd/system/kube-scheduler.service
+    notify:
+      - Reload Systemd
+      - Restart kube-scheduler
+
+  - name: Copy kube-scheduler config file
+    template:
+      src:   config/kube-scheduler.j2
+      dest:  /etc/kubernetes/config/kube-scheduler
+      mode:  0640
+      owner: kube
+      group: kube
+    notify: Restart kube-scheduler
+      
+  - name: Enable kube-scheduler service
+    service:
+      name:    kube-scheduler
+      enabled: yes
+
+  tags: k8s_kube_scheduler
+
+
+# Kubernetes kube-controller-manager
+- block:
+
+  - name: Copy kube-controller-manager service file
+    copy:
+      src:  services/kube-controller-manager.service
+      dest: /usr/lib/systemd/system/kube-controller-manager.service
+    notify:
+      - Reload Systemd
+      - Restart kube-controller-manager
+
+  - name: Copy kube-controller-manager config file
+    template:
+      src:   config/kube-controller-manager.j2
+      dest:  /etc/kubernetes/config/kube-controller-manager
+      mode:  0640
+      owner: kube
+      group: kube
+    notify: Restart kube-controller-manager
+
+  - name: Enable kube-controller-manager service
+    service:
+      name:    kube-controller-manager
+      enabled: yes
+
+  tags: k8s_kube_controller_manager
+
+
+# Kubernetes security
+- block:
+
+  # Certificates
+  - block:
+
+    - name: Get k8sdc-ca certificate
+      slurp:
+        src: /etc/k8sdc-ca/k8sdc-ca.crt
+      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+      run_once: yes
+      register: k8sdc_ca_cert
+
+    - name: Create k8sdc-ca certificate
+      copy:
+        dest: /etc/kubernetes/certs/k8sdc-ca.crt
+        content: "{{ k8sdc_ca_cert.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+
+    - name: Create kube-apiserver certificate
+      copy:
+        dest: /etc/kubernetes/certs/kube_apiserver.crt
+        content: "{{ kube_apiserver_cert.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+      notify: Restart kube-apiserver
+      when: kube_apiserver_cert is defined
+
+    - name: Create kube-apiserver private key
+      copy:
+        dest: /etc/kubernetes/certs/kube_apiserver.key
+        content: "{{ kube_apiserver_key.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+      notify: Restart kube-apiserver
+      when: kube_apiserver_key is defined
+
+    - name: Create kube-controller-manager certificate
+      copy:
+        dest: /etc/kubernetes/certs/kube_controller_manager.crt
+        content: "{{ kube_controller_manager_cert.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+      notify: Restart kube-controller-manager
+      when: kube_controller_manager_cert is defined
+
+    - name: Create kube-controller-manager private key
+      copy:
+        dest: /etc/kubernetes/certs/kube_controller_manager.key
+        content: "{{ kube_controller_manager_key.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+      notify: Restart kube-controller-manager
+      when: kube_controller_manager_key is defined
+
+    tags: k8s_certs
+
+  # Tokens for kubeconfig files
+  - block:
+
+    - name: Write the kubecfg (auth) file for kube-controller-manager
+      template: 
+        src:   kubeconfig/kube-controller-manager.kubeconfig.j2
+        dest:  /etc/kubernetes/kubeconfig/kube-controller-manager.kubeconfig
+        mode:  0440
+        owner: kube
+        group: kube     
+      notify:  Restart kube-controller-manager
+      when:    kube_controller_manager_token is defined
+
+    - name: Write the kubecfg (auth) file for kube-scheduler
+      template: 
+        src:   kubeconfig/kube-scheduler.kubeconfig.j2 
+        dest:  /etc/kubernetes/kubeconfig/kube-scheduler.kubeconfig
+        mode:  0440
+        owner: kube
+        group: kube
+      notify:  Restart kube-scheduler
+      when:    kube_scheduler_token is defined
+
+    - name: Write the kubecfg (auth) file for kubectl
+      template: 
+        src:   kubeconfig/kubectl.kubeconfig.j2 
+        dest:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
+        mode:  0440
+        owner: kube
+        group: kube
+      when:    kubectl_token is defined
+
+    tags: k8s_tokens
+
+  # Basic auth users
+
   tags:
-    - k8s_master_config
-
-- name: Configure master config file permissions
-  file:
-    path:  /etc/kubernetes/config
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:
-    - k8s_master_config    
-
-
-# Kubernetes kube-apiserver config
-- name: Copy kube-apiserver service file
-  copy:
-    src:  services/kube-apiserver.service
-    dest: /usr/lib/systemd/system/kube-apiserver.service
-  notify:
-    - Reload Systemd
-    - Restart kube-apiserver
-  tags:
-    - k8s_kube_apiserver_config
-
-- name: Copy kube-apiserver config file
-  template:
-    src:  config/kube-apiserver.j2
-    dest: /etc/kubernetes/kube-apiserver
-  notify:
-    - Reload Systemd
-    - Restart kube-apiserver
-  tags:
-    - k8s_kube_apiserver_config
-
-- name: Configure kube-apiserver config file permissions
-  file:
-    path:  /etc/kubernetes/kube-apiserver
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:   
-    - k8s_kube_apiserver_config
-
-- name: Enable kube-apiserver service
-  service:
-    name:    kube-apiserver
-    enabled: yes
-  tags:
-    - k8s_kube_apiserver_config
-
-
-# Kubernetes kube-scheduler config
-- name: Copy kube-scheduler service file
-  copy:
-    src:  services/kube-scheduler.service
-    dest: /usr/lib/systemd/system/kube-scheduler.service
-  notify:
-    - Reload Systemd
-    - Restart kube-scheduler
-  tags:
-    - k8s_kube_scheduler_config
-
-- name: Copy kube-scheduler config file
-  template:
-    src:  config/kube-scheduler.j2
-    dest: /etc/kubernetes/kube-scheduler
-  notify:
-    - Reload Systemd
-    - Restart kube-scheduler
-  tags:
-    - k8s_kube_scheduler_config
-
-- name: Configure kube-scheduler config file permissions
-  file:
-    path:  /etc/kubernetes/kube-scheduler
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:   
-    - k8s_kube_scheduler_config
-
-- name: Enable kube-scheduler service
-  service:
-    name:    kube-scheduler
-    enabled: yes
-  tags:
-    - k8s_kube_scheduler_config
-
-
-# Kubernetes kube-controller-manager config
-- name: Copy kube-controller-manager service file
-  copy:
-    src:  services/kube-controller-manager.service
-    dest: /usr/lib/systemd/system/kube-controller-manager.service
-  notify:
-    - Reload Systemd
-    - Restart kube-controller-manager
-  tags:
-    - k8s_kube_controller_manager_config
-
-- name: Copy kube-controller-manager config file
-  template:
-    src:  config/kube-controller-manager.j2
-    dest: /etc/kubernetes/kube-controller-manager
-  notify:
-    - Reload Systemd
-    - Restart kube-controller-manager
-  tags:
-    - k8s_kube_controller_manager_config
-
-- name: Configure kube-controller-manager config file permissions
-  file:
-    path:  /etc/kubernetes/kube-controller-manager
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:   
-    - k8s_kube_controller_manager_config
-
-- name: Enable kube-controller-manager service
-  service:
-    name:    kube-controller-manager
-    enabled: yes
-  tags:
-    - k8s_kube_controller_manager_config
-
-
-# Security
-- name: Create kube-apiserver certificate
-  copy:
-    dest: /tmp/kube_apiserver.crt
-    content: "{{ kube_apiserver_cert.content | b64decode }}"
-  notify: Restart kube-apiserver
-  when: kube_apiserver_cert is defined
-  tags: k8s_security2
-
-- name: Create kube-apiserver private key
-  copy:
-    dest: /tmp/kube_apiserver.key
-    content: "{{ kube_apiserver_key.content | b64decode }}"
-  notify: Restart kube-apiserver
-  when: kube_apiserver_key is defined
-  tags: k8s_security2
-
-- name: Create kube-controller-manager certificate
-  copy:
-    dest: /tmp/kube_controller_manager.crt
-    content: "{{ kube_controller_manager_cert.content | b64decode }}"
-  notify: Restart kube-controller-manager
-  when: kube_controller_manager_cert is defined
-  tags: k8s_security2
-
-- name: Create kube-controller-manager private key
-  copy:
-    dest: /tmp/kube_controller_manager.key
-    content: "{{ kube_controller_manager_key.content | b64decode }}"
-  notify: Restart kube-controller-manager
-  when: kube_controller_manager_key is defined
-  tags: k8s_security2
-
-
-
-# - name: Include security configuration
-#   include: security.yaml
-#   tags: security
-
+    - k8sdc_security 
+    - k8s_security
 
 
 # - name: Configure firewalld ports for Kubernetes

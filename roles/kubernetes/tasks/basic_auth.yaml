@@ -1,0 +1,14 @@
+---
+
+
+
+
+# - name: Populate users for basic auth in API
+#   lineinfile:
+#     dest: "{{ kube_users_dir }}/known_users.csv"
+#     create: yes
+#     line: '{{ item.value.pass }},{{ item.key }},{{ item.value.role }}'
+#     backup: yes
+#   with_dict: "{{ kube_users }}"
+#   when: inventory_hostname in "{{ groups['kube-master'] }}"
+#   notify: set secret_changed

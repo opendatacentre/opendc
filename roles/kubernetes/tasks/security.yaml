@@ -47,6 +47,9 @@
     - kubecfg.crt
     - kubecfg.key
 
+
+
+
 - name: Copy the token gen script
   copy:
     src:  kube-gen-token.sh
@@ -60,7 +63,7 @@
     TOKEN_DIR: /etc/kubernetes/tokens/
   with_nested:
     - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
-    - "{{ groups['k8sdc-master'] }}"
+    - "{{ groups['k8sdc-masters'] }}"
   register: gentoken
   changed_when: "'Added' in gentoken.stdout"
   notify:

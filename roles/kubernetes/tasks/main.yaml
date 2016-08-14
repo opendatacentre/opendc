@@ -29,7 +29,6 @@
     group: kube
     mode:  0755
 
-
 # Download Kubernetes binaries
 - name: Download Kubernetes binaries
   include: download.yaml
@@ -40,14 +39,59 @@
     - k8s_binaries
 
 
-# Generate Kubernetes certificates, tokens and basic auth users
-- name: Generate Kubernetes certificates, tokens and basic auth users
-  include: security2.yaml
+# Generate Kubernetes certificates
+- name: Stat kube_apiserver.key
+  stat:
+    path: /etc/kubernetes/certs/kube_apiserver.key
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+  run_once: yes
+  register: kube_apiserver_key_file
+  tags:
+  - k8sdc_security 
+  - k8s_security
+  - k8s_certs
+
+- name: Generate Kubernetes certificates
+  include: certificates.yaml
   delegate_to: "{{ groups['k8sdc-ca'][0] }}"
   run_once: yes
-  when: regen_certs
+  when: not kube_apiserver_key_file.stat.exists or regen_certs
   tags:
-    - k8s_security2
+  - k8sdc_security 
+  - k8s_security
+  - k8s_certs
+
+
+# Generate Kubernetes tokens
+- name: Stat known_tokens.csv
+  stat:
+    path: /etc/kubernetes/tokens/known_tokens.csv
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+  run_once: yes
+  register: known_tokens_file
+  tags:
+  - k8sdc_security 
+  - k8s_security
+  - k8s_tokens
+
+- name: Generate Kubernetes tokens
+  include: tokens.yaml
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+  run_once: yes
+  when: not known_tokens_file.stat.exists or regen_tokens
+  tags:
+  - k8sdc_security 
+  - k8s_security
+  - k8s_tokens
+
+
+# Generate Kubernetes basic auth users
+- name: Generate Kubernetes basic auth users
+  include: basic_auth.yaml
+  tags:
+    - k8sdc_security 
+    - k8s_security
+    - k8s_basic_auth
 
 
 # Configure Kubernetes masters

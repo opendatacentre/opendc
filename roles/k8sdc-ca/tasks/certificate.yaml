@@ -6,50 +6,54 @@
     state: directory
     mode:  0750
 
-- name: Create openssl.conf
-  template:
-    src: "{{ role_path }}/../k8sdc-ca/templates/openssl.conf.j2"
-    dest: /tmp/k8sdc-ca/openssl.conf
+- block:
 
-- name: Generate private key
-  command: openssl genrsa -out {{ cert_name }}.key 2048
-  args:
-    chdir: /tmp/k8sdc-ca/
+  - name: Create openssl.conf
+    template:
+      src: "{{ role_path }}/../k8sdc-ca/templates/openssl.conf.j2"
+      dest: /tmp/k8sdc-ca/openssl.conf
 
-- name: Get private key
-  slurp:
-    src: "/tmp/k8sdc-ca/{{ cert_name }}.key"
-  register: "{{ cert_name }}_key"
+  - name: Generate private key
+    command: openssl genrsa -out {{ cert_name }}.key 2048
+    args:
+      chdir: /tmp/k8sdc-ca/
 
-- name: Generate certificate signing request
-  command: >
-      openssl req -new 
-                  -key {{ cert_name }}.key 
-                  -out {{ cert_name }}.csr 
-                  -subj "/CN={{ cn }}" 
-                  -config openssl.conf
-  args:
-    chdir: /tmp/k8sdc-ca/
+  - name: Get private key
+    slurp:
+      src: "/tmp/k8sdc-ca/{{ cert_name }}.key"
+    register: "{{ cert_name }}_key"
 
-- name: Generate certificate
-  command: >
-      openssl x509 -req 
-                   -in {{ cert_name }}.csr 
-                   -CA /etc/k8sdc-ca/k8sdc-ca.crt 
-                   -CAkey /etc/k8sdc-ca/k8sdc-ca.key 
-                   -CAcreateserial 
-                   -out {{ cert_name }}.crt
-                   -days 1095 -extensions v3_req 
-                   -extfile openssl.conf
-  args:
-    chdir: /tmp/k8sdc-ca/
+  - name: Generate certificate signing request
+    command: >
+        openssl req -new 
+                    -key {{ cert_name }}.key 
+                    -out {{ cert_name }}.csr 
+                    -subj "/CN={{ cn }}" 
+                    -config openssl.conf
+    args:
+      chdir: /tmp/k8sdc-ca/
 
-- name: Get certificate
-  slurp:
-    src: "/tmp/k8sdc-ca/{{ cert_name }}.crt"
-  register: "{{ cert_name }}_cert"
+  - name: Generate certificate
+    command: >
+        openssl x509 -req 
+                     -in {{ cert_name }}.csr 
+                     -CA /etc/k8sdc-ca/k8sdc-ca.crt 
+                     -CAkey /etc/k8sdc-ca/k8sdc-ca.key 
+                     -CAcreateserial 
+                     -out {{ cert_name }}.crt
+                     -days 1095 -extensions v3_req 
+                     -extfile openssl.conf
+    args:
+      chdir: /tmp/k8sdc-ca/
 
-- name: Remove certificate temp directory
-  file:
-    path:  /tmp/k8sdc-ca/
-    state: absent
+  - name: Get certificate
+    slurp:
+      src: "/tmp/k8sdc-ca/{{ cert_name }}.crt"
+    register: "{{ cert_name }}_cert"
+
+  always:
+
+  - name: Remove certificate temp directory
+    file:
+      path:  /tmp/k8sdc-ca/
+      state: absent

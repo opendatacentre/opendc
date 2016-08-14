@@ -14,6 +14,9 @@
       kubernetes,
       kubernetes.default,
       kubernetes.default.svc,
+      {%- for apiserver in groups['k8sdc-masters'] -%}
+        {{ apiserver }},
+      {%- endfor -%}
       {{ k8sdc_fqdn }}
 
 - name: Convert fact for k8sdc masters DNS values to a list
@@ -51,19 +54,6 @@
         dns_values: "{{ k8sdc_master_dns_values }}", 
         ip_values:  "{{ k8sdc_master_ip_values }}" }
 
-    
-
-
-
-# - name: Populate users for basic auth in API
-#   lineinfile:
-#     dest: "{{ kube_users_dir }}/known_users.csv"
-#     create: yes
-#     line: '{{ item.value.pass }},{{ item.key }},{{ item.value.role }}'
-#     backup: yes
-#   with_dict: "{{ kube_users }}"
-#   when: inventory_hostname in "{{ groups['kube-master'] }}"
-#   notify: set secret_changed
 
 
 

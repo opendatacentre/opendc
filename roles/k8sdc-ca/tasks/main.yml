@@ -1,6 +1,5 @@
 ---
 # Create k8sdc-ca certificate authority
-
 - name: Install openssl
   yum:
     name:  openssl
@@ -15,21 +14,23 @@
 - name: Stat k8sdc-ca.key
   stat:
     path: /etc/k8sdc-ca/k8sdc-ca.key
-  register: k8sdc_ca_key
+  register: k8sdc_ca_key_file
 
-- name: Generate CA private key
-  command: openssl genrsa -out k8sdc-ca.key 2048
-  args:
-    chdir: /etc/k8sdc-ca/
-  when: not k8sdc_ca_key.stat.exists or regen_certs
+- block:
 
-- name: Generate CA self signed certificate
-  command: >
-      openssl req -x509 -new -nodes 
-                  -key k8sdc-ca.key 
-                  -days 10000 
-                  -out k8sdc-ca.crt 
-                  -subj "/CN=k8sdc-ca"
-  args:
-    chdir: /etc/k8sdc-ca/
-  when: not k8sdc_ca_key.stat.exists or regen_certs
+  - name: Generate CA private key
+    command: openssl genrsa -out k8sdc-ca.key 2048
+    args:
+      chdir: /etc/k8sdc-ca/
+
+  - name: Generate CA self signed certificate
+    command: >
+        openssl req -x509 -new -nodes 
+                    -key k8sdc-ca.key 
+                    -days 10000 
+                    -out k8sdc-ca.crt 
+                    -subj "/CN=k8sdc-ca"
+    args:
+      chdir: /etc/k8sdc-ca/
+
+  when: not k8sdc_ca_key_file.stat.exists or regen_certs
