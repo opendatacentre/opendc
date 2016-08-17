@@ -1,57 +1,80 @@
 ---
 # Generate Kubernetes tokens
-# TODO: Put the script in a temporary location and generate tokens there.  
-#       Cleanup up tmp dir afterwards!!  (just like with cert generation)
-- name: Copy the token gen script
-  copy:
-    src:   security/kube-gen-token.sh
-    dest:  /home/{{ admin_user }}/
-    mode:  0500
-    owner: "{{ admin_user }}"
+- name: Create tokens temp directory
+  file:
+    path:  /tmp/tokens/
+    state: directory
+    mode:  0750
 
-- name: Ensure that a token auth file exists
-  file: 
-    path:  /etc/kubernetes/tokens/known_tokens.csv
-    state: touch
-  changed_when: false
+- block:
 
-- name: Generate tokens for master components
-  command: >
-    /home/{{ admin_user }}/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}
-  environment:
-    TOKEN_DIR: /etc/kubernetes/tokens/
-  with_nested:
-    - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
-    - "{{ groups['k8sdc-masters'] }}"
-  register: gentoken
-  changed_when: "'Added' in gentoken.stdout"
-  notify:
-    - Restart master daemons
+  - name: Copy the token gen script
+    copy:
+      src:  security/kube-gen-token.sh
+      dest: /tmp/tokens/
+      mode: 0500
 
+  - name: Generate master tokens
+    command: >
+      /tmp/tokens/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}
+    environment:
+      TOKEN_DIR: /tmp/tokens/
+    with_nested:
+      - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
+      - "{{ groups['k8sdc-masters'] }}"
 
-# - name: Generate tokens for node components
-#   command: "/home/{{ admin_user }}/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}"
-#   environment:
-#     TOKEN_DIR: /etc/kubernetes/tokens/
-#   with_nested:
-#     - [ 'system:kubelet', 'system:proxy' ]
-#     - "{{ groups['k8sdc-nodes'] }}"
-#   register: gentoken
-#   changed_when: "'Added' in gentoken.stdout"
-#   notify:
-#     - Restart master daemons
+  - name: Get master token values
+    slurp:
+      src: "/tmp/tokens/{{ item[0] }}-{{ item[1] }}.token"
+    with_nested:
+      - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
+      - "{{ groups['k8sdc-masters'] }}"
+    register: master_tokens
 
-- name: Get the master token values
-  slurp:
-    src: "/etc/kubernetes/tokens/{{ item }}-{{ inventory_hostname }}.token"
-  with_items:
-    - "system:controller_manager"
-    - "system:scheduler"
-    - "system:kubectl"
-  register: tokens
+  - name: Set master token facts
+    set_fact:
+      master_token_values: >-
+        {%- set master_token_values = {} -%}
+        {%- for node in groups['k8sdc-masters'] -%}
+          {%- set types = [ "system_controller_manager", "system_scheduler", "system_kubectl" ] -%}
+          {%- set types_values = {} -%}
+          {%- for type in types -%}
+            {%- for token in master_tokens.results -%}
+              {%- set token_name = token.item | join('_') | replace(':', '_') | replace('.', '_') -%}
+              {%- set node_name = node | replace('.', '_') -%}
+              {%- set validate_name = type + '_' + node_name -%}
+              {%- if validate_name == token_name -%}
+                {%- set _ = types_values.update({type: token.content }) -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+          {%- set _ = master_token_values.update({node: types_values}) -%}
+        {%- endfor -%}
+        {{ master_token_values }}
 
-- name: Set token facts
-  set_fact:
-    kube_controller_manager_token: "{{ tokens.results[0].content|b64decode }}"
-    kube_scheduler_token:          "{{ tokens.results[1].content|b64decode }}"
-    kubectl_token:                 "{{ tokens.results[2].content|b64decode }}"
+  # TODO: I need the ability to generate tokens for new nodes without regenerating 
+  #       all node tokens!!!!
+
+  # - name: Generate tokens for node components
+  #   command: "/home/{{ admin_user }}/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}"
+  #   environment:
+  #     TOKEN_DIR: /etc/kubernetes/tokens/
+  #   with_nested:
+  #     - [ 'system:kubelet', 'system:proxy' ]
+  #     - "{{ groups['k8sdc-nodes'] }}"
+  #   register: gentoken
+  #   changed_when: "'Added' in gentoken.stdout"
+  #   notify:
+  #     - Restart master daemons
+
+  - name: Get known_tokens.csv
+    slurp:
+      src: /tmp/tokens/known_tokens.csv
+    register: known_tokens_csv_file
+
+  always:
+
+  - name: Remove tokens temp directory
+    file:
+      path:  /tmp/tokens/
+      state: absent

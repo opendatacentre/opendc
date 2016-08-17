@@ -221,8 +221,29 @@
 
     tags: k8s_certs
 
-  # Tokens for kubeconfig files
+  # Tokens
   - block:
+
+    - name: Create known_tokens.csv
+      copy:
+        dest: /etc/kubernetes/tokens/known_tokens.csv
+        content: "{{ known_tokens_csv_file.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+      notify: Restart kube-apiserver
+      when: master_token_values is defined
+  
+    - name: Create system:controller_manager token file
+      copy:
+        dest: >-
+          /etc/kubernetes/tokens/system:controller_manager-{{ inventory_hostname }}.token
+        content: >-
+          {{ master_token_values[inventory_hostname]['system_controller_manager'] | b64decode }}
+        mode:  0440
+        owner: kube
+        group: kube
+      when: master_token_values is defined
 
     - name: Write the kubecfg (auth) file for kube-controller-manager
       template: 
@@ -232,7 +253,18 @@
         owner: kube
         group: kube     
       notify:  Restart kube-controller-manager
-      when:    kube_controller_manager_token is defined
+      when:    master_token_values is defined
+
+    - name: Create system:scheduler token file
+      copy:
+        dest: >-
+          /etc/kubernetes/tokens/system:scheduler-{{ inventory_hostname }}.token
+        content: >-
+          {{ master_token_values[inventory_hostname]['system_scheduler'] | b64decode }}
+        mode:  0440
+        owner: kube
+        group: kube
+      when: master_token_values is defined
 
     - name: Write the kubecfg (auth) file for kube-scheduler
       template: 
@@ -242,7 +274,18 @@
         owner: kube
         group: kube
       notify:  Restart kube-scheduler
-      when:    kube_scheduler_token is defined
+      when:    master_token_values is defined
+
+    - name: Create system:kubectl token file
+      copy:
+        dest: >-
+          /etc/kubernetes/tokens/system:kubectl-{{ inventory_hostname }}.token
+        content: >-
+          {{ master_token_values[inventory_hostname]['system_kubectl'] | b64decode }}
+        mode:  0440
+        owner: kube
+        group: kube
+      when: master_token_values is defined
 
     - name: Write the kubecfg (auth) file for kubectl
       template: 
@@ -251,7 +294,7 @@
         mode:  0440
         owner: kube
         group: kube
-      when:    kubectl_token is defined
+      when:    master_token_values is defined
 
     tags: k8s_tokens
 

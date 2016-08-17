@@ -1,9 +1,5 @@
 ---
-# Generate Kubernetes certificates, tokens and basic auth users
-
-# But only if they don't already exist or if regen_certs is true, i.e. do stat beforehand
-# Just check kube-apiserver.key
-
+# Generate Kubernetes certificates
 - name: Set fact for k8sdc masters FQDN 
   set_fact:
     k8sdc_fqdn: "kubernetes.default.svc.{{ kubernetes_dns_domain }}"
