@@ -1,224 +1,211 @@
 ---
 # Configure Kubernetes nodes
-- name: Create /var/run/kubernetes/
+- name: node | Create directories
   file:
-    path: /var/run/kubernetes/
+    path:  "{{ item }}"
     state: directory
     owner: kube
     group: kube
-    mode:  0755
-
-- name: Create /var/lib/kubelet/
-  file:
-    path: /var/lib/kubelet/
-    state: directory
-    owner: kube
-    group: kube
-    mode:  0755
+    mode:  0770
+  with_items:
+    - /var/run/kubernetes/
+    - /var/lib/kubelet/
+    - /etc/kubernetes/certs/
+    - /etc/kubernetes/tokens/
+    - /etc/kubernetes/config/
+    - /etc/kubernetes/kubeconfig/
 
 
 # Kubernetes node binaries
-- name: Stop node services
-  service:
-    name:  "{{ item }}"
-    state: stopped
-  ignore_errors: true
-  with_items:
-    - kubelet
-    - kube-proxy
-  tags:
-    - k8s_binaries
-    - k8s_node_binaries
+- block:
 
-- name: Fetch Kubernetes binaries from fileserver
-  command: >
-      scp -o StrictHostKeyChecking=no
-          -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }}
-          {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }}
-          /usr/bin/{{ item }}
-  notify:
-    - Restart node daemons
-  with_items:
-    - kubelet
-    - kube-proxy
-  tags:
-    - k8s_binaries
-    - k8s_node_binaries
+  - name: node | Stop node services
+    service:
+      name:  "{{ item }}"
+      state: stopped
+    ignore_errors: true
+    with_items:
+      - kubelet
+      - kube-proxy
 
-- name: Configure node binary permissions
-  file:
-    path:  /usr/bin/{{ item }}
-    state: file
-    mode:  0755
-    owner: kube
-    group: kube
-  with_items:
-    - kubelet
-    - kube-proxy
+  - name: node | Fetch Kubernetes binaries from fileserver
+    command: >
+        scp -o StrictHostKeyChecking=no
+            -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }}
+            {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/kubernetes_binaries_{{ kubernetes_version }}/{{ item }}
+            /usr/bin/{{ item }}
+    notify:
+      - Restart node daemons
+    with_items:
+      - kubelet
+      - kube-proxy
+
+  - name: node | Configure node binary permissions
+    file:
+      path:  /usr/bin/{{ item }}
+      state: file
+      mode:  0750
+      owner: kube
+      group: kube
+    with_items:
+      - kubelet
+      - kube-proxy
+
   tags:
     - k8s_binaries
     - k8s_node_binaries
 
 
 # Kubernetes node config
-- name: Copy node config file
+- name: node | Copy node config file
   template:
-    src: config/config.j2
-    dest: /etc/kubernetes/config
+    src:   config/config.j2
+    dest:  /etc/kubernetes/config/config
+    mode:  0640
+    owner: kube
+    group: kube
   notify:
     - Reload Systemd
     - Restart node daemons
-  tags:
-    - k8s_node_config
-
-- name: Configure node config file permissions
-  file:
-    path:  /etc/kubernetes/config
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:
-    - k8s_node_config
+  tags: k8s_node_config
 
 
-# Kubernetes kubelet config
-- name: Copy kubelet service file
-  copy:
-    src:  services/kubelet.service
-    dest: /usr/lib/systemd/system/kubelet.service
-  notify:
-    - Reload Systemd
-    - Restart kubelet
-  tags:
-    - k8s_kubelet_config
+# Kubernetes kubelet
+- block:
 
-- name: Copy kubelet config file
-  template:
-    src:  config/kubelet.j2
-    dest: /etc/kubernetes/kubelet
-  notify:
-    - Reload Systemd
-    - Restart kubelet
-  tags:
-    - k8s_kubelet_config
+  - name: node | Copy kubelet service file
+    copy:
+      src:  services/kubelet.service
+      dest: /usr/lib/systemd/system/kubelet.service
+    notify:
+      - Reload Systemd
+      - Restart kubelet
 
-- name: Configure kubelet config file permissions
-  file:
-    path:  /etc/kubernetes/kubelet
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:   
-    - k8s_kubelet_config
+  - name: node | Copy kubelet config file
+    template:
+      src:   config/kubelet.j2
+      dest:  /etc/kubernetes/config/kubelet
+      mode:  0640
+      owner: kube
+      group: kube
+    notify: Restart kubelet
 
-- name: Enable kubelet service
-  service:
-    name:    kubelet
-    enabled: yes
-  tags:
-    - k8s_kubelet_config
+  - name: node | Enable kubelet service
+    service:
+      name:    kubelet
+      enabled: yes
+
+  tags: k8s_kubelet_config
 
 
-# Kubernetes kube-proxy config
-- name: Copy kube-proxy service file
-  copy:
-    src:  services/kube-proxy.service
-    dest: /usr/lib/systemd/system/kube-proxy.service
-  notify:
-    - Reload Systemd
-    - Restart kube-proxy
-  tags:
-    - k8s_kube_proxy_config
+# Kubernetes kube-proxy
+- block:
 
-- name: Copy kube-proxy config file
-  template:
-    src:  config/kube-proxy.j2
-    dest: /etc/kubernetes/kube-proxy
-  notify:
-    - Reload Systemd
-    - Restart kube-proxy
-  tags:
-    - k8s_kube_proxy_config
+  - name: node | Copy kube-proxy service file
+    copy:
+      src:  services/kube-proxy.service
+      dest: /usr/lib/systemd/system/kube-proxy.service
+    notify:
+      - Reload Systemd
+      - Restart kube-proxy
 
-- name: Configure kube-proxy config file permissions
-  file:
-    path:  /etc/kubernetes/kube-proxy
-    state: file
-    mode:  0644
-    owner: kube
-    group: kube
-  tags:   
-    - k8s_kube_proxy_config
+  - name: node | Copy kube-proxy config file
+    template:
+      src:   config/kube-proxy.j2
+      dest:  /etc/kubernetes/config/kube-proxy
+      mode:  0640
+      owner: kube
+      group: kube
+    notify: Restart kube-proxy
 
-- name: Enable kube-proxy service
-  service:
-    name:    kube-proxy
-    enabled: yes
+  - name: node | Enable kube-proxy service
+    service:
+      name:    kube-proxy
+      enabled: yes
+
   tags:
     - k8s_kube_proxy_config
 
 
 # Kubernetes node security
-# - name: Read the CA certificate from a Kubernetes master
-#   slurp:
-#     src: "/etc/kubernetes/certs/ca.crt"
-#   register: ca_cert
-#   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
-#   run_once: yes
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
+- block:
 
-# - name: Decode the CA certificate and register it as a fact
-#   set_fact:
-#     kube_ca_cert: "{{ ca_cert.content|b64decode }}"
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
+  # Certificates
+  - block:
 
-# - name: Create certs directory
-#   file:
-#     path:  /etc/kubernetes/certs/
-#     state: directory
-#     owner: kube
-#     group: kube
-#     mode:  0770
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
+    # k8sdc CA
+    - name: node | Get k8sdc-ca certificate
+      slurp:
+        src: /etc/k8sdc-ca/k8sdc-ca.crt
+      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+      register: k8sdc_ca_cert
 
-# - name: Create CA certificate
-#   copy: 
-#     content: "{{ kube_ca_cert }}" 
-#     dest:    /etc/kubernetes/certs/ca.crt
-#     group:   kube
-#     owner:   kube
-#     mode:    0440
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
+    - name: node | Create k8sdc-ca certificate
+      copy:
+        dest: /etc/kubernetes/certs/k8sdc-ca.crt
+        content: "{{ k8sdc_ca_cert.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
 
-# - name: Get the kubelet and kube-proxy tokens from a Kubernetes master
-#   slurp:
-#     src: "/etc/kubernetes/tokens/{{ item }}-{{ inventory_hostname }}.token"
-#   with_items:
-#     - "system:kubelet"
-#     - "system:proxy"
-#   register: tokens
-#   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
+    # Am I missing cert here, i.e. kubelet, proxy?
 
-# - name: Set token facts
-#   set_fact:
-#     kubelet_token: "{{ tokens.results[0].content|b64decode }}"
-#     proxy_token: "{{ tokens.results[1].content|b64decode }}"
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
+
+    tags: k8s_certs
+
+  # Tokens
+  - block:
+  
+    # kubelet
+    - name: node | Create system:kubelet token file
+      copy:
+        dest: >-
+          /etc/kubernetes/tokens/system:kubelet-{{ inventory_hostname }}.token
+        content: >-
+          {{ node_token_values[inventory_hostname]['system_kubelet'] | b64decode }}
+        mode:  0440
+        owner: kube
+        group: kube
+      when: node_token_values is defined
+
+    - name: node | Create kubelet kubeconfig file
+      template: 
+        src:   kubeconfig/kubelet.kubeconfig.j2
+        dest:  /etc/kubernetes/kubeconfig/kubelet.kubeconfig
+        mode:  0440
+        owner: kube
+        group: kube     
+      notify:  Restart kubelet
+      when:    node_token_values is defined
+    
+    # proxy
+    - name: node | Create system:kube-proxy token file
+      copy:
+        dest: >-
+          /etc/kubernetes/tokens/system:kube-proxy-{{ inventory_hostname }}.token
+        content: >-
+          {{ node_token_values[inventory_hostname]['system_proxy'] | b64decode }}
+        mode:  0440
+        owner: kube
+        group: kube
+      when: node_token_values is defined
+
+    - name: node | Create kube-proxy kubeconfig file
+      template: 
+        src:   kubeconfig/kube-proxy.kubeconfig.j2
+        dest:  /etc/kubernetes/kubeconfig/kube-proxy.kubeconfig
+        mode:  0440
+        owner: kube
+        group: kube     
+      notify:  Restart kube-proxy
+      when:    node_token_values is defined
+
+    tags: k8s_tokens
+
+  tags:
+    - k8sdc_security 
+    - k8s_security
+
 
 # - name: Write the kubecfg (auth) file for kubelet
 #   template: 

@@ -1,0 +1,29 @@
+---
+# Generate Kubernetes basic auth users
+- name: basic_auth_users | Create users temp directory
+  file:
+    path:  /tmp/users/
+    state: directory
+    mode:  0750
+
+- block:
+
+  - name: basic_auth_users | Generate basic auth users
+    lineinfile:
+      dest:   /tmp/users/known_users.csv
+      line:   "{{ item.value.pass }},{{ item.key }},{{ item.value.role }}"
+      create: yes
+    with_dict: "{{ k8s_users }}"
+
+  - name: basic_auth_users | Get basic auth users
+    slurp:
+      src: /tmp/users/known_users.csv
+    register: known_users
+
+  always:
+
+  - name: basic_auth_users | Remove users temp directory
+    file:
+      path:  /tmp/users/
+      state: absent
+

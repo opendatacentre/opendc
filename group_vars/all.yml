@@ -17,10 +17,14 @@ packages:
   - socat
   - ceph-common
 
-# Security
-regen_certs:  false
-regen_tokens: false
-regen_users:  false
+# Kubernetes security
+k8s_regen_certs:  false
+k8s_regen_tokens: false
+k8s_regen_users:  false
+k8s_users:
+  k8sdc:
+    pass: password123
+    role: admin
 
 install_nfs: true
 kubernetes_api_port:     6443

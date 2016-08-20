@@ -1,6 +1,6 @@
 ---
 # Generate Kubernetes tokens
-- name: Create tokens temp directory
+- name: tokens | Create tokens temp directory
   file:
     path:  /tmp/tokens/
     state: directory
@@ -8,13 +8,13 @@
 
 - block:
 
-  - name: Copy the token gen script
+  - name: tokens | Copy the token gen script
     copy:
       src:  security/kube-gen-token.sh
       dest: /tmp/tokens/
       mode: 0500
 
-  - name: Generate master tokens
+  - name: tokens | Generate master tokens
     command: >
       /tmp/tokens/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}
     environment:
@@ -23,7 +23,7 @@
       - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
       - "{{ groups['k8sdc-masters'] }}"
 
-  - name: Get master token values
+  - name: tokens | Get master token values
     slurp:
       src: "/tmp/tokens/{{ item[0] }}-{{ item[1] }}.token"
     with_nested:
@@ -31,7 +31,7 @@
       - "{{ groups['k8sdc-masters'] }}"
     register: master_tokens
 
-  - name: Set master token facts
+  - name: tokens | Set master token facts
     set_fact:
       master_token_values: >-
         {%- set master_token_values = {} -%}
@@ -52,29 +52,55 @@
         {%- endfor -%}
         {{ master_token_values }}
 
+  - name: tokens | Generate node tokens
+    command: >
+      /tmp/tokens/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}
+    environment:
+      TOKEN_DIR: /tmp/tokens/
+    with_nested:
+      - [ "system:kubelet", "system:proxy" ]
+      - "{{ groups['k8sdc-nodes'] }}"
+
+  - name: tokens | Get node token values
+    slurp:
+      src: "/tmp/tokens/{{ item[0] }}-{{ item[1] }}.token"
+    with_nested:
+      - [ "system:kubelet", "system:proxy" ]
+      - "{{ groups['k8sdc-nodes'] }}"
+    register: node_tokens
+
+  - name: tokens | Set node token facts
+    set_fact:
+      node_token_values: >-
+        {%- set node_token_values = {} -%}
+        {%- for node in groups['k8sdc-nodes'] -%}
+          {%- set types = [ "system_kubelet", "system_proxy" ] -%}
+          {%- set types_values = {} -%}
+          {%- for type in types -%}
+            {%- for token in node_tokens.results -%}
+              {%- set token_name = token.item | join('_') | replace(':', '_') | replace('.', '_') -%}
+              {%- set node_name = node | replace('.', '_') -%}
+              {%- set validate_name = type + '_' + node_name -%}
+              {%- if validate_name == token_name -%}
+                {%- set _ = types_values.update({type: token.content }) -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+          {%- set _ = node_token_values.update({node: types_values}) -%}
+        {%- endfor -%}
+        {{ node_token_values }}
+
   # TODO: I need the ability to generate tokens for new nodes without regenerating 
-  #       all node tokens!!!!
+  #       all the node tokens!!!!
 
-  # - name: Generate tokens for node components
-  #   command: "/home/{{ admin_user }}/kube-gen-token.sh {{ item[0] }}-{{ item[1] }}"
-  #   environment:
-  #     TOKEN_DIR: /etc/kubernetes/tokens/
-  #   with_nested:
-  #     - [ 'system:kubelet', 'system:proxy' ]
-  #     - "{{ groups['k8sdc-nodes'] }}"
-  #   register: gentoken
-  #   changed_when: "'Added' in gentoken.stdout"
-  #   notify:
-  #     - Restart master daemons
-
-  - name: Get known_tokens.csv
+  - name: tokens | Get known_tokens.csv
     slurp:
       src: /tmp/tokens/known_tokens.csv
     register: known_tokens_csv_file
 
   always:
 
-  - name: Remove tokens temp directory
+  - name: tokens | Remove tokens temp directory
     file:
       path:  /tmp/tokens/
       state: absent

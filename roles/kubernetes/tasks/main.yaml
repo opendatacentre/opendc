@@ -1,12 +1,12 @@
 ---
 # Configure Kubernetes
-- name: Create Kubernetes group
+- name: main | Create Kubernetes group
   group:
     name:  kube
     gid:   "{{ kubernetes_gid }}"
     state: present
 
-- name: Create Kubernetes user
+- name: main | Create Kubernetes user
   user:
     name:    kube
     uid:     "{{ kubernetes_uid }}"
@@ -15,13 +15,13 @@
     comment: "Kubernetes"
     state:   present
 
-- name: Add Kubernetes group to the k8sdc admin user
+- name: main | Add Kubernetes group to the k8sdc admin user
   user: 
     name:   "{{ admin_user }}"
     append: yes
     groups: kube
 
-- name: Create /etc/kubernetes/
+- name: main | Create /etc/kubernetes/
   file:
     path:  /etc/kubernetes/
     state: directory
@@ -31,7 +31,7 @@
 
 
 # Download Kubernetes binaries
-- name: Download Kubernetes binaries
+- name: main | Download Kubernetes binaries
   include: download.yaml
   delegate_to: "{{ fileserver }}"
   run_once: yes
@@ -41,62 +41,76 @@
 
 
 # Generate Kubernetes certificates
-- name: Stat kube_apiserver.key
+- name: main | Stat kube_apiserver.key
   stat:
     path: /etc/kubernetes/certs/kube_apiserver.key
   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
   run_once: yes
   register: kube_apiserver_key_file
   tags:
-  - k8sdc_security 
-  - k8s_security
-  - k8s_certs
+    - k8sdc_security 
+    - k8s_security
+    - k8s_certs
 
-- name: Generate Kubernetes certificates
+- name: main | Generate Kubernetes certificates
   include: certificates.yaml
   delegate_to: "{{ groups['k8sdc-ca'][0] }}"
   run_once: yes
-  when: not kube_apiserver_key_file.stat.exists or regen_certs
+  when: not kube_apiserver_key_file.stat.exists or k8s_regen_certs
   tags:
-  - k8sdc_security 
-  - k8s_security
-  - k8s_certs
+    - k8sdc_security 
+    - k8s_security
+    - k8s_certs
 
 
 # Generate Kubernetes tokens
-- name: Stat known_tokens.csv
+- name: main | Stat known_tokens.csv
   stat:
     path: /etc/kubernetes/tokens/known_tokens.csv
   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
   run_once: yes
   register: known_tokens_file
   tags:
-  - k8sdc_security 
-  - k8s_security
-  - k8s_tokens
+    - k8sdc_security 
+    - k8s_security
+    - k8s_tokens
 
-- name: Generate Kubernetes tokens
+- name: main | Generate Kubernetes tokens
   include: tokens.yaml
   delegate_to: "{{ groups['k8sdc-masters'][0] }}"
   run_once: yes
-  when: not known_tokens_file.stat.exists or regen_tokens
-  tags:
-  - k8sdc_security 
-  - k8s_security
-  - k8s_tokens
-
-
-# Generate Kubernetes basic auth users
-- name: Generate Kubernetes basic auth users
-  include: basic_auth.yaml
+  when: not known_tokens_file.stat.exists or k8s_regen_tokens
   tags:
     - k8sdc_security 
     - k8s_security
-    - k8s_basic_auth
+    - k8s_tokens
+
+
+# Generate Kubernetes basic auth users
+- name: main | Stat known_users.csv
+  stat:
+    path: /etc/kubernetes/users/known_users.csv
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+  run_once: yes
+  register: known_users_file
+  tags:
+    - k8sdc_security 
+    - k8s_security
+    - k8s_users
+
+- name: main | Generate Kubernetes basic auth users
+  include: basic_auth_users.yaml
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+  run_once: yes
+  when: not known_users_file.stat.exists or k8s_regen_users
+  tags:
+    - k8sdc_security
+    - k8s_security
+    - k8s_users
 
 
 # Configure Kubernetes masters
-- name: Configure Kubernetes masters
+- name: main | Configure Kubernetes masters
   include: master.yaml
   when: '"k8sdc-masters" in group_names'
   tags: 
@@ -104,7 +118,7 @@
 
 
 # Configure Kubernetes nodes
-- name: Configure Kubernetes nodes
+- name: main | Configure Kubernetes nodes
   include: node.yaml
   when: '"k8sdc-nodes" in group_names'
   tags: 

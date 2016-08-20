@@ -1,6 +1,6 @@
 ---
 # Configure Kubernetes masters
-- name: Create directories
+- name: master | Create directories
   file:
     path: /etc/kubernetes/{{ item }}
     state: directory
@@ -18,7 +18,7 @@
 # Kubernetes master binaries
 - block:
 
-  - name: Stop master services
+  - name: master | Stop master services
     service:
       name:  "{{ item }}"
       state: stopped
@@ -28,7 +28,7 @@
       - kube-scheduler
       - kube-controller-manager
 
-  - name: Fetch Kubernetes binaries from fileserver
+  - name: master | Fetch Kubernetes binaries from fileserver
     command: >
         scp -o StrictHostKeyChecking=no
             -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} 
@@ -42,7 +42,7 @@
       - kube-controller-manager
       - kubectl
 
-  - name: Configure master binary permissions
+  - name: master | Configure master binary permissions
     file:
       path:  /usr/bin/{{ item }}
       state: file
@@ -61,10 +61,10 @@
 
 
 # Kubernetes config
-- name: Copy config file
+- name: master | Copy config file
   template:
-    src:  config/config.j2
-    dest: /etc/kubernetes/config/config
+    src:   config/config.j2
+    dest:  /etc/kubernetes/config/config
     mode:  0640
     owner: kube
     group: kube
@@ -77,7 +77,7 @@
 # Kubernetes kube-apiserver
 - block:
 
-  - name: Copy kube-apiserver service file
+  - name: master | Copy kube-apiserver service file
     copy:
       src:  services/kube-apiserver.service
       dest: /usr/lib/systemd/system/kube-apiserver.service
@@ -85,7 +85,7 @@
       - Reload Systemd
       - Restart kube-apiserver
 
-  - name: Copy kube-apiserver config file
+  - name: master | Copy kube-apiserver config file
     template:
       src:   config/kube-apiserver.j2
       dest:  /etc/kubernetes/config/kube-apiserver
@@ -94,7 +94,7 @@
       group: kube
     notify: Restart kube-apiserver
       
-  - name: Enable kube-apiserver service
+  - name: master | Enable kube-apiserver service
     service:
       name:    kube-apiserver
       enabled: yes
@@ -105,7 +105,7 @@
 # Kubernetes kube-scheduler
 - block:
 
-  - name: Copy kube-scheduler service file
+  - name: master | Copy kube-scheduler service file
     copy:
       src:  services/kube-scheduler.service
       dest: /usr/lib/systemd/system/kube-scheduler.service
@@ -113,7 +113,7 @@
       - Reload Systemd
       - Restart kube-scheduler
 
-  - name: Copy kube-scheduler config file
+  - name: master | Copy kube-scheduler config file
     template:
       src:   config/kube-scheduler.j2
       dest:  /etc/kubernetes/config/kube-scheduler
@@ -122,7 +122,7 @@
       group: kube
     notify: Restart kube-scheduler
       
-  - name: Enable kube-scheduler service
+  - name: master | Enable kube-scheduler service
     service:
       name:    kube-scheduler
       enabled: yes
@@ -133,7 +133,7 @@
 # Kubernetes kube-controller-manager
 - block:
 
-  - name: Copy kube-controller-manager service file
+  - name: master | Copy kube-controller-manager service file
     copy:
       src:  services/kube-controller-manager.service
       dest: /usr/lib/systemd/system/kube-controller-manager.service
@@ -141,7 +141,7 @@
       - Reload Systemd
       - Restart kube-controller-manager
 
-  - name: Copy kube-controller-manager config file
+  - name: master | Copy kube-controller-manager config file
     template:
       src:   config/kube-controller-manager.j2
       dest:  /etc/kubernetes/config/kube-controller-manager
@@ -150,7 +150,7 @@
       group: kube
     notify: Restart kube-controller-manager
 
-  - name: Enable kube-controller-manager service
+  - name: master | Enable kube-controller-manager service
     service:
       name:    kube-controller-manager
       enabled: yes
@@ -158,20 +158,20 @@
   tags: k8s_kube_controller_manager
 
 
-# Kubernetes security
+# Kubernetes master security
 - block:
 
   # Certificates
   - block:
 
-    - name: Get k8sdc-ca certificate
+    # k8sdc CA
+    - name: master | Get k8sdc-ca certificate
       slurp:
         src: /etc/k8sdc-ca/k8sdc-ca.crt
       delegate_to: "{{ groups['k8sdc-ca'][0] }}"
-      run_once: yes
       register: k8sdc_ca_cert
 
-    - name: Create k8sdc-ca certificate
+    - name: master | Create k8sdc-ca certificate
       copy:
         dest: /etc/kubernetes/certs/k8sdc-ca.crt
         content: "{{ k8sdc_ca_cert.content | b64decode }}"
@@ -179,7 +179,8 @@
         owner: kube
         group: kube
 
-    - name: Create kube-apiserver certificate
+    # kube-apiserver
+    - name: master | Create kube-apiserver certificate
       copy:
         dest: /etc/kubernetes/certs/kube_apiserver.crt
         content: "{{ kube_apiserver_cert.content | b64decode }}"
@@ -189,7 +190,7 @@
       notify: Restart kube-apiserver
       when: kube_apiserver_cert is defined
 
-    - name: Create kube-apiserver private key
+    - name: master | Create kube-apiserver private key
       copy:
         dest: /etc/kubernetes/certs/kube_apiserver.key
         content: "{{ kube_apiserver_key.content | b64decode }}"
@@ -199,7 +200,8 @@
       notify: Restart kube-apiserver
       when: kube_apiserver_key is defined
 
-    - name: Create kube-controller-manager certificate
+    # kube-controller-manager
+    - name: master | Create kube-controller-manager certificate
       copy:
         dest: /etc/kubernetes/certs/kube_controller_manager.crt
         content: "{{ kube_controller_manager_cert.content | b64decode }}"
@@ -209,7 +211,7 @@
       notify: Restart kube-controller-manager
       when: kube_controller_manager_cert is defined
 
-    - name: Create kube-controller-manager private key
+    - name: master | Create kube-controller-manager private key
       copy:
         dest: /etc/kubernetes/certs/kube_controller_manager.key
         content: "{{ kube_controller_manager_key.content | b64decode }}"
@@ -224,7 +226,7 @@
   # Tokens
   - block:
 
-    - name: Create known_tokens.csv
+    - name: master | Create known_tokens.csv
       copy:
         dest: /etc/kubernetes/tokens/known_tokens.csv
         content: "{{ known_tokens_csv_file.content | b64decode }}"
@@ -234,10 +236,11 @@
       notify: Restart kube-apiserver
       when: master_token_values is defined
   
-    - name: Create system:controller_manager token file
+    # kube-controller-manager
+    - name: master | Create system:controller_manager token file
       copy:
         dest: >-
-          /etc/kubernetes/tokens/system:controller_manager-{{ inventory_hostname }}.token
+          /etc/kubernetes/tokens/system:kube-controller-manager-{{ inventory_hostname }}.token
         content: >-
           {{ master_token_values[inventory_hostname]['system_controller_manager'] | b64decode }}
         mode:  0440
@@ -245,7 +248,7 @@
         group: kube
       when: master_token_values is defined
 
-    - name: Write the kubecfg (auth) file for kube-controller-manager
+    - name: master | Create kube-controller-manager kubeconfig file
       template: 
         src:   kubeconfig/kube-controller-manager.kubeconfig.j2
         dest:  /etc/kubernetes/kubeconfig/kube-controller-manager.kubeconfig
@@ -255,10 +258,11 @@
       notify:  Restart kube-controller-manager
       when:    master_token_values is defined
 
-    - name: Create system:scheduler token file
+    # kube-scheduler
+    - name: master | Create system:scheduler token file
       copy:
         dest: >-
-          /etc/kubernetes/tokens/system:scheduler-{{ inventory_hostname }}.token
+          /etc/kubernetes/tokens/system:kube-scheduler-{{ inventory_hostname }}.token
         content: >-
           {{ master_token_values[inventory_hostname]['system_scheduler'] | b64decode }}
         mode:  0440
@@ -266,7 +270,7 @@
         group: kube
       when: master_token_values is defined
 
-    - name: Write the kubecfg (auth) file for kube-scheduler
+    - name: master | Create kube-scheduler kubeconfig file
       template: 
         src:   kubeconfig/kube-scheduler.kubeconfig.j2 
         dest:  /etc/kubernetes/kubeconfig/kube-scheduler.kubeconfig
@@ -276,7 +280,8 @@
       notify:  Restart kube-scheduler
       when:    master_token_values is defined
 
-    - name: Create system:kubectl token file
+    # kubectl
+    - name: master | Create system:kubectl token file
       copy:
         dest: >-
           /etc/kubernetes/tokens/system:kubectl-{{ inventory_hostname }}.token
@@ -287,7 +292,7 @@
         group: kube
       when: master_token_values is defined
 
-    - name: Write the kubecfg (auth) file for kubectl
+    - name: master | Create kubectl kubeconfig file
       template: 
         src:   kubeconfig/kubectl.kubeconfig.j2 
         dest:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
@@ -299,6 +304,19 @@
     tags: k8s_tokens
 
   # Basic auth users
+  - block:
+
+    - name: master | Create known_users.csv file
+      copy:
+        dest:    /etc/kubernetes/users/known_users.csv
+        content: "{{ known_users.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+      notify:  Restart kube-apiserver
+      when: known_users.content is defined
+
+    tags: k8s_users
 
   tags:
     - k8sdc_security 
