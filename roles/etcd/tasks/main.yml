@@ -3,13 +3,13 @@
   stat:
     path: "/{{ download_dir }}/{{ etcd_pkgname }}"
   register:    etcd_pkg_fileserver
-  delegate_to: "{{ fileserver }}"
+  delegate_to: "{{ groups['fileserver'][0] }}"
   run_once:    yes
 
 - name: Download Etcd to the fileserver
   get_url:
     url:  "{{ etcd_url }}"
-    dest: "/{{ download_dir }}/{{ etcd_pkgname }}"
+    dest: "{{ download_dir }}/{{ etcd_pkgname }}"
   delegate_to: "{{ fileserver }}"
   run_once:    yes
   when:        not etcd_pkg_fileserver.stat.exists

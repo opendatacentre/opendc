@@ -28,32 +28,31 @@
     - k8sdc_ca
     - k8sdc_security
 
+- name: Configure Etcd
+  hosts: 
+    - etcd
+  become:  yes
+  roles:
+    - etcd
+  tags: configure_etcd
 
-# - name: Configure Etcd
-#   hosts: 
-#     - etcd
-#   sudo:  yes
-#   roles:
-#     - etcd
-#   tags: configure_etcd
+- name: Configure Flannel
+  hosts: 
+    - k8sdc-masters
+    - k8sdc-nodes
+  become:  yes
+  roles:
+    - flannel
+  tags: configure_flannel
 
-# - name: Configure Flannel
-#   hosts: 
-#     - k8sdc-masters
-#     - k8sdc-nodes
-#   sudo:  yes
-#   roles:
-#     - flannel
-#   tags: configure_flannel
-
-# - name: Configure Docker
-#   hosts: 
-#     - k8sdc-masters
-#     - k8sdc-nodes
-#   sudo:  yes
-#   roles:
-#     - docker
-#   tags: configure_docker
+- name: Configure Docker
+  hosts: 
+    - k8sdc-masters
+    - k8sdc-nodes
+  become:  yes
+  roles:
+    - docker
+  tags: configure_docker
 
 - name: Kubernetes setup
   hosts: 
@@ -68,35 +67,35 @@
 #   hosts: 
 #     - k8sdc-master
 #     - k8sdc-nodes
-#   sudo:  yes
+#   become:  yes
 #   roles:
 #     - { role: nfs, when: install_nfs }
 #   tags: configure_nw_filesystem
 
 # - name: Configure Cluster Services, i.e. DNS in k8s-system
 #   hosts: k8sdc-master
-#   sudo: yes
+#   become: yes
 #   roles:
 #     - services-cluster
 #   tags: configure_services_cluster
 
 # - name: Configure Infrastucture Services
 #   hosts: k8sdc-master
-#   sudo: yes
+#   become: yes
 #   roles:
 #     - services-infrastructure
 #   tags: configure_services_infrastructure
 
 # - name: Configure Development Services
 #   hosts: k8sdc-master
-#   sudo: yes
+#   become: yes
 #   roles:
 #     - services-development
 #   tags: configure_services_development
 
 # - name: Configure Productivity Services
 #   hosts: k8sdc-master
-#   sudo: yes
+#   become: yes
 #   roles:
 #     - services-productivity
 #   tags: configure_services_productivity

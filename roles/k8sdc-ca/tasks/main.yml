@@ -33,4 +33,4 @@
     args:
       chdir: /etc/k8sdc-ca/
 
-  when: not k8sdc_ca_key_file.stat.exists or regen_certs
+  when: not k8sdc_ca_key_file.stat.exists or k8s_regen_certs

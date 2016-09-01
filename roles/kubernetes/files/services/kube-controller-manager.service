@@ -2,8 +2,8 @@
 Description=Kubernetes Controller Manager Server
 
 [Service]
-EnvironmentFile=-/etc/kubernetes/config
-EnvironmentFile=-/etc/kubernetes/kube-controller-manager
+EnvironmentFile=-/etc/kubernetes/config/config
+EnvironmentFile=-/etc/kubernetes/config/kube-controller-manager
 User=kube
 ExecStart=/usr/bin/kube-controller-manager \
 	    $KUBE_LOGTOSTDERR \

@@ -1,16 +1,16 @@
 ---
 cluster_name:   k8sdc
-interface:      eth0
+interface:      eth1
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['k8sdc-masters'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
-admin_user:     k8admin #k8sdc
+admin_user:     k8sdc #k8admin
 admin_uid:      5000
-admin_group:    k8admin #k8sdc
+admin_group:    k8sdc #k8admin
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
-fileserver:     "{{ groups.fileserver | first }}"
+fileserver:     "{{ groups['fileserver'][0] }}"
 download_dir:   /var/download/
 install_pkgs:   true
 packages:
