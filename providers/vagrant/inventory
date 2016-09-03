@@ -1,0 +1,34 @@
+
+
+master-vb.k8sdc.io ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/Users/desdrury/Sites/Citopro/k8sdc/.vagrant/machines/master-vb.k8sdc.io/virtualbox/private_key'
+node1-vb.k8sdc.io ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/Users/desdrury/Sites/Citopro/k8sdc/.vagrant/machines/node1-vb.k8sdc.io/virtualbox/private_key'
+node2-vb.k8sdc.io ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/Users/desdrury/Sites/Citopro/k8sdc/.vagrant/machines/node2-vb.k8sdc.io/virtualbox/private_key'
+node3-vb.k8sdc.io ansible_ssh_user='vagrant' ansible_ssh_private_key_file='/Users/desdrury/Sites/Citopro/k8sdc/.vagrant/machines/node3-vb.k8sdc.io/virtualbox/private_key'
+
+[k8sdc:children]
+k8sdc-masters
+k8sdc-nodes
+etcd
+k8sdc-ca
+fileserver
+
+
+[k8sdc-masters]
+master-vb.k8sdc.io
+
+[k8sdc-nodes]
+node1-vb.k8sdc.io
+node2-vb.k8sdc.io
+node3-vb.k8sdc.io
+
+[etcd]
+master-vb.k8sdc.io
+node1-vb.k8sdc.io
+node2-vb.k8sdc.io
+node3-vb.k8sdc.io
+
+[fileserver]
+master-vb.k8sdc.io
+
+[k8sdc-ca]
+master-vb.k8sdc.io

@@ -7,3 +7,7 @@ roles/docker/vars/
 roles/kubernetes/vars/
 cluster-services/
 site/
+build/
+dist/
+k8sdc.egg-info/
+*.pyc
