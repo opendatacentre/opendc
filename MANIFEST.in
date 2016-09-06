@@ -1,1 +1,7 @@
+include site.yaml
+include LICENSE
 recursive-include providers *
+recursive-include roles *
+recursive-include group_vars *
+recursive-include keys *
+recursive-include utilities *

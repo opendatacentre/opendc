@@ -6,15 +6,25 @@ from k8sdc import __version__, __author__, __email__
 import os
 from collections import namedtuple
 
-# Need to use namedtuple as tuples are normally immutable
-DataFiles = namedtuple('DataFiles', ['directory','files'])
+
+def add_data_files(directory, data_files):
+  DataFiles = namedtuple('DataFiles', ['directory','files'])
+  for root, dirnames, filenames in os.walk(directory):
+    if len(filenames) > 0:
+      files = DataFiles(root, [])
+      for filename in filenames:
+        files[1].append(os.path.join(root, filename))
+      data_files.append(files)
+
+
 data_files = []
-for root, dirnames, filenames in os.walk('providers'):
-  if len(filenames) > 0:
-    files = DataFiles(root, [])
-    for filename in filenames:
-      files[1].append(os.path.join(root, filename))
-    data_files.append(files)
+data_files.append(('', ['site.yaml', 'LICENSE']))
+add_data_files('providers', data_files)
+add_data_files('roles', data_files)
+add_data_files('group_vars', data_files)
+add_data_files('keys', data_files)
+add_data_files('utilities', data_files)
+
 
 setup(
   name         = 'k8sdc',
@@ -35,7 +45,8 @@ setup(
   packages     = find_packages(),
   data_files   = data_files,
   scripts      = ['bin/k8sdc'],
-  install_requires = ['docopt>=0.6.2',
+  install_requires = ['ansible>=2.1.1.0',
+                      'docopt>=0.6.2',
                       'schema>=0.6.0',
                       'terminaltables>=3.0.0',
                       'requests>=2.9.1']

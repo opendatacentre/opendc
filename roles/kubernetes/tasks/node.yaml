@@ -95,7 +95,7 @@
       name:    kubelet
       enabled: yes
 
-  tags: k8s_kubelet_config
+  tags: k8s_kubelet
 
 
 # Kubernetes kube-proxy
@@ -124,7 +124,7 @@
       enabled: yes
 
   tags:
-    - k8s_kube_proxy_config
+    - k8s_kube_proxy
 
 
 # Kubernetes node security
@@ -205,31 +205,6 @@
   tags:
     - k8sdc_security 
     - k8s_security
-
-
-# - name: Write the kubecfg (auth) file for kubelet
-#   template: 
-#     src:   kubelet.kubeconfig.j2 
-#     dest:  /etc/kubernetes/kubelet.kubeconfig
-#     owner: kube
-#     group: kube
-#   notify:
-#     - Restart kubelet
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
-
-# - name: Write the kubecfg (auth) file for kube-proxy
-#   template: 
-#     src:   proxy.kubeconfig.j2
-#     dest:  /etc/kubernetes/proxy.kubeconfig
-#     owner: kube
-#     group: kube
-#   notify:
-#     - Restart kube-proxy
-#   tags:
-#     - k8s_security
-#     - k8s_node_security
 
 
 # # Kubernetes node firewalld

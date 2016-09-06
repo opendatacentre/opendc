@@ -3,49 +3,88 @@
 Initialise a new k8sdc installation.
 
 usage:
-  k8sdc init [--help | -h] -p <provider>
+  k8sdc [--debug] init [--help | -h]  -p <provider>
 
 options:
-  -p, --provider=<provider>  Provider.
-                                vagrant
-                                do
-                                aws
-  -h, --help                 show this help.
+  -p, --provider=<provider>  
+                provider type. One of the following:
+                  vagrant
+                  do [NOT IMPLEMENTED]
+                  aws [NOT IMPLEMENTED]
+                  federation [NOT IMPLEMENTED]
+  -h, --help    show this help.
+  --debug       show debug output.
+
+example:
+  k8sdc init -p vagrant
 """
+
 
 import k8sdc
 import os
+import sys
+import shutil
+from logging import debug, error
 from docopt import docopt
 from pkg_resources import Requirement, resource_filename
-from shutil import copytree, copy
 
 
 class InitCmd(object):
-  """docstring for ClassName"""
+  """Initialize a new k8sdc installation"""
   
-  def __init__(self, argv):
+  files       = ['site.yaml', 'LICENSE']
+  directories = ['roles', 'group_vars', 'keys', 'utilities']
+  providers   = ['vagrant']
+
+
+  def __init__(self):
     super(InitCmd, self).__init__()
 
     args = docopt(__doc__)
-    # print(args)
+    debug("k8sdc init - args:\n{}".format(args))
 
     provider = args['--provider']
-    curdir = os.path.abspath(os.curdir)
+    if provider not in self.providers:
+      error("Unknown provider: {}".format(provider))
+      error("Permitted set is: \n\t{}".format(self.providers))
+      print(__doc__)
+      sys.exit(1)
 
-    if provider == 'vagrant':
-      # check for existence of vagrant command on path
-      pass
+    curdir = os.getcwd()
 
-    # check curdir does not include a .k8sdc config file
-    if not os.path.exists(os.path.join(curdir, '.k8sdc')):
-      providers_dir = resource_filename(Requirement.parse("k8sdc"),"providers")
-      src = os.path.join(providers_dir, provider)
-      k8sdc.copytree(src, curdir)
-    else:
-      raise Exception()
+    debug('provider: {}'.format(provider))
+    debug('curdir:   {}'.format(curdir))
+    debug('----------')
 
+    # Check curdir does not include a .k8sdc config file
+    # TODO: or parent path
+    if os.path.exists(os.path.join(curdir, '.k8sdc')):
+      error('Current directory already contains a \'.k8sdc\' file.')
+      sys.exit(1)
+
+    # Copy standard files
+    for file in self.files:
+      src = resource_filename(Requirement.parse("k8sdc"),file)
+      debug("Copying file: {}".format(file))
+      shutil.copy2(src, curdir)
+      debug('----------')
+
+    # Copy standard directories
+    for directory in self.directories:
+      src = resource_filename(Requirement.parse("k8sdc"),directory)
+      debug("Copying directory: {}".format(directory))
+      k8sdc.copytree(src, os.path.join(curdir, directory))
+
+    # Copy provider specific directory
+    provider_dir = os.path.join('providers', provider)
+    src = resource_filename(Requirement.parse("k8sdc"),provider_dir)
+    debug("Copying directory: {}".format(provider_dir))
+    k8sdc.copytree(src, curdir)
 
     # create .k8sdc config file
+    with open(os.path.join(curdir, '.k8sdc'), 'w'):
+      os.utime(os.path.join(curdir, '.k8sdc'), None)
+
 
 
     
