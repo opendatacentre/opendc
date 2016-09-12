@@ -14,7 +14,7 @@ commands:
   init       initialize a new k8sdc installation in the current directory.
   up         run machine, provision, app, client, config and hosts commands. [NOT IMPLEMENTED]
   machine    create a new set of machines for k8sdc to be provisioned to. [NOT IMPLEMENTED]
-  provision  provision k8sdc components on the machines. [NOT IMPLEMENTED]
+  provision  provision k8sdc components on to the machines. [NOT IMPLEMENTED]
   app        deploy k8sdc apps to the k8s cluster. [NOT IMPLEMENTED]
   client     install kubectl and helm clients locally. [NOT IMPLEMENTED]
   config     generate a local kubeconfig file. [NOT IMPLEMENTED]

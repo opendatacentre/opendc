@@ -11,6 +11,11 @@ fileserver
 ansible_user=XXXXX
 ansible_ssh_pass=XXXXX
 
+[k8s:children]
+k8sdc-masters
+k8sdc-nodes
+
+
 [k8sdc-masters]
 master.k8sdc.io
 

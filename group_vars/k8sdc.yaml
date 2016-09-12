@@ -1,0 +1,39 @@
+---
+# Solutions - Call a seperate task yaml file in roles/solutions/system.yaml,
+#             infra.yaml, etc, i.e. dns.yaml, ceph.yaml
+#             Variables for the solution are stored with the solution yaml and
+#             included at runtime.
+
+system:
+  namespace: k8s-system
+  solutions:
+    - name: dns
+      use:  true
+    
+    - name: helm
+      use:  true
+
+    - name: dashboard
+      use:  true
+
+
+infrastructure:
+  namespace: infra
+  solutions:
+    - name: storage-ceph
+      use:  true
+
+
+development:
+  namespace: devel
+  solutions:
+    - name: artifactory
+      use:  true
+
+
+productivity:
+
+
+# User defined solutions, roles/user/
+user:
+  namespace: user

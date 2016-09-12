@@ -8,6 +8,7 @@ usage:
 options:
   -p, --provider=<provider>  
                 provider type. One of the following:
+                  bare [NOT IMPLEMENTED]
                   vagrant
                   do [NOT IMPLEMENTED]
                   aws [NOT IMPLEMENTED]
@@ -24,7 +25,7 @@ import k8sdc
 import os
 import sys
 import shutil
-from logging import debug, error
+from logging import debug, error, info
 from docopt import docopt
 from pkg_resources import Requirement, resource_filename
 
@@ -61,6 +62,8 @@ class InitCmd(object):
     if os.path.exists(os.path.join(curdir, '.k8sdc')):
       error('Current directory already contains a \'.k8sdc\' file.')
       sys.exit(1)
+
+    info("Copying files for provider: {}".format(provider))
 
     # Copy standard files
     for file in self.files:

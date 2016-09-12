@@ -1,6 +1,0 @@
-# Capabilties
-
-<hr>
-
-**TODO**
-

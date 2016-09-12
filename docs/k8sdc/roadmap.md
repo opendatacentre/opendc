@@ -1,8 +1,13 @@
-# Services Roadmap
+# Roadmap
+___
 
-<hr>
+**k8sdc** has [*Capabilities*](../reference/capability.md) that are realised by [*Solutions*](../reference/solution.md).  *Solutions* are implemented by [*Products*](../reference/product.md) and configuration.
+___
 
-The following lists contain items that are intended to make it into the k8sdc platform. However, these items are likely to change.
+
+*NOTE: This now needs a complete re-write*
+
+The following lists contain items that are intended to make it into the **k8sdc** platform. However, these items are likely to change.
 
 ## Done but needs more work
 

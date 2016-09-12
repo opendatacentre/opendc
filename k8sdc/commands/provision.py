@@ -24,7 +24,7 @@ from ansible.inventory import Inventory
 
 
 class ProvisionCmd(object):
-  """Provision k8sdc components onto a set of machines"""
+  """Provision k8sdc components on to a set of machines"""
 
   def __init__(self):
     super(ProvisionCmd, self).__init__()
@@ -49,6 +49,7 @@ class ProvisionCmd(object):
                             passwords={})
 
     results = pbex.run()
+    print(results)
 
 
 

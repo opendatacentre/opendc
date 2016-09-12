@@ -6,6 +6,8 @@ roles/flannel/vars/
 roles/docker/vars/
 roles/kubernetes/vars/
 cluster-services/
+node_modules/
+_book/
 site/
 build/
 dist/

@@ -46,8 +46,5 @@ setup(
   data_files   = data_files,
   scripts      = ['bin/k8sdc'],
   install_requires = ['ansible>=2.1.1.0',
-                      'docopt>=0.6.2',
-                      'schema>=0.6.0',
-                      'terminaltables>=3.0.0',
-                      'requests>=2.9.1']
+                      'docopt>=0.6.2']
 )

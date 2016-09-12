@@ -1,5 +1,0 @@
-# Solutions
-
-<hr>
-
-**TODO**
