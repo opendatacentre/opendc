@@ -1,7 +1,7 @@
 # Kubernetes {{kubernetes}}
 ___
 
-Flow diagram of the order the task files are called. With decision nodes for the stat file checks. 
+[ Flow diagram of the order the task files are called. With decision nodes for the stat file checks. ] 
 
 ## Role Directory Layout
 

@@ -6,7 +6,7 @@ ___
 
 #### Which infrastructure applications and what capabilities do they provide?
 
-<a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
+
 
 #### Which development applications and what capabilities do they provide?
 

@@ -23,6 +23,7 @@
 - name: certificates | Set fact for k8sdc masters IP addresses
   set_fact:
     k8sdc_master_ip_values: >-
+      10.254.0.1,
       {%- for apiserver in groups['k8sdc-masters'] -%}
       {{ hostvars[apiserver]['ansible_' + interface].ipv4.address }}
       {%- if not loop.last -%},{%- endif -%}

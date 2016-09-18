@@ -5,12 +5,13 @@ Distributed block storage is ....
 ___
 
 
-## Attributes
+## Characteristics
 
 * Can share block storage over a network.
 * Can be mounted into a *Container*.
 * Resilient to failure.
 * Good performance.
+
 ___
 
 

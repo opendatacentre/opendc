@@ -4,3 +4,5 @@ ___
 Take a look at this:
 
 <script type="text/javascript" src="https://asciinema.org/a/14.js" id="asciicast-14" async></script>
+
+<a href="https://asciinema.org/a/4suhr8p42qcn6r7crfzt6cc3e?autoplay=1" target="_blank"><img src="https://cloud.githubusercontent.com/assets/6783261/17330426/ce7ad066-5894-11e6-84ea-29fd4207af58.gif" alt="asciicast"></a>
