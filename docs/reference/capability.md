@@ -1,7 +1,7 @@
 # Capability
 ___
 
-A *Capability*, within the context of **k8sdc**, is a set of desired characteristics that apply to a particular domain within an IT system, i.e. cluster management, monitoring, logging, etc.  A *Capability* is implemented by a [*Solution*](solution.md) and there can be more than one *Solution* to a *Capability*, leaving the choice of which *Solution* to use up to the end user.
+Within the context of **k8sdc**, a *Capability* is the definition of a set of desired attributes that apply to a particular domain within an IT system, i.e. cluster management, monitoring, logging, etc.  A *Capability* is implemented by a [*Solution*](solution.md) and there can be more than one equivalent *Solution* to a *Capability*, leaving the choice of which *Solution* to use up to the end user.
 ___
 
 

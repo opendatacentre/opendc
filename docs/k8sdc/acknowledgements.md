@@ -15,7 +15,7 @@ ___
 
 ## Organisations and Projects
 
-* [Google](https://www.google.com/about/company/) and the Kubernetes community for [Kubernetes](http://kubernetes.io) and [Helm](https://github.com/kubernetes/helm).
+* [Google](https://www.google.com/about/company/), [Deis](http://deis.io/) and the Kubernetes community for [Kubernetes](http://kubernetes.io) and [Helm](https://github.com/kubernetes/helm).
 * [RedHat](https://www.redhat.com) for [Ansible](https://www.ansible.com).
 * [Docker](https://www.docker.com) for Docker.
 * The [Python Software Foundation](https://www.python.org/psf/) for [Python](https://www.python.org).

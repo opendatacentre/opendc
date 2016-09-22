@@ -5,7 +5,7 @@ A HTTP(S) reverse proxy is .....
 ___
 
 
-## Characteristics
+## Attributes
 
 * Auto-discovery of *Pods*.
 

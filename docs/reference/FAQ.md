@@ -4,39 +4,36 @@ ___
 
 ## Project {{project}}
 
-#### Which infrastructure applications and what capabilities do they provide?
-
-
-
-#### Which development applications and what capabilities do they provide?
-
-#### Which productivity applications and what capabilities do they provide?
-
-#### What does fully integrated 'out of the box' mean?
-
-#### How is Kubernetes used for orchestration?
-
 #### Is everything open source?
 
 Yes.  However some products have paid versions.  If you find a product particularly useful I recommend paying for it to help maintain the continued development of the product. 
 
-#### Where can I run k8sdc?
 
 #### Why have you created this project?
 
-Remove barriers to entry and allow sophisticated digital solutions to be delivered without the usual cost. Allow for smaller players to innovate on new and better solutions for the worlds problems. 
+To allow for smaller organisations to more easily innovate on digital content.  To allow organisations to regain control of their IT.  To minimise the cost barrier when providing digital content.  To democratize access to professional capabilities without being locked into a particular vendor.  
 
-#### Do you make any money on it?
 
-Not from k8sdc itself. I may earn money consulting on it. And there will potentially be a paid product that adds additional value created in the future. But k8sc as a platform will always be free.
+#### Do you make money from k8sdc?
+
+Not from **k8sdc** itself. However, money might be made in providing consulting services at some point in the future.  And there may also be a paid product that adds additional value.  Although this is not a given.  Most importantly though, **k8sdc** will always be free.
+
 
 #### Is this a silver bullet to all my IT needs?
 
-K8sdc makes it quick and easy to bootstrap an IT infrastructure.  However, to fully understand and learn how to use all the capabilities will take considerable time and effort. Also, the selection of tooling and configuration of them may very well not suit all your requirements. Meaning customisation is needed. 
+No.  **k8sdc** makes it quick and easy to bootstrap a set of IT *Capabilities*.  However, to **fully** understand and learn how to use all of these *Capabilities* will take considerable time and effort. Also, the provided *Solutions* may not suit your requirements.  Meaning customisation will be needed. 
 
-#### What if there is a feature I really need that one of the chosen products does not support?
 
-You are free to integrate your own solution. Or. As the software is open source, modify it to your requirements. However, if this modification could be useful to the community, and giving it away does not compromise your business, then please consider making a pull request and contributing it back for the greater good. Remember we all stand on each others shoulders. 
+#### What if there is a feature that I really need?
+
+You are free to integrate your own *Solutions*.  If the *Solution* could be useful to the community, and it does not compromise your business activity, then please consider making a pull request and contributing it back to **k8sdc**.
+
+
+#### What does fully integrated 'out of the box' mean?
+
+
+#### Where can I run k8sdc?
+
 ___
 
 ## Usage {{usage}}

@@ -1,7 +1,7 @@
 # Install
 ___
 
-The **k8sdc** platform can be installed using a number of different [*Providers*](../providers/README.md).  By using the [`k8sdc`](../commands/k8sdc.md) command, all *Providers* will have a similar method of installation.
+The **k8sdc** platform can be installed using a number of different [*Providers*](../providers/README.md).  The [`k8sdc`](../commands/k8sdc.md) command allows for all *Providers* to have a similar method of installation.
 ___
 
 

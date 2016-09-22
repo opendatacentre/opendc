@@ -24,12 +24,14 @@ In the context of **k8sdc** this means ...
 
 **Tool**
 
+**Base Component**  {{base_component}}
+
 
 **Provider** {{provider}}
 
 A Provider describes the machine level platform that the **k8sdc** components can be deployed to.  For example, **k8sdc** can be deployed to Vagrant machines, Digital Ocean Droplets, bare metal nodes, etc.
 
-**Workload**
+**Workload**  {{workload}}
 
 
 **Namespace** {{namespace}}
