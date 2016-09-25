@@ -1,0 +1,6 @@
+ansible.log
+bin/
+config/
+.vagrant/
+facts/
+keys/

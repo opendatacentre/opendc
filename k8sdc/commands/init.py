@@ -35,7 +35,7 @@ class InitCmd(object):
   
   files       = ['site.yaml', 'LICENSE']
   directories = ['roles', 'group_vars', 'keys', 'utilities']
-  providers   = ['vagrant']
+  providers   = ['vagrant', 'bare']
 
 
   def __init__(self):
@@ -77,6 +77,8 @@ class InitCmd(object):
       src = resource_filename(Requirement.parse("k8sdc"),directory)
       debug("Copying directory: {}".format(directory))
       k8sdc.copytree(src, os.path.join(curdir, directory))
+
+    # TODO: Ensure keys have 0400 permissions!
 
     # Copy provider specific directory
     provider_dir = os.path.join('providers', provider)

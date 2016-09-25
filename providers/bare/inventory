@@ -1,0 +1,37 @@
+
+
+master.k8sdc.io ansible_ssh_user='p751314' ansible_ssh_private_key_file='keys/master.pem'
+node1.k8sdc.io ansible_ssh_user='p751314' ansible_ssh_private_key_file='keys/node1.pem'
+node2.k8sdc.io ansible_ssh_user='p751314' ansible_ssh_private_key_file='keys/node2.pem'
+node3.k8sdc.io ansible_ssh_user='p751314' ansible_ssh_private_key_file='keys/node3.pem'
+node4.k8sdc.io ansible_ssh_user='p751314' ansible_ssh_private_key_file='keys/node4.pem'
+
+[k8sdc:children]
+k8sdc-masters
+k8sdc-nodes
+etcd
+k8sdc-ca
+fileserver
+
+
+[k8sdc-masters]
+master.k8sdc.io
+
+[k8sdc-nodes]
+node1.k8sdc.io
+node2.k8sdc.io
+node3.k8sdc.io
+node4.k8sdc.io
+
+[etcd]
+master.k8sdc.io
+node1.k8sdc.io
+node2.k8sdc.io
+node3.k8sdc.io
+node4.k8sdc.io
+
+[fileserver]
+master.k8sdc.io
+
+[k8sdc-ca]
+master.k8sdc.io
