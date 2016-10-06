@@ -1,4 +1,5 @@
 .vagrant
+.python-version
 site.retry
 facts/
 roles/etcd/vars/

@@ -37,15 +37,14 @@ import os
 import sys
 import shutil
 import logging
-from logging import debug, error
 from docopt import docopt
 from k8sdc.commands.init import InitCmd
 from k8sdc.commands.provision import ProvisionCmd
 
-
+logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.4'
+__version__ = '0.0.7'
 commands    = {'init'      : InitCmd,
                'up'        : '',
                'machine'   : '',
@@ -62,9 +61,9 @@ commands    = {'init'      : InitCmd,
 
 # Overide of shutil.copytree to cope with dest directory already existing
 def copytree(src, dest, symlinks=False, ignore=None):
-  debug("src:  {}".format(src))
-  debug("dest: {}".format(dest))
-  debug('Copying files ...')
+  logging.debug("src:  {}".format(src))
+  logging.debug("dest: {}".format(dest))
+  logging.debug('Copying files ...')
   if os.path.exists(dest):
     for item in os.listdir(src):
       s = os.path.join(src, item)
@@ -75,27 +74,25 @@ def copytree(src, dest, symlinks=False, ignore=None):
         shutil.copy2(s, d)
   else:
     shutil.copytree(src, dest, symlinks, ignore)
-  debug('----------')
+  logging.debug('----------')
 
 
 # main
 def main():
-  args = docopt(__doc__, 
+  args = docopt(__doc__,
                 version="k8sdc {}".format(__version__),
                 options_first=True)
 
   if args['--debug']:
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
   else:
-    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.ERROR)
-  debug("k8sdc - args:\n{}".format(args))
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+  logger.debug("k8sdc - args:\n{}".format(args))
 
   command = args['<command>']
   if command not in commands.keys():
-    error("Unknown command: {}".format(command))
+    logger.error("Unknown command: {}".format(command))
     print(__doc__)
     sys.exit(1)
 
-  argv = [command] + args['<args>']
-  commands[command]()
-
+  commands[command]([command] + args['<args>'])

@@ -14,7 +14,7 @@ ___
 * Management of a business with productivity [*Products*](reference/product.md).
 * Development and hosting of digital content with development and infrastructure *Products*.
 
-The intention is to give small / medium and non-profit organisations the ability to stand up an infrastructure that rivals the *Capabilities* of an enterprise, thus freeing them to focus their resources on providing business value.
+The intention is to give small / medium and non-profit organisations the ability to easily stand up an infrastructure that rivals the *Capabilities* of an enterprise, thus freeing them to focus their resources on providing business value.
 ___
 
 

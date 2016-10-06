@@ -19,7 +19,7 @@
     path: "/{{ download_dir }}/{{ flannel_pkgname }}"
   register: flannel_pkg
 
-- name: Download Etcd
+- name: Download Flannel
   command: scp -o StrictHostKeyChecking=no \
            -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
            {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ flannel_pkgname }} \
