@@ -1,0 +1,18 @@
+---
+goos:       "{{ ansible_system | lower }}"
+goarch:     amd64
+client_dir: /usr/local/bin/
+
+# kubectl
+kubectl_version: 1.3.5
+kubectl_host:    https://storage.googleapis.com
+kubectl_path: >-
+  kubernetes-release/release/v{{ kubectl_version }}/bin/{{ goos }}/{{ goarch }}
+kubectl_url:     "{{ kubectl_host }}/{{ kubectl_path }}/kubectl"
+
+# Helm
+helm_version: 2.0.0-alpha.5
+helm_host:    https://storage.googleapis.com
+helm_path: >-
+  kubernetes-helm/helm-v{{ helm_version }}-{{ goos }}-{{ goarch }}.tar.gz
+helm_url:     "{{ helm_host }}/{{ helm_path }}"

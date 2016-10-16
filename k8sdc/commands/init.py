@@ -21,12 +21,12 @@ example:
 """
 
 
-import k8sdc
 import os
 import sys
 import shutil
 import logging
 from docopt import docopt
+from k8sdc.utility import copytree
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +34,8 @@ logger = logging.getLogger(__name__)
 class InitCmd(object):
   """Initialize a new k8sdc installation"""
 
-  files       = ['site.yaml', 'LICENSE']
-  directories = ['roles', 'group_vars', 'keys', 'utilities']
+  files       = ['site.yaml', 'LICENSE', 'ansible.cfg']
+  directories = ['roles', 'group_vars', 'host_vars', 'playbooks', 'keys', 'utilities']
   providers   = ['vagrant', 'bare']
 
   def __init__(self, argv):
@@ -47,7 +47,7 @@ class InitCmd(object):
     provider = args['--provider']
     if provider not in self.providers:
       logger.error("Unknown provider: {}".format(provider))
-      logger.error("Permitted set is: \n\t{}".format(self.providers))
+      logger.error("Permitted providers are: \n\t{}".format(self.providers))
       print(__doc__)
       sys.exit(1)
 
@@ -58,10 +58,9 @@ class InitCmd(object):
     logger.debug('----------')
     logger.info("Copying files for provider: {}".format(provider))
 
-    # Check curdir does not include a .k8sdc config file
-    # TODO: or parent path
-    if os.path.exists(os.path.join(curdir, '.k8sdc')):
-      logger.error('Current directory already contains a \'.k8sdc\' file.')
+    # Check curdir does not include a provider.yaml file
+    if os.path.exists(os.path.join(curdir, 'provider.yaml')):
+      logger.error('Current directory already contains a \'provider.yaml\' file.')
       sys.exit(1)
 
     # Copy standard files
@@ -75,7 +74,7 @@ class InitCmd(object):
     for directory in self.directories:
       src = os.path.join(sys.prefix + '/k8sdc', directory)
       logger.debug("Copying directory: {}".format(directory))
-      k8sdc.copytree(src, os.path.join(curdir, directory))
+      copytree(src, os.path.join(curdir, directory))
 
     # TODO: Ensure keys have 0400 permissions!
 
@@ -83,8 +82,4 @@ class InitCmd(object):
     provider_dir = os.path.join('providers', provider)
     src = os.path.join(sys.prefix + '/k8sdc', provider_dir)
     logger.debug("Copying directory: {}".format(provider_dir))
-    k8sdc.copytree(src, curdir)
-
-    # create .k8sdc config file
-    with open(os.path.join(curdir, '.k8sdc'), 'w'):
-      os.utime(os.path.join(curdir, '.k8sdc'), None)
+    copytree(src, curdir)

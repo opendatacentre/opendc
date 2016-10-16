@@ -1,0 +1,32 @@
+---
+vagrant:
+  vm_box:         centos/7
+  vm_box_version: 1607.01
+  provider:       virtualbox
+  masters:
+    - hostname: master.vb.k8sdc.io
+      ip:       192.168.101.100
+      memory:   2048
+      cpus:     2
+  nodes:
+    - hostname: node1.vb.k8sdc.io
+      ip:       192.168.101.110
+      memory:   4096
+      cpus:     4
+    - hostname: node2.vb.k8sdc.io
+      ip:       192.168.101.111
+      memory:   4096
+      cpus:     4
+    - hostname: node3.vb.k8sdc.io
+      ip:       192.168.101.112
+      memory:   4096
+      cpus:     4
+  etcd:
+    - master.vb.k8sdc.io
+    - node1.vb.k8sdc.io
+    - node2.vb.k8sdc.io
+    - node3.vb.k8sdc.io
+  fileserver:
+    - master.vb.k8sdc.io
+  k8sdc_ca:
+    - master.vb.k8sdc.io

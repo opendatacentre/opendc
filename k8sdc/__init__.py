@@ -12,14 +12,15 @@ options:
 
 commands:
   init       initialize a new k8sdc installation in the current directory.
-  up         run machine, provision, app, client, config and hosts commands. [NOT IMPLEMENTED]
-  machine    create a new set of machines for k8sdc to be provisioned to. [NOT IMPLEMENTED]
-  provision  provision k8sdc components on to the machines. [NOT IMPLEMENTED]
+  up         run template, machine, provision, app (not yet!), client, config and hosts commands. [NOT IMPLEMENTED]
+  template   create provider specific files from templates
+  machine    create a new set of machines for k8sdc to be provisioned to.
+  provision  provision k8sdc components on to the machines.
   app        deploy k8sdc apps to the k8s cluster. [NOT IMPLEMENTED]
   client     install kubectl and helm clients locally. [NOT IMPLEMENTED]
   config     generate a local kubeconfig file. [NOT IMPLEMENTED]
   hosts      update /etc/hosts with k8sdc hosts and services. [NOT IMPLEMENTED]
-  security   manage k8sdc security, i.e. ssh config, certificates, tokens, etc.  [NOT IMPLEMENTED]
+  security   manage k8sdc security, i.e. ssh config, certificates, tokens, etc. [NOT IMPLEMENTED]
   upgrade    upgrade playbooks. [NOT IMPLEMENTED]
   status     check status of services. [NOT IMPLEMENTED]
   destroy    remove k8sdc machines. [NOT IMPLEMENTED]
@@ -33,12 +34,11 @@ examples:
 """
 
 
-import os
 import sys
-import shutil
 import logging
 from docopt import docopt
 from k8sdc.commands.init import InitCmd
+from k8sdc.commands.machine import MachineCmd
 from k8sdc.commands.provision import ProvisionCmd
 
 logger      = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ __email__   = 'des@drury-family.com'
 __version__ = '0.0.7'
 commands    = {'init'      : InitCmd,
                'up'        : '',
-               'machine'   : '',
+               'machine'   : MachineCmd,
                'provision' : ProvisionCmd,
                'app'       : '',
                'client'    : '',
@@ -57,24 +57,6 @@ commands    = {'init'      : InitCmd,
                'upgrade'   : '',
                'status'    : '',
                'destroy'   : ''}
-
-
-# Overide of shutil.copytree to cope with dest directory already existing
-def copytree(src, dest, symlinks=False, ignore=None):
-  logging.debug("src:  {}".format(src))
-  logging.debug("dest: {}".format(dest))
-  logging.debug('Copying files ...')
-  if os.path.exists(dest):
-    for item in os.listdir(src):
-      s = os.path.join(src, item)
-      d = os.path.join(dest, item)
-      if os.path.isdir(s):
-        shutil.copytree(s, d, symlinks, ignore)
-      else:
-        shutil.copy2(s, d)
-  else:
-    shutil.copytree(src, dest, symlinks, ignore)
-  logging.debug('----------')
 
 
 # main

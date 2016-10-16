@@ -4,6 +4,13 @@
 #             Variables for the solution are stored with the solution yaml and
 #             included at runtime.
 
+
+fileserver_http_proxy:  ''
+fileserver_https_proxy: ''
+
+docker_repo_cache_http_proxy: ''
+docker_repo_cache_https_proxy: ''
+
 system:
   namespace: k8s-system
   solutions:

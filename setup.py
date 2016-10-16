@@ -26,7 +26,10 @@ add_data_files('keys', data_files)
 add_data_files('utilities', data_files)
 
 with open('README.rst') as readme_file:
-    long_description = readme_file.read()
+  long_description = readme_file.read()
+
+with open('requirements.txt') as requirements_file:
+  requirements = requirements_file.read().split()
 
 
 setup(name             = 'k8sdc',
@@ -48,5 +51,4 @@ setup(name             = 'k8sdc',
       packages         = find_packages(),
       data_files       = data_files,
       scripts          = ['bin/k8sdc'],
-      install_requires = ['ansible>=2.1.1.0',
-                          'docopt>=0.6.2'])
+      install_requires = requirements)

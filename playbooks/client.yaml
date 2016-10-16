@@ -1,0 +1,6 @@
+---
+- name: Install kubectl and helm clients locally
+  hosts: 
+    - localhost
+  roles: 
+    - client

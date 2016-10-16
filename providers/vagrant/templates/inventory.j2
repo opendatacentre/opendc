@@ -1,0 +1,33 @@
+{% for master in vagrant.masters -%}
+{{ master.hostname }} ansible_host={{ master.ip }} ansible_ssh_private_key_file='.vagrant/machines/{{ master.hostname }}/virtualbox/private_key'
+{% endfor -%}
+{% for node in vagrant.nodes -%}
+{{ node.hostname }} ansible_host={{ node.ip }} ansible_ssh_private_key_file='.vagrant/machines/{{ node.hostname }}/virtualbox/private_key'
+{% endfor %}
+[k8sdc:children]
+k8sdc-masters
+k8sdc-nodes
+etcd
+k8sdc-ca
+fileserver
+
+[k8sdc:vars]
+ansible_ssh_user=vagrant
+
+[k8sdc-masters]
+{% for master in vagrant.masters -%}
+{{ master.hostname }}
+{% endfor %}
+[k8sdc-nodes]
+{% for node in vagrant.nodes -%}
+{{ node.hostname }}
+{% endfor %}
+[etcd]
+{% for etcd in vagrant.etcd -%}
+{{ etcd }}
+{% endfor %}
+[fileserver]
+{{ vagrant.fileserver[0] }}
+
+[k8sdc-ca]
+{{ vagrant.k8sdc_ca[0] }}
