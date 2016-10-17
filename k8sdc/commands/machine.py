@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class MachineCmd(object):
-  """Provision k8sdc components on to a set of machines"""
+  """Create a new set of machines for k8sdc to be provisioned to."""
 
   providers = {'bare'    : BareProvider,
                'vagrant' : VagrantProvider}

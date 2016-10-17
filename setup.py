@@ -18,10 +18,12 @@ def add_data_files(directory, data_files):
 
 
 data_files = []
-data_files.append(('k8sdc', ['site.yaml', 'LICENSE']))
+data_files.append(('k8sdc', ['site.yaml', 'LICENSE', 'ansible.cfg']))
 add_data_files('providers', data_files)
 add_data_files('roles', data_files)
 add_data_files('group_vars', data_files)
+add_data_files('host_vars', data_files)
+add_data_files('playbooks', data_files)
 add_data_files('keys', data_files)
 add_data_files('utilities', data_files)
 

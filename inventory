@@ -9,6 +9,7 @@ fileserver
 [k8sdc:vars]
 ansible_user=XXXXX
 ansible_ssh_pass=XXXXX
+ansible_connection=ssh
 
 [k8s:children]
 k8sdc-masters

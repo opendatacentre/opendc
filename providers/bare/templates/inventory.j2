@@ -13,6 +13,7 @@ fileserver
 
 [k8sdc:vars]
 ansible_ssh_user=k8sdc
+ansible_connection=ssh
 
 [k8sdc-masters]
 {% for master in bare.masters -%}

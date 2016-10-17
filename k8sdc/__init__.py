@@ -40,6 +40,7 @@ from docopt import docopt
 from k8sdc.commands.init import InitCmd
 from k8sdc.commands.machine import MachineCmd
 from k8sdc.commands.provision import ProvisionCmd
+from k8sdc.commands.client import ClientCmd
 
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
@@ -47,10 +48,11 @@ __email__   = 'des@drury-family.com'
 __version__ = '0.0.7'
 commands    = {'init'      : InitCmd,
                'up'        : '',
+               'template'  : '',
                'machine'   : MachineCmd,
                'provision' : ProvisionCmd,
                'app'       : '',
-               'client'    : '',
+               'client'    : ClientCmd,
                'config'    : '',
                'hosts'     : '',
                'security'  : '',
