@@ -1,4 +1,2 @@
 ---
-# This file should have its variables included by k8sdc-masters and k8sdc nodes
-# as the inventory file has a [k8s:children] section.
-# TEST!!!! 
+# k8s variables

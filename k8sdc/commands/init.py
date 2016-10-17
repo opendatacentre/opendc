@@ -8,7 +8,7 @@ usage:
 options:
   -p, --provider=<provider>
                 provider type. One of the following:
-                  bare [NOT IMPLEMENTED]
+                  bare
                   vagrant
                   do [NOT IMPLEMENTED]
                   aws [NOT IMPLEMENTED]
@@ -20,12 +20,12 @@ example:
   k8sdc init -p vagrant
 """
 
-
 import os
 import sys
 import shutil
 import logging
 from docopt import docopt
+from k8sdc.provider import providers
 from k8sdc.utility import copytree
 
 logger = logging.getLogger(__name__)
@@ -36,27 +36,26 @@ class InitCmd(object):
 
   files       = ['site.yaml', 'LICENSE', 'ansible.cfg']
   directories = ['roles', 'group_vars', 'host_vars', 'playbooks', 'keys', 'utilities']
-  providers   = ['vagrant', 'bare']
 
-  def __init__(self, argv):
-    super(InitCmd, self).__init__()
-
+  def parse(self, argv):
     args = docopt(__doc__, argv=argv)
     logger.debug("k8sdc init - args:\n{}".format(args))
 
     provider = args['--provider']
-    if provider not in self.providers:
+    if provider not in providers:
       logger.error("Unknown provider: {}".format(provider))
-      logger.error("Permitted providers are: \n\t{}".format(self.providers))
+      logger.error("Permitted providers are: \n\t{}".format(providers.keys()))
       print(__doc__)
       sys.exit(1)
+    self.provider = provider
 
+  def run(self):
     curdir = os.getcwd()
 
-    logger.debug('provider: {}'.format(provider))
+    logger.debug('provider: {}'.format(self.provider))
     logger.debug('curdir:   {}'.format(curdir))
     logger.debug('----------')
-    logger.info("Copying files for provider: {}".format(provider))
+    logger.info("Copying files for provider: {}".format(self.provider))
 
     # Check curdir does not include a provider.yaml file
     if os.path.exists(os.path.join(curdir, 'provider.yaml')):
@@ -79,7 +78,7 @@ class InitCmd(object):
     # TODO: Ensure keys have 0400 permissions!
 
     # Copy provider specific directory
-    provider_dir = os.path.join('providers', provider)
+    provider_dir = os.path.join('providers', self.provider)
     src = os.path.join(sys.prefix + '/k8sdc', provider_dir)
     logger.debug("Copying directory: {}".format(provider_dir))
     copytree(src, curdir)

@@ -72,6 +72,7 @@ def execute(command):
                              cmd        = command,
                              output     = output)
 
+
 def call_ansible(yaml_file):
   """Call Ansible with a playbook."""
 
@@ -130,4 +131,3 @@ def call_ansible(yaml_file):
   result = pbex.run()
   if result:
     logger.error("An error occured whilst executing the Ansible Playbook.")
-

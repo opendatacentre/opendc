@@ -2,5 +2,23 @@
 - name: Install kubectl and helm clients locally
   hosts: 
     - localhost
-  roles: 
-    - client
+  tasks: 
+    - name: Download kubectl
+      get_url:
+        url:  "{{ kubectl_url }}"
+        dest: "{{ client_dir }}/kubectl"
+        mode: 0755
+
+    - name: Download helm
+      get_url:
+        url:  "{{ helm_url }}"
+        dest: "/tmp/{{ helm_url | basename }}"
+
+    - name: Extract helm
+      unarchive:
+        src:  "/tmp/{{ helm_url | basename }}"
+        dest: /tmp/
+
+    - name: Copy helm
+      command: >-
+        cp /tmp/{{ goos }}-{{ goarch }}/helm {{ client_dir }}

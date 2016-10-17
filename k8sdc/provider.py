@@ -1,10 +1,32 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import sys
 from jinja2 import Environment, FileSystemLoader
-from k8sdc.utility import execute
+from k8sdc.utility import execute, load_yaml_file
 
 logger = logging.getLogger(__name__)
+
+
+def get_provider():
+  yaml_file = os.path.realpath(os.path.join(os.path.curdir, 'provider.yaml'))
+  if not os.path.exists(yaml_file):
+    logger.error("Cannot find file: {}".format(yaml_file))
+    sys.exit(1)
+
+  provider_data = load_yaml_file(yaml_file)
+  provider_name = provider_data.keys()[0]
+
+  if provider_name not in providers.keys():
+    logger.error("Unknown provider in 'provider.yaml': {}".format(provider_name))
+    logger.error("Permitted providers are: \n\t{}".format(providers.keys()))
+    sys.exit(1)
+  logger.debug("Provider: {}".format(provider_name))
+
+  provider = providers[provider_name](provider_data)
+  provider.validate()
+
+  return provider
 
 
 class Provider(object):
@@ -62,8 +84,19 @@ class VagrantProvider(Provider):
     pass
 
   def create_machines(self):
+    """Create Vagrant machines"""
     logger.info("Creating machines")
+    vagrantfile = os.path.realpath(os.path.join(os.path.curdir, 'Vagrantfile'))
+    if not os.path.exists(vagrantfile):
+      logger.error("Cannot find file: {}".format(vagrantfile))
+      logger.error("Are you sure that \'k8sdc template\' has been run?")
+      sys.exit(1)
     execute("vagrant up --no-provision")
 
   def destroy_machines(self):
+    """Destroy Vagrant machines"""
     pass
+
+
+providers = {'bare'    : BareProvider,
+             'vagrant' : VagrantProvider}
