@@ -38,4 +38,4 @@ class UpCmd(object):
     ProvisionCmd().run()
     ClientCmd().run()
     ConfigCmd().run()
-    HostsCmd().run()
+    # HostsCmd().run()
