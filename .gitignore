@@ -1,6 +1,6 @@
 .vagrant
 .python-version
-site.retry
+*.retry
 facts/
 roles/etcd/vars/
 roles/flannel/vars/

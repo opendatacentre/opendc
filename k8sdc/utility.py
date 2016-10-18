@@ -73,7 +73,7 @@ def execute(command):
                              output     = output)
 
 
-def call_ansible(yaml_file):
+def call_ansible(yaml_file, become=False):
   """Call Ansible with a playbook."""
 
   variable_manager = VariableManager()
@@ -114,7 +114,7 @@ def call_ansible(yaml_file):
                     ssh_extra_args=None,
                     sftp_extra_args=None,
                     scp_extra_args=None,
-                    become=False,
+                    become=become,
                     become_method='sudo',
                     become_user='root',
                     verbosity=2,

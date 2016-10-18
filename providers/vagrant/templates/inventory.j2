@@ -1,8 +1,8 @@
 {% for master in vagrant.masters -%}
-{{ master.hostname }} ansible_host={{ master.ip }} ansible_ssh_private_key_file='.vagrant/machines/{{ master.hostname }}/virtualbox/private_key'
+{{ master.hostname }} ansible_host={{ master.ip }} ansible_ssh_private_key_file='{{ cwd }}/.vagrant/machines/{{ master.hostname }}/virtualbox/private_key'
 {% endfor -%}
 {% for node in vagrant.nodes -%}
-{{ node.hostname }} ansible_host={{ node.ip }} ansible_ssh_private_key_file='.vagrant/machines/{{ node.hostname }}/virtualbox/private_key'
+{{ node.hostname }} ansible_host={{ node.ip }} ansible_ssh_private_key_file='{{ cwd }}/.vagrant/machines/{{ node.hostname }}/virtualbox/private_key'
 {% endfor %}
 [k8sdc:children]
 k8sdc-masters

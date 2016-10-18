@@ -4,9 +4,9 @@ interface:      eth1
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
 api_server_ip:  "{{ hostvars[groups['k8sdc-masters'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
-admin_user:     k8sdc #k8admin
+admin_user:     k8sdc
 admin_uid:      5000
-admin_group:    k8sdc #k8admin
+admin_group:    k8sdc
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"

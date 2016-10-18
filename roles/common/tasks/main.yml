@@ -52,6 +52,13 @@
   with_file:
     - "{{ public_key }}"
 
+- name: Add admin user to sudoers
+  lineinfile:
+    dest:   "/etc/sudoers.d/{{ admin_user }}"
+    create: yes
+    state:  present
+    line:   "%{{ admin_user }} ALL=(ALL) NOPASSWD: ALL"
+
 - name: Create download directory
   file:
     path:  "{{ download_dir }}"

@@ -12,7 +12,7 @@ docker_repo_cache_http_proxy: ''
 docker_repo_cache_https_proxy: ''
 
 system:
-  namespace: k8s-system
+  namespace: kube-system
   solutions:
     - name: dns
       use:  true

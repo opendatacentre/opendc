@@ -42,9 +42,15 @@ $ k8sdc init -p vagrant
 ___
 
 
-## Edit the .k8sdc file
+## Edit the provider.yaml file
 
 
+___
+
+
+## Generate public / private key pair for admin user
+
+or accept the samples!
 ___
 
 

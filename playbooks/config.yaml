@@ -1,0 +1,45 @@
+---
+- name: Get k8sdc-ca certificate
+  hosts:
+    - localhost
+  tasks:
+    - name: Fetch k8sdc-ca.crt
+      slurp:
+        src: /etc/kubernetes/certs/k8sdc-ca.crt
+      delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+      become: true
+      register: k8sdc_ca_cert
+
+    - name: Create local k8sdc-ca.crt
+      copy:
+        dest:    "{{ inventory_dir }}/certs/k8sdc-ca.crt"
+        content: "{{ k8sdc_ca_cert.content | b64decode }}"
+        mode:  0400
+
+    - name: Fetch kubectl.kubeconfig
+      slurp:
+        src: /etc/kubernetes/kubeconfig/kubectl.kubeconfig
+      delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+      become: true
+      register: kubectl_kubeconfig
+
+    - name: Create local kubectl.kubeconfig
+      copy:
+        dest:    "{{ inventory_dir }}/config/kubectl.kubeconfig"
+        content: "{{ kubectl_kubeconfig.content | b64decode }}"
+        mode:  0400
+      become: false
+
+    - name: Modify CA in kubectl.kubeconfig
+      lineinfile:
+        dest: "{{ inventory_dir }}/config/kubectl.kubeconfig"
+        line: "    certificate-authority: {{ inventory_dir }}/certs/k8sdc-ca.crt"
+        regexp: "certificate-authority:"
+        state: present
+
+    - name: Modify server in kubectl.kubeconfig
+      lineinfile:
+        dest: "{{ inventory_dir }}/config/kubectl.kubeconfig"
+        line: "    server: https://{{ api_server_ip }}:6443"
+        regexp: "server:"
+        state: present

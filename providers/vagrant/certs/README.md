@@ -1,0 +1,1 @@
+The k8sdc CA cert will be written into this directory when using `k8sdc config`.

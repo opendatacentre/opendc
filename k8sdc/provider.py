@@ -33,6 +33,7 @@ class Provider(object):
   """This Class is the parent for all Provider Classes"""
 
   def __init__(self, provider_data):
+    provider_data['cwd'] = os.path.realpath(os.path.curdir)
     self.provider_data = provider_data
 
   def create_files(self):
