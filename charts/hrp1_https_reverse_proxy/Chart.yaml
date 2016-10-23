@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for Kubernetes
+name: hrp1_https_reverse_proxy
+version: 0.1.0

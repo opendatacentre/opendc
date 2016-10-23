@@ -1,2 +1,4 @@
 ---
-# tasks file for solutions
+# dbs1_distributed_block_storage
+- include: dbs1_distributed_block_storage.yaml
+  when:    dbs1_distributed_block_storage.role_tasks

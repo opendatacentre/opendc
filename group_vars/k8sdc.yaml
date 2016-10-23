@@ -11,6 +11,69 @@ fileserver_https_proxy: ''
 docker_repo_cache_http_proxy: ''
 docker_repo_cache_https_proxy: ''
 
+namespaces:
+  - kube-system
+  - k8sdc-system
+  - k8sdc-infra
+  - k8sdc-development
+  - k8sdc-productivity
+
+
+# rathrer than define all the soloutions in this file, can I include a solutions.yaml
+# from the group_vars directory into this file????
+solutions:
+  cm1_cluster_management:
+    enable:     yes
+    namespace:  kube-system
+    role_tasks: no
+    hostnames:
+      kube_dashboard: dashboard.k8sdc.io
+
+  dbs1_distributed_block_storage:
+    enable:     yes
+    namespace:  k8sdc-system
+    role_tasks: yes
+    nodes:
+      - hostname: node1.k8sdc.io
+        size:     20gb
+      - hostname: node2.k8sdc.io
+        size:     20gb
+      - hostname: node3.k8sdc.io
+        size:     20gb
+
+  im1_identity_management:
+    enable:     yes
+    namespace:  k8sdc-system
+    role_tasks: no
+    hostnames: 
+      keycloack: keycloak.k8sdc.io
+
+  hrp1_https_reverse_proxy:
+    enable:     yes
+    namespace:  k8sdc-system
+    role_tasks: no
+    keepalived: yes
+    vip:        10.0.0.100
+
+  m1_metrics:
+    enable:     yes
+    namespace:  k8sdc-system
+    role_tasks: no
+    hostnames:
+      prometheus: prometheus.k8sdc.io
+      grafana:    grafana.k8sdc.io 
+
+  l1_logging:
+    enable:     yes
+    namespace:  k8sdc-system
+    role_tasks: no
+    hostnames:
+      kibana:         kibana.k8sdc.io
+      kafka_admin:    kafka.k8sdc.io
+      logstash_admin: logstash.k8sdc.io
+  
+
+
 system:
   namespace: kube-system
   solutions:

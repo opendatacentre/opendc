@@ -1,0 +1,3 @@
+description: A Helm chart for Kubernetes
+name: im1_identity_management
+version: 0.1.0

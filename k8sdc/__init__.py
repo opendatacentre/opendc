@@ -16,10 +16,11 @@ commands:
   template   create provider specific files from templates.
   machine    create a new set of machines for k8sdc to be provisioned to.
   provision  provision k8sdc components on to the machines.
-  app        deploy k8sdc apps to the k8s cluster. [NOT IMPLEMENTED]
   client     install kubectl and helm clients locally.
   config     generate a local kubeconfig file.
   hosts      update the local /etc/hosts with k8sdc hosts and services. [NOT IMPLEMENTED]
+  pull       pull all k8dc app images to the Docker repository cache. [NOT IMPLEMENTED]
+  app        deploy k8sdc apps to the k8s cluster. [NOT IMPLEMENTED]
   security   manage k8sdc security, i.e. ssh config, certificates, tokens, etc. [NOT IMPLEMENTED]
   upgrade    upgrade playbooks. [NOT IMPLEMENTED]
   status     check status of services. [NOT IMPLEMENTED]
