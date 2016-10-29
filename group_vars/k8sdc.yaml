@@ -30,15 +30,15 @@ solutions:
     namespace:  k8sdc-system
     role_tasks: yes
     mon_hosts:
-      - hostname: node1.vb2.k8sdc.io
-      - hostname: node2.vb2.k8sdc.io
-      - hostname: node3.vb2.k8sdc.io
+      - hostname: node1.vb.k8sdc.io
+      - hostname: node2.vb.k8sdc.io
+      - hostname: node3.vb.k8sdc.io
     osd_hosts:
-      - hostname:   node1.vb2.k8sdc.io
+      - hostname:   node1.vb.k8sdc.io
         count_256m: 40
-      - hostname:   node2.vb2.k8sdc.io
+      - hostname:   node2.vb.k8sdc.io
         count_256m: 40
-      - hostname:   node3.vb2.k8sdc.io
+      - hostname:   node3.vb.k8sdc.io
         count_256m: 40
 
   im1_identity_management:

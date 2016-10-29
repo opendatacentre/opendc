@@ -5,9 +5,20 @@ The **k8sdc** platform can be installed using a number of different [*Providers*
 ___
 
 
+## Test environment
+
+**k8sdc** is a new project and therefore testing has only been conducted on a limited set of environments.  The following software versions are known to work.
+
+* macOS 10.12
+* Python 2.7.12
+* Vagrant 1.8.4
+* Virtualbox 5.0.26 r108824
+___
+
+
 ## Install the k8sdc command
 
-The `k8sdc` command is implemented using Python 2.7.  It can be installed using `pip`.  
+The `k8sdc` command is implemented using Python.  It can be installed using `pip`.  
 
 **Note**
 
@@ -39,18 +50,25 @@ $ mkdir ~/k8sdc
 $ cd ~/k8sdc
 $ k8sdc init -p vagrant
 ```
+
+**Note**
+
+To install using the Vagrant *Provider* the following software versions must be installed.
+
+* Vagrant 1.8.4
+* Virtualbox 5.0.26 and above
 ___
 
 
 ## Edit the provider.yaml file
 
-
+*TODO*
 ___
 
 
 ## Generate public / private key pair for admin user
 
-or accept the samples!
+*TODO*
 ___
 
 
@@ -61,6 +79,11 @@ The simplest way to install **k8sdc** is by using [`k8sdc up`](../commands/k8sdc
 ```
 $ k8sdc up
 ```
+
+**Note**
+
+The default installation directory for the `kubectl` and `helm` commands is `/usr/local/bin/`.  As such this directory must be in your `PATH` environment variable so that the Solutions can be deployed.
+
 ___
 
 

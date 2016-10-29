@@ -20,13 +20,15 @@ from k8sdc.commands.machine   import MachineCmd
 from k8sdc.commands.provision import ProvisionCmd
 from k8sdc.commands.client    import ClientCmd
 from k8sdc.commands.config    import ConfigCmd
+from k8sdc.commands.helm      import HelmCmd
+from k8sdc.commands.sol       import SolCmd
 from k8sdc.commands.hosts     import HostsCmd
 
 logger = logging.getLogger(__name__)
 
 
 class UpCmd(object):
-  """Run template, machine, provision, app (not yet!), client, config and hosts commands."""
+  """Run template, machine, provision, client, config, pull, helm, sol and hosts commands."""
 
   def parse(self, argv):
     args = docopt(__doc__, argv=argv)
@@ -38,4 +40,6 @@ class UpCmd(object):
     ProvisionCmd().run()
     ClientCmd().run()
     ConfigCmd().run()
+    HelmCmd().run()
+    SolCmd().run()
     # HostsCmd().run()

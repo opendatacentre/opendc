@@ -9,7 +9,7 @@
   tags: confirm_os
 
 
-# TODO: Add NTP so that service like Ceph work properly
+# TODO: Add NTP so that services like Ceph work properly
 - name: Common components setup
   hosts:
     - k8sdc
@@ -67,12 +67,3 @@
   roles:  
     - kubernetes
   tags: k8s_setup
-
-
-- name: Solutions setup
-  hosts:
-    - k8sdc
-  become: yes
-  roles:
-    - solutions
-  tags: solutions_setup

@@ -17,6 +17,7 @@ packages:
   - socat
   - ceph-common
 
+
 # Kubernetes security
 k8s_regen_certs:  false
 k8s_regen_tokens: false

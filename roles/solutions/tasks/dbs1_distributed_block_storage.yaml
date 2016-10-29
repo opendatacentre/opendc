@@ -64,7 +64,7 @@
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
-    KUBECONFIG:  config/kubectl.kubeconfig
+    KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
   with_items: groups['mon_hosts']
   delegate_to: localhost
   become:   no
@@ -75,11 +75,12 @@
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
-    KUBECONFIG:  config/kubectl.kubeconfig
+    KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
   with_items: groups['osd_hosts']
   delegate_to: localhost
   become:   no
   run_once: yes
+
 
 # Deploy workloads
 

@@ -12,15 +12,16 @@ options:
 
 commands:
   init       initialize a new k8sdc installation in the current directory.
-  up         run template, machine, provision, app (not yet!), client, config and hosts (not yet!) commands.
+  up         run template, machine, provision, client, config, pull, helm, sol and hosts commands.
   template   create provider specific files from templates.
   machine    create a new set of machines for k8sdc to be provisioned to.
   provision  provision k8sdc components on to the machines.
   client     install kubectl and helm clients locally.
   config     generate a local kubeconfig file.
+  pull       pull all k8dc solution images to the Docker repository cache. [NOT IMPLEMENTED]
+  helm       deploy Helm to the k8s cluster.
+  sol        deploy k8sdc solutions to the k8s cluster.
   hosts      update the local /etc/hosts with k8sdc hosts and services. [NOT IMPLEMENTED]
-  pull       pull all k8dc app images to the Docker repository cache. [NOT IMPLEMENTED]
-  app        deploy k8sdc apps to the k8s cluster. [NOT IMPLEMENTED]
   security   manage k8sdc security, i.e. ssh config, certificates, tokens, etc. [NOT IMPLEMENTED]
   upgrade    upgrade playbooks. [NOT IMPLEMENTED]
   start      start k8sdc machines. [NOT IMPLEMENTED]
@@ -33,6 +34,7 @@ environment variables:
 
 examples:
   k8sdc init --provider vagrant
+  k8sdc up
   k8sdc status
 """
 
@@ -46,20 +48,23 @@ from k8sdc.commands.machine   import MachineCmd
 from k8sdc.commands.provision import ProvisionCmd
 from k8sdc.commands.client    import ClientCmd
 from k8sdc.commands.config    import ConfigCmd
+from k8sdc.commands.helm      import HelmCmd
+from k8sdc.commands.sol       import SolCmd
 from k8sdc.commands.hosts     import HostsCmd
 
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.10'
+__version__ = '0.0.11'
 commands    = {'init'      : InitCmd,
                'up'        : UpCmd,
                'template'  : TemplateCmd,
                'machine'   : MachineCmd,
                'provision' : ProvisionCmd,
-               'app'       : '',
                'client'    : ClientCmd,
                'config'    : ConfigCmd,
+               'helm'      : HelmCmd,
+               'sol'       : SolCmd,
                'hosts'     : HostsCmd,
                'security'  : '',
                'upgrade'   : '',

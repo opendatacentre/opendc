@@ -1,0 +1,8 @@
+---
+- name: Solutions setup
+  hosts:
+    - k8sdc
+  become: yes
+  roles:
+    - solutions
+  tags: solutions_setup
