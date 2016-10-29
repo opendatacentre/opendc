@@ -1,3 +1,17 @@
-description: A Helm chart for Kubernetes
 name: cm1_cluster_management
-version: 0.1.0
+description: The k8sdc 'cm1_cluster_management' solution
+version: 0.0.1
+keywords:
+  - k8sdc
+  - kubernetes
+  - cluster
+  - management
+  - cm1
+home: http://k8sdc.io/
+sources:
+  - https://github.com/desdrury/k8sdc
+maintainers:
+  - name:  Des Drury
+    email: des@drury-family.com
+#icon: 
+

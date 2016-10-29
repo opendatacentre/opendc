@@ -1,4 +1,6 @@
 ---
 # dbs1_distributed_block_storage
 - include: dbs1_distributed_block_storage.yaml
-  when:    dbs1_distributed_block_storage.role_tasks
+  when: solutions.dbs1_distributed_block_storage.role_tasks is defined and 
+        solutions.dbs1_distributed_block_storage.role_tasks
+  tags: dbs1_distributed_block_storage

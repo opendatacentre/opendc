@@ -9,8 +9,9 @@ ___
 
 The *Capabilities* that are currently implemented within **k8sdc** are listed in the following table.
 
-| Capability Name  | Solutions     |
-|:-----------------|:--------------|
+| Capability Name                              | Solutions                                                              |
+| :------------------------------------------- | :--------------------------------------------------------------------- |
+| [Cluster Services][cap_clust_serv]           | [\[CS1\] Cluster Services (Kubernetes)][sol_cs1_clust_serv_kub]            |
 | [Cluster Management][cap_clust_man]          | [Cluster Management (Kubernetes)][sol_clust_man_kub]                   |
 | [Distributed Block Storage][cap_dist_blk_st] | [Distributed Block Storage (Ceph)][sol_dist_blk_st_ceph]               |
 | [Identity Management][cap_ident_man]         | [Identity Management (OpenDJ+Keycloak)][sol_ident_man_opendj_keycloak] |
@@ -21,6 +22,9 @@ The *Capabilities* that are currently implemented within **k8sdc** are listed in
 | [Artifact Storage][cap_art_st]               | [Artifact Storage (Artifactory)][sol_art_st_artifactory]               |
 | [Image Repository][cap_image_repo]           | [Image Repository (Portus)][sol_image_repo_portus]                     |
 
+
+[cap_clust_serv]:         capabilities/cluster_services_kubernetes.md
+[sol_cs1_clust_serv_kub]: solutions/cs1_cluster_services_kubernetes.md
 
 [cap_clust_man]:     capabilities/cluster_management.md
 [sol_clust_man_kub]: solutions/cluster_management_kubernetes.md

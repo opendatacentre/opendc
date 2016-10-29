@@ -5,9 +5,10 @@
   tasks: 
     - name: Download kubectl
       get_url:
-        url:  "{{ kubectl_url }}"
-        dest: "{{ client_dir }}/kubectl"
-        mode: 0755
+        url:   "{{ kubectl_url }}"
+        dest:  "{{ client_dir }}/kubectl"
+        force: yes
+        mode:  0755
 
     - name: Download helm
       get_url:

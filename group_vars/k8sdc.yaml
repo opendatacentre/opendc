@@ -1,9 +1,6 @@
 ---
-# Solutions - Call a seperate task yaml file in roles/solutions/system.yaml,
-#             infra.yaml, etc, i.e. dns.yaml, ceph.yaml
-#             Variables for the solution are stored with the solution yaml and
-#             included at runtime.
-
+kubectl_http_proxy: ''
+kubectl_https_proxy: ''
 
 fileserver_http_proxy:  ''
 fileserver_https_proxy: ''
@@ -13,15 +10,14 @@ docker_repo_cache_https_proxy: ''
 
 namespaces:
   - kube-system
-  - k8sdc-system
   - k8sdc-infra
   - k8sdc-development
   - k8sdc-productivity
 
-
-# rathrer than define all the soloutions in this file, can I include a solutions.yaml
-# from the group_vars directory into this file????
 solutions:
+  cs1_cluster_services:
+
+
   cm1_cluster_management:
     enable:     yes
     namespace:  kube-system
@@ -33,13 +29,17 @@ solutions:
     enable:     yes
     namespace:  k8sdc-system
     role_tasks: yes
-    nodes:
-      - hostname: node1.k8sdc.io
-        size:     20gb
-      - hostname: node2.k8sdc.io
-        size:     20gb
-      - hostname: node3.k8sdc.io
-        size:     20gb
+    mon_hosts:
+      - hostname: node1.vb2.k8sdc.io
+      - hostname: node2.vb2.k8sdc.io
+      - hostname: node3.vb2.k8sdc.io
+    osd_hosts:
+      - hostname:   node1.vb2.k8sdc.io
+        count_256m: 40
+      - hostname:   node2.vb2.k8sdc.io
+        count_256m: 40
+      - hostname:   node3.vb2.k8sdc.io
+        count_256m: 40
 
   im1_identity_management:
     enable:     yes
@@ -71,39 +71,3 @@ solutions:
       kibana:         kibana.k8sdc.io
       kafka_admin:    kafka.k8sdc.io
       logstash_admin: logstash.k8sdc.io
-  
-
-
-system:
-  namespace: kube-system
-  solutions:
-    - name: dns
-      use:  true
-    
-    - name: helm
-      use:  true
-
-    - name: dashboard
-      use:  true
-
-
-infrastructure:
-  namespace: infra
-  solutions:
-    - name: storage-ceph
-      use:  true
-
-
-development:
-  namespace: devel
-  solutions:
-    - name: artifactory
-      use:  true
-
-
-productivity:
-
-
-# User defined solutions, roles/user/
-user:
-  namespace: user

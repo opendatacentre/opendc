@@ -3,7 +3,7 @@ ___
 
 
 ```
-$ export KUBECONFIG=config/kubectl.kubeconfig
+$ export KUBECONFIG=`pwd`/config/kubectl.kubeconfig
 $ bin/kubectl get nodes
 $ bin/helm init
 $ bin/kubectl get po --all-namespaces

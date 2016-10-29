@@ -1,2 +1,86 @@
 ---
-# Create blank file, format as ext4, mount and use for Ceph
+# dbs1_distributed_block_storage solution
+
+
+# Create new host groups
+- name: dbs1_distributed_block_storage | Create mon hosts group
+  add_host:
+    name:   "{{ item }}"
+    groups: mon_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+
+- name: dbs1_distributed_block_storage | Create osd hosts group
+  add_host:
+    name:       "{{ item }}"
+    count_256m: "{{ solutions.dbs1_distributed_block_storage.osd_hosts | selectattr('hostname','equalto', item) | map(attribute='count_256m') | first }}"
+    groups:     osd_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.osd_hosts | map(attribute='hostname') | list }}"
+
+
+# Create Ceph filesystems
+- block:
+
+  - name: dbs1_distributed_block_storage | Create /var/ceph/
+    file:
+      path:  /var/ceph/
+      state: directory
+    
+  - name: dbs1_distributed_block_storage | Check for /var/ceph/ceph_d0
+    stat:
+      path:         /var/ceph/ceph_d0
+      get_checksum: no
+      get_md5:      no
+    register:    ceph_filesystem
+
+  - name: dbs1_distributed_block_storage | Create /var/ceph/ceph_d0
+    command: >-
+      dd if=/dev/zero of=/var/ceph/ceph_d0 bs=256M count={{ count_256m }} conv=notrunc
+    when: '"osd_hosts" in group_names and not ceph_filesystem.stat.exists'
+
+  - name: dbs1_distributed_block_storage | Format /var/ceph/ceph_d0
+    command: mkfs -t xfs /var/ceph/ceph_d0
+    when: not ceph_filesystem.stat.exists
+
+  - name: dbs1_distributed_block_storage | Create /mnt/ceph_d0
+    file:
+      path:  /mnt/ceph_d0
+      state: directory
+
+  - name: dbs1_distributed_block_storage | Mount /var/ceph/ceph_d0 on /mnt/ceph_d0
+    mount:
+      name:   /mnt/ceph_d0
+      src:    /var/ceph/ceph_d0
+      fstype: xfs
+      opts:   loop
+      state:  mounted
+
+  when: '"osd_hosts" in group_names'
+  tags: dbs1_distributed_block_storage_create_fs
+
+
+# Label nodes
+- name: dbs1_distributed_block_storage | Label mon hosts
+  command: kubectl label --overwrite node {{ item }} k8sdc_dbs1_mon=True
+  environment:
+    http_proxy:  "{{ kubectl_http_proxy }}"
+    https_proxy: "{{ kubectl_https_proxy }}"
+    KUBECONFIG:  config/kubectl.kubeconfig
+  with_items: groups['mon_hosts']
+  delegate_to: localhost
+  become:   no
+  run_once: yes
+
+- name: dbs1_distributed_block_storage | Label osd hosts
+  command: kubectl label --overwrite node {{ item }} k8sdc_dbs1_osd=True
+  environment:
+    http_proxy:  "{{ kubectl_http_proxy }}"
+    https_proxy: "{{ kubectl_https_proxy }}"
+    KUBECONFIG:  config/kubectl.kubeconfig
+  with_items: groups['osd_hosts']
+  delegate_to: localhost
+  become:   no
+  run_once: yes
+
+# Deploy workloads
+
+

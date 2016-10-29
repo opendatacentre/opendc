@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-dashboard
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: cm1_cluster_management
+    product:  kubernetes-dashboard
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  externalIPs:
+    - {{ .Values.externalIP }}
+  ports:
+    - port: 8000
+      targetPort: http
+  selector:
+    solution: cm1_cluster_management
+    product:  kubernetes-dashboard

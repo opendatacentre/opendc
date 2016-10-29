@@ -123,3 +123,10 @@
   when: '"k8sdc-nodes" in group_names'
   tags: 
     - k8s_node
+
+
+# TODO: Create Kubernetes namespaces as per the k8sdc.yaml file!  
+# Check if it exists first to make this task idempotent.
+
+# Install Helm into cluster
+

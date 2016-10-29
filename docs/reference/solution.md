@@ -10,18 +10,21 @@ ___
 The *Solutions* that are currently implemented by **k8sdc** are listed in the following table.
 
 
-| Solution Name  | Capabilities  | Products    |
-|:---------------|:--------------|:------------|
-| [Cluster Management (Kubernetes)][sol_clust_man_kub]                   | [Cluster Management][cap_clust_man]          | [Kubernetes Dashboard][prd_kub_dash]                    |
-| [Distributed Block Storage (Ceph)][sol_dist_blk_st_ceph]               | [Distributed Block Storage][cap_dist_blk_st] | [Ceph][prd_ceph]                                        |
-| [Identity Management (OpenDJ+Keycloak)][sol_ident_man_opendj_keycloak] | [Identity Management][cap_ident_man]         | [OpenDJ][prd_opendj] and [Keycloak][prd_keycloak]       |
-| [HTTP/S Reverse Proxy (Traefik)][sol_https_rev_proxy_traefik]          | [HTTP/S Reverse Proxy][cap_https_rev_proxy]  | [Traefik][prd_traefik]                                  |
-| [Metrics (Prometheus)][sol_metrics_prom]                               | [Metrics][cap_metrics]                       | [Prometheus][prd_prometheus] and [Grafana][prd_grafana] |
-| [Logging (ELK+Kafka)][sol_logging_elk_kafka]                           | [Logging][cap_logging]                        | [Elasticsearch][prd_elasticsearch], [Logstash][prd_logstash], [Kibana][prd_kibana] and [Kafka][prd_kafka] (which uses [Zookeeper][prd_zookeeper])|
-| [Job Management (Jenkins)][sol_job_management_jenkins]                 | [Job Management][cap_job_management]          | [Jenkins][prd_jenkins]                                  |
-| [Artifact Storage (Artifactory)][sol_art_st_artifactory]               | [Artifact Storage][cap_art_st]                | [Artifactory][prd_artifactory]                          |
-| [Image Repository (Portus)][sol_image_repo_portus]                     | [Image Repository][cap_image_repo]            | [Portus][prd_portus]                                    |               
+| Solution Name                                                          | Capabilities                                 | Products                                                                                                                                          |
+| :--------------------------------------------------------------------- | :------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [\[CS1\] Cluster Services (Kubernetes)][sol_cs1_clust_serv_kub]                    | [Cluster Services][cap_clust_serv]           | [Kube DNS][prd_kub_dns] and [Heapster][prd_heapster]                                                                                              |
+| [Cluster Management (Kubernetes)][sol_clust_man_kub]                   | [Cluster Management][cap_clust_man]          | [Kubernetes Dashboard][prd_kub_dash]                                                                                                              |
+| [Distributed Block Storage (Ceph)][sol_dist_blk_st_ceph]               | [Distributed Block Storage][cap_dist_blk_st] | [Ceph][prd_ceph]                                                                                                                                  |
+| [Identity Management (OpenDJ+Keycloak)][sol_ident_man_opendj_keycloak] | [Identity Management][cap_ident_man]         | [OpenDJ][prd_opendj] and [Keycloak][prd_keycloak]                                                                                                 |
+| [HTTP/S Reverse Proxy (Traefik)][sol_https_rev_proxy_traefik]          | [HTTP/S Reverse Proxy][cap_https_rev_proxy]  | [Traefik][prd_traefik]                                                                                                                            |
+| [Metrics (Prometheus)][sol_metrics_prom]                               | [Metrics][cap_metrics]                       | [Prometheus][prd_prometheus] and [Grafana][prd_grafana]                                                                                           |
+| [Logging (ELK+Kafka)][sol_logging_elk_kafka]                           | [Logging][cap_logging]                       | [Elasticsearch][prd_elasticsearch], [Logstash][prd_logstash], [Kibana][prd_kibana] and [Kafka][prd_kafka] (which uses [Zookeeper][prd_zookeeper]) |
+| [Job Management (Jenkins)][sol_job_management_jenkins]                 | [Job Management][cap_job_management]         | [Jenkins][prd_jenkins]                                                                                                                            |
+| [Artifact Storage (Artifactory)][sol_art_st_artifactory]               | [Artifact Storage][cap_art_st]               | [Artifactory][prd_artifactory]                                                                                                                    |
+| [Image Repository (Portus)][sol_image_repo_portus]                     | [Image Repository][cap_image_repo]           | [Portus][prd_portus]                                                                                                                              |
 
+[cap_clust_serv]:         capabilities/cluster_services_kubernetes.md
+[sol_cs1_clust_serv_kub]: solutions/cs1_cluster_services_kubernetes.md
 
 [cap_clust_man]:     capabilities/cluster_management.md
 [sol_clust_man_kub]: solutions/cluster_management_kubernetes.md

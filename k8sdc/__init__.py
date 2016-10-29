@@ -23,7 +23,9 @@ commands:
   app        deploy k8sdc apps to the k8s cluster. [NOT IMPLEMENTED]
   security   manage k8sdc security, i.e. ssh config, certificates, tokens, etc. [NOT IMPLEMENTED]
   upgrade    upgrade playbooks. [NOT IMPLEMENTED]
+  start      start k8sdc machines. [NOT IMPLEMENTED]
   status     check status of services. [NOT IMPLEMENTED]
+  stop       stop k8sdc machines. [NOT IMPLEMENTED]
   destroy    remove k8sdc machines. [NOT IMPLEMENTED]
 
 environment variables:

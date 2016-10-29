@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8sdc-ceph-osd-2
+  namespace: k8sdc-system
+  labels:
+    app: k8sdc-ceph-osd-2
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: k8sdc-ceph-osd-2
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        app: k8sdc-ceph-osd-2
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/hostname: node4.k8sdc.io
+      containers:
+      - name: k8sdc-ceph-osd-2
+        image: ceph/daemon
+        securityContext:
+          privileged: true
+        args:
+          - osd
+        env:
+          - name:  OSD_TYPE
+            value: "directory"
+          - name:  OSD_FORCE_ZAP
+            value: "1"
+          - name:  KV_TYPE
+            value: "etcd"
+          - name:  KV_IP
+            value: "127.0.0.1"
+          - name:  KV_PORT
+            value: "2379" 
+        volumeMounts:
+          - name: etc
+            mountPath: /etc/ceph
+          - name: var
+            mountPath: /var/lib/ceph
+          - name: osd
+            mountPath: /var/lib/ceph/osd
+      volumes:
+        - name: etc
+          hostPath:
+            path: /etc/ceph
+        - name: var
+          hostPath:
+            path: /var/lib/ceph
+        - name: osd
+          hostPath:
+            path: /var/lib/ceph/osd
+        
