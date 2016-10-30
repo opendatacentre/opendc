@@ -73,7 +73,7 @@ def execute(command):
                              output     = output)
 
 
-def call_ansible(yaml_file, become=False):
+def call_ansible(yaml_file, become=False, tag=None):
   """Call Ansible with a playbook."""
 
   variable_manager = VariableManager()
@@ -99,7 +99,8 @@ def call_ansible(yaml_file, become=False):
                         'become_method',
                         'become_user',
                         'verbosity',
-                        'check'])
+                        'check',
+                        'tags'])
 
   options = Options(listtags=False,
                     listtasks=False,
@@ -118,7 +119,8 @@ def call_ansible(yaml_file, become=False):
                     become_method='sudo',
                     become_user='root',
                     verbosity=2,
-                    check=False)
+                    check=False,
+                    tags=tag)
 
   pbex = PlaybookExecutor(playbooks=[yaml_file],
                           inventory=inventory,

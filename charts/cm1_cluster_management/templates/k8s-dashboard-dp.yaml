@@ -8,12 +8,9 @@ metadata:
     product:  kubernetes-dashboard
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
-    chart:    "{{.Chart.Name}}-{{.Chart.Version}}"
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-  replicas: {{default 1 .Values.replicaCount}}
-  # selector:
-  #   matchLabels:
-  #     app: kubernetes-dashboard
+  replicas: {{ default 1 .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -21,12 +18,12 @@ spec:
         product:  kubernetes-dashboard
         heritage: {{ .Release.Service | quote }}
         release:  {{ .Release.Name | quote }}
-        chart:    "{{.Chart.Name}}-{{.Chart.Version}}"
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
       - name: kubernetes-dashboard
         image: {{ .Values.image }}:{{ .Values.tag }}
-        imagePullPolicy: {{default "IfNotPresent" .Values.pullPolicy}}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
         ports:
         - name: http
           containerPort: 9090

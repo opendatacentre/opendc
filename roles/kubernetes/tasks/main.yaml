@@ -125,8 +125,12 @@
     - k8s_node
 
 
-# TODO: Create Kubernetes namespaces as per the k8sdc.yaml file!  
-# Check if it exists first to make this task idempotent.
-
-# Install Helm into cluster
-
+# Create Kubernetes namespaces
+- name: main | Create Kubernetes Namespaces
+  command:       /bin/kubectl create ns {{ item }}
+  delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
+  run_once:      yes
+  ignore_errors: yes
+  with_items:    "{{ namespaces }}"
+  tags:
+    - k8s_ns

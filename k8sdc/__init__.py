@@ -18,7 +18,7 @@ commands:
   provision  provision k8sdc components on to the machines.
   client     install kubectl and helm clients locally.
   config     generate a local kubeconfig file.
-  pull       pull all k8dc solution images to the Docker repository cache. [NOT IMPLEMENTED]
+  pull       pull k8sdc solution images to the Docker repository cache.
   helm       deploy Helm to the k8s cluster.
   sol        deploy k8sdc solutions to the k8s cluster.
   hosts      update the local /etc/hosts with k8sdc hosts and services. [NOT IMPLEMENTED]
@@ -48,6 +48,7 @@ from k8sdc.commands.machine   import MachineCmd
 from k8sdc.commands.provision import ProvisionCmd
 from k8sdc.commands.client    import ClientCmd
 from k8sdc.commands.config    import ConfigCmd
+from k8sdc.commands.pull      import PullCmd
 from k8sdc.commands.helm      import HelmCmd
 from k8sdc.commands.sol       import SolCmd
 from k8sdc.commands.hosts     import HostsCmd
@@ -63,12 +64,15 @@ commands    = {'init'      : InitCmd,
                'provision' : ProvisionCmd,
                'client'    : ClientCmd,
                'config'    : ConfigCmd,
+               'pull'      : PullCmd,
                'helm'      : HelmCmd,
                'sol'       : SolCmd,
                'hosts'     : HostsCmd,
                'security'  : '',
                'upgrade'   : '',
+               'start'     : '',
                'status'    : '',
+               'stop'      : '',
                'destroy'   : ''}
 
 

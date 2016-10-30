@@ -8,8 +8,11 @@
 k8sdc-masters
 k8sdc-nodes
 etcd
-k8sdc-ca
 fileserver
+k8sdc-ca
+timeserver
+docker-registry-mirror
+
 
 [k8sdc:vars]
 ansible_ssh_user=vagrant
@@ -28,7 +31,13 @@ ansible_connection=ssh
 {{ etcd }}
 {% endfor %}
 [fileserver]
-{{ vagrant.fileserver[0] }}
+{{ vagrant.fileserver }}
 
 [k8sdc-ca]
-{{ vagrant.k8sdc_ca[0] }}
+{{ vagrant.k8sdc_ca }}
+
+[timeserver]
+{{ vagrant.timeserver }}
+
+[docker-registry-mirror]
+{{ vagrant.docker_registry_mirror }}

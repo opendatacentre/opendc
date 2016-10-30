@@ -43,3 +43,5 @@
         line: "    server: https://{{ api_server_ip }}:6443"
         regexp: "server:"
         state: present
+
+# Add contexts for each namespace!!!!

@@ -1,4 +1,4 @@
 # Default values for dbs1_distributed_block_storage.
-# This is a YAML-formatted file.
-# Declare name/value pairs to be passed into your templates.
-# name: value
+namespace: k8sdc-infra
+image:     ceph/daemon
+tag:       tag-build-master-jewel-centos-7

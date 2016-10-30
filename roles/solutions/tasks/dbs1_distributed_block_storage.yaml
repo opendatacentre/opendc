@@ -82,6 +82,7 @@
   run_once: yes
 
 
-# Deploy workloads
+# Run Ceph Job and remove it afterwards!  Need to check for completed in k get po output!
+
 
 

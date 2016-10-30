@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: k8sdc-dbs1-ceph-job
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: dbs1_distributed_block_storage
+    product:  Ceph
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-install
+spec:
+  template:
+    metadata:
+      name: k8sdc-dbs1-ceph-job
+      labels:
+        solution: dbs1_distributed_block_storage
+        product:  Ceph
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      hostNetwork: true
+      containers:
+      - name: k8sdc-dbs1-ceph-job
+        image: {{ .Values.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        args:
+          - populate_kvstore
+        env:
+          - name: KV_TYPE
+            value: "etcd"
+          - name: KV_IP
+            value: "127.0.0.1"
+          - name: KV_PORT
+            value: "2379"
+      restartPolicy: Never

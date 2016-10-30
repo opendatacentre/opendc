@@ -26,7 +26,7 @@ vagrant:
     - node1.vb.k8sdc.io
     - node2.vb.k8sdc.io
     - node3.vb.k8sdc.io
-  fileserver:
-    - master.vb.k8sdc.io
-  k8sdc_ca:
-    - master.vb.k8sdc.io
+  fileserver:             master.vb.k8sdc.io
+  k8sdc_ca:               master.vb.k8sdc.io
+  timeserver:             master.vb.k8sdc.io
+  docker_registry_mirror: master.vb.k8sdc.io

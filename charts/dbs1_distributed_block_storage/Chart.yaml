@@ -1,3 +1,16 @@
-description: A Helm chart for Kubernetes
 name: dbs1_distributed_block_storage
-version: 0.1.0
+description: The k8sdc 'dbs1_distributed_block_storage' solution
+version: 0.0.1
+keywords:
+  - k8sdc
+  - distributed
+  - block
+  - storage
+  - dbs1
+home: http://k8sdc.io/
+sources:
+  - https://github.com/desdrury/k8sdc
+maintainers:
+  - name:  Des Drury
+    email: des@drury-family.com
+#icon: 

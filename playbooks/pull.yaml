@@ -1,0 +1,20 @@
+---
+- name: Pull k8sdc solution images to the Docker repository cache
+  hosts: 
+    - docker-registry-mirror
+  tasks:
+    - name: Get Docker image details from Solutions
+      set_fact:
+        images: >-
+          {%- for solution in solutions -%}
+            {%- for image_name in solutions[solution].images -%}
+              {{ solutions[solution].images[image_name].image }}:{{ solutions[solution].images[image_name].tag }}
+              {%- if not loop.last -%},{%- endif -%}              
+            {%- endfor -%}
+            {%- if not loop.last -%},{%- endif -%}
+          {%- endfor -%}
+
+    - name: Pull Docker images
+      command: docker pull {{ item }}
+      become: yes
+      with_items: images.split(',')

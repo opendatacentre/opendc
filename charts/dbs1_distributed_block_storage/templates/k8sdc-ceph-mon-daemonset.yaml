@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: k8sdc-dbs1-ceph-mon
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: dbs1_distributed_block_storage
+    product:  Ceph
+    type:     mon
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      solution: dbs1_distributed_block_storage
+      product:  Ceph
+      type:     mon
+  template:
+    metadata:
+      name: k8sdc-dbs1-ceph-mon
+      labels:
+        solution: dbs1_distributed_block_storage
+        product:  Ceph
+        type:     mon
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        k8sdc_dbs1_mon: "True"
+      containers:
+      - name: k8sdc-dbs1-ceph-mon
+        image: {{ .Values.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        args:
+          - mon
+        env:
+          - name:  MON_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name:  CEPH_PUBLIC_NETWORK
+            value: "0.0.0.0/0"
+          - name:  KV_TYPE
+            value: "etcd"
+          - name:  KV_IP
+            value: "127.0.0.1"
+          - name:  KV_PORT
+            value: "2379" 
+        volumeMounts:
+          - name: etc
+            mountPath: /etc/ceph
+          - name: var
+            mountPath: /var/lib/ceph
+      volumes:
+        - name: etc
+          hostPath:
+            path: /etc/ceph
+        - name: var
+          hostPath:
+            path: /var/lib/ceph

@@ -1,0 +1,103 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-dns-v18
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: cs1_cluster_services
+    product:  kube-dns-v18
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    k8s-app: kube-dns
+    version: v18
+    kubernetes.io/cluster-service: "true"
+spec:
+  replicas: {{ default 1 .Values.replicaCount }}
+  selector:
+    matchLabels:
+      solution: cs1_cluster_services
+      product:  kube-dns-v18
+  template:
+    metadata:
+      labels:
+        solution: cs1_cluster_services
+        product:  kube-dns-v18
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        k8s-app: kube-dns
+        version: v18
+        kubernetes.io/cluster-service: "true"
+    spec:
+      containers:
+        - name: kubedns
+          image: {{ .Values.kubedns_image }}:{{ .Values.kubedns_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          dnsPolicy: Default
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /readiness
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          args:
+            - --domain={{ .Values.domain }}
+            - --dns-port=10053
+          ports:
+            - containerPort: 10053
+              name: dns-local
+              protocol: UDP
+            - containerPort: 10053
+              name: dns-tcp-local
+              protocol: TCP
+
+        - name: dnsmasq
+          image: {{ .Values.dnsmasq_image }}:{{ .Values.dnsmasq_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          args:
+            - --cache-size=1000
+            - --no-resolv
+            - --server=127.0.0.1#10053
+          ports:
+            - containerPort: 53
+              name: dns
+              protocol: UDP
+            - containerPort: 53
+              name: dns-tcp
+              protocol: TCP
+
+        - name: healthz
+          image: {{ .Values.healthz_image }}:{{ .Values.healthz_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          resources:
+            limits:
+              cpu: 10m
+              memory: 20Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          args:
+            - -cmd=nslookup kubernetes.default.svc.{{ .Values.domain }} 127.0.0.1 >/dev/null && nslookup kubernetes.default.svc.{{ .Values.domain }} 127.0.0.1:10053 >/dev/null
+            - -port=8080
+            - -quiet
+          ports:
+            - containerPort: 8080
+              protocol: TCP

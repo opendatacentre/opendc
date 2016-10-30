@@ -1,28 +1,39 @@
 apiVersion: extensions/v1beta1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: k8sdc-ceph-osd-3
-  namespace: k8sdc-system
+  name: k8sdc-dbs1-ceph-osd
+  namespace: {{ .Values.namespace }}
   labels:
-    app: k8sdc-ceph-osd-3
+    solution: dbs1_distributed_block_storage
+    product:  Ceph
+    type:     osd
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-  replicas: 1
-  revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: k8sdc-ceph-osd-3
-  strategy: {'type': 'Recreate'}
+      solution: dbs1_distributed_block_storage
+      product:  Ceph
+      type:     osd
   template:
     metadata:
+      name: k8sdc-dbs1-ceph-osd
       labels:
-        app: k8sdc-ceph-osd-3
+        solution: dbs1_distributed_block_storage
+        product:  Ceph
+        type:     osd
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       hostNetwork: true
       nodeSelector:
-        kubernetes.io/hostname: node6.k8sdc.io
+        k8sdc_dbs1_osd: "True"
       containers:
-      - name: k8sdc-ceph-osd-3
-        image: ceph/daemon
+      - name: k8sdc-dbs1-ceph-osd
+        image: {{ .Values.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
         securityContext:
           privileged: true
         args:
@@ -54,5 +65,5 @@ spec:
             path: /var/lib/ceph
         - name: osd
           hostPath:
-            path: /var/lib/ceph/osd
+            path: /mnt/ceph_d0
         

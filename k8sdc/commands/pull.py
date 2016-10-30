@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Deploy k8sdc solutions to the k8s cluster.
+Pull k8sdc solution images to the Docker repository cache.
 
 usage:
-  k8sdc [--debug] sol [<solution>] [--help | -h]
+  k8sdc [--debug] pull [<solution>] [--help | -h]
 
 options:
-  <solution>    is a specific solution to deploy.
+  <solution>    is a specific solution images to pull.
   -h, --help    show this help.
   --debug       show debug output.
 
 example:
-  k8sdc sol
-  k8sdc sol cs1_cluster_services
+  k8sdc pull
+  k8sdc pull dbs1_distributed_block_storage
 """
 
 import logging
@@ -23,17 +23,17 @@ from k8sdc.utility import call_ansible
 logger = logging.getLogger(__name__)
 
 
-class SolCmd(object):
-  """Deploy k8sdc solutions to the k8s cluster."""
+class PullCmd(object):
+  """Pull k8sdc solution images to the Docker repository cache."""
 
   def parse(self, argv):
     args = docopt(__doc__, argv=argv)
-    logger.debug("k8sdc sol - args:\n{}".format(args))
+    logger.debug("k8sdc pull - args:\n{}".format(args))
     self.tag = args['<solution>']
 
   def run(self):
     if self.tag is not None:
       self.tag = [self.tag]
 
-    call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/sol.yaml')), 
+    call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/pull.yaml')), 
                  tag = self.tag )

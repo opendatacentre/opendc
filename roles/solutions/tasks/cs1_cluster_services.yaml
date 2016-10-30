@@ -1,0 +1,34 @@
+---
+# cs1_cluster_services solution
+
+- name: Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.cs1_cluster_services.namespace }},
+      domain={{ solutions.cs1_cluster_services.domain }},
+      cluster_ip={{ solutions.cs1_cluster_services.cluster_ip }},
+      kubedns_image={{ solutions.cs1_cluster_services.images.kubedns.image }},
+      kubedns_tag={{ solutions.cs1_cluster_services.images.kubedns.tag }},
+      dnsmasq_image={{ solutions.cs1_cluster_services.images.dnsmasq.image }},
+      dnsmasq_tag={{ solutions.cs1_cluster_services.images.dnsmasq.tag }},
+      healthz_image={{ solutions.cs1_cluster_services.images.healthz.image }},
+      healthz_tag={{ solutions.cs1_cluster_services.images.healthz.tag }},
+      replicaCount={{ solutions.cs1_cluster_services.replicas }}
+  run_once: yes
+
+# Check if solution is already released and if so use helm upgrade
+- name: Deploy solution cs1_cluster_services
+  command: >
+    helm install
+         --name cs1
+         --set {{ variables.replace(' ', '').strip() }}
+         cs1_cluster_services
+  args:
+    chdir: "{{ inventory_dir }}/charts/"
+  environment:
+    http_proxy:  "{{ kubectl_http_proxy }}"
+    https_proxy: "{{ kubectl_https_proxy }}"
+    KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

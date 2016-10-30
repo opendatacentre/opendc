@@ -1,4 +1,16 @@
-apiVersion: v1
-description: A Helm chart for Kubernetes
 name: cs1_cluster_services
-version: 0.1.0
+description: The k8sdc 'cs1_cluster_services' solution
+version: 0.0.1
+keywords:
+  - k8sdc
+  - kubernetes
+  - cluster
+  - services
+  - cs1
+home: http://k8sdc.io/
+sources:
+  - https://github.com/desdrury/k8sdc
+maintainers:
+  - name:  Des Drury
+    email: des@drury-family.com
+#icon: 
