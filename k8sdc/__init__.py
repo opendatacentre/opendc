@@ -57,7 +57,7 @@ from k8sdc.commands.hosts     import HostsCmd
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.12'
+__version__ = '0.0.14'
 commands    = {'init'      : InitCmd,
                'up'        : UpCmd,
                'template'  : TemplateCmd,
@@ -100,6 +100,10 @@ def main():
     if not os.path.exists(provider_file):
       logger.error("Cannot find file 'provider.yaml' in current directory")
       sys.exit(1)
+
+  if args['<command>'] in ['security', 'upgrade', 'start', 'status', 'stop', 'destroy']:
+    logger.error("Command '{}' is not yet implemented".format(args['<command>']))
+    sys.exit(1)
 
   k8sdc_command = commands[command]()
   k8sdc_command.parse([command] + args['<args>'])

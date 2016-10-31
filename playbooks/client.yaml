@@ -10,16 +10,33 @@
         force: yes
         mode:  0755
 
+    - name: Create temp directory
+      command: mktemp -d
+      register: temp_dir
+
+    - set_fact:
+        temp_dir: "{{ temp_dir.stdout }}"
+
     - name: Download helm
       get_url:
         url:  "{{ helm_url }}"
-        dest: "/tmp/{{ helm_url | basename }}"
+        dest: "{{ temp_dir }}/{{ helm_url | basename }}"
 
     - name: Extract helm
       unarchive:
-        src:  "/tmp/{{ helm_url | basename }}"
-        dest: /tmp/
+        src:  "/{{ temp_dir }}/{{ helm_url | basename }}"
+        dest: "{{ temp_dir }}/"
 
     - name: Copy helm
       command: >-
-        cp /tmp/{{ goos }}-{{ goarch }}/helm {{ client_dir }}
+        cp {{ temp_dir }}/{{ goos }}-{{ goarch }}/helm {{ client_dir }}
+
+    - name: Set Helm permissions
+      file:
+        path: "{{ client_dir }}/helm"
+        mode: 0755
+
+    - name: Remove temp directory
+      file:
+        path:  "{{ temp_dir }}"
+        state: absent

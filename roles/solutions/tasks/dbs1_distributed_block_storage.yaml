@@ -82,7 +82,20 @@
   run_once: yes
 
 
-# Run Ceph Job and remove it afterwards!  Need to check for completed in k get po output!
+# Deploy
+- name: Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.dbs1_distributed_block_storage.namespace }},
+      image={{ solutions.dbs1_distributed_block_storage.images.ceph.image }},
+      tag={{ solutions.dbs1_distributed_block_storage.images.ceph.tag }},
+  run_once: yes
+
+- name: Run Helm
+  include: helm.yaml sol_name=dbs1_distributed_block_storage variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no
 
 
 

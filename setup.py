@@ -26,6 +26,7 @@ add_data_files('host_vars', data_files)
 add_data_files('playbooks', data_files)
 add_data_files('keys', data_files)
 add_data_files('utilities', data_files)
+add_data_files('charts', data_files)
 
 with open('README.rst') as readme_file:
   long_description = readme_file.read()

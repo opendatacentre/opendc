@@ -128,6 +128,8 @@
 # Create Kubernetes namespaces
 - name: main | Create Kubernetes Namespaces
   command:       /bin/kubectl create ns {{ item }}
+  environment:
+    KUBECONFIG:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
   delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
   run_once:      yes
   ignore_errors: yes

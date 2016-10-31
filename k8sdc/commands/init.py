@@ -35,7 +35,7 @@ class InitCmd(object):
   """Initialize a new k8sdc installation"""
 
   files       = ['site.yaml', 'LICENSE', 'ansible.cfg']
-  directories = ['roles', 'group_vars', 'host_vars', 'playbooks', 'keys', 'utilities']
+  directories = ['roles', 'group_vars', 'host_vars', 'playbooks', 'keys', 'utilities', 'charts']
 
   def parse(self, argv):
     args = docopt(__doc__, argv=argv)
