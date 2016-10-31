@@ -1,0 +1,35 @@
+---
+# Run Helm to deploy a Solution
+
+# TODO: Also need to check if previous release FAILED and it was version 1
+#       In which case need to --purge it before installing.
+- name: Check for previous release
+  command: >
+    helm list {{ sol_name.split('_')[0] }} --all
+  environment:
+    http_proxy:  "{{ kubectl_http_proxy }}"
+    https_proxy: "{{ kubectl_https_proxy }}"
+    KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
+  register: helm_output
+
+- name: Define whether to install
+  set_fact:
+    helm_cmd: helm install --name {{ sol_name.split('_')[0] }}
+  when: helm_output.stdout == ""
+
+- name: Define whether to upgrade
+  set_fact:
+    helm_cmd: helm upgrade {{ sol_name.split('_')[0] }}
+  when: not helm_output.stdout == ""
+
+- name: Deploy solution
+  command: >
+    {{ helm_cmd }}
+         --set {{ variables.replace(' ', '').strip() }}
+         {{ sol_name }}
+  args:
+    chdir: "{{ inventory_dir }}/charts/"
+  environment:
+    http_proxy:  "{{ kubectl_http_proxy }}"
+    https_proxy: "{{ kubectl_https_proxy }}"
+    KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"

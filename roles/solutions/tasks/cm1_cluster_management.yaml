@@ -1,0 +1,18 @@
+---
+# cm1_cluster_management Solution
+
+- name: Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.cm1_cluster_management.namespace }},
+      image={{ solutions.cm1_cluster_management.images.kube_dashboard.image }},
+      tag={{ solutions.cm1_cluster_management.images.kube_dashboard.tag }},
+      externalIP={{ solutions.cm1_cluster_management.external_ip }},
+      replicaCount={{ solutions.cm1_cluster_management.replicas }}
+  run_once: yes
+
+- name: Run Helm
+  include: helm.yaml sol_name=cm1_cluster_management variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

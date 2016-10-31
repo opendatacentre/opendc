@@ -18,7 +18,6 @@ solutions:
   cs1_cluster_services:
     enable:     yes
     namespace:  kube-system
-    role_tasks: yes
     domain:     k8sdc.io
     cluster_ip: 10.254.1.1
     replicas:   1
@@ -32,14 +31,15 @@ solutions:
       healthz:
         image: gcr.io/google_containers/exechealthz-amd64
         tag:   1.0
-    # Still need to do Heapster!
+      heapster:
+        image: gcr.io/google_containers/heapster
+        tag:   v1.2.0
 
   cm1_cluster_management:
-    enable:     yes
-    namespace:  kube-system
-    role_tasks: no
-    hostnames:
-      kube_dashboard: dashboard.k8sdc.io
+    enable:      yes
+    namespace:   kube-system
+    external_ip: "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_' + interface].ipv4.address }}"
+    replicas:    1
     images:
       kube_dashboard:
         image: gcr.io/google_containers/kubernetes-dashboard-amd64
@@ -48,7 +48,6 @@ solutions:
   dbs1_distributed_block_storage:
     enable:     yes
     namespace:  k8sdc-infra
-    role_tasks: yes
     images:
       ceph:
         image: ceph/daemon
@@ -68,7 +67,6 @@ solutions:
   im1_identity_management:
     enable:     yes
     namespace:  k8sdc-infra
-    role_tasks: no
     images:
       opendj:
         image: k8sdc/opendj
@@ -82,7 +80,6 @@ solutions:
   hrp1_https_reverse_proxy:
     enable:     yes
     namespace:  k8sdc-infra
-    role_tasks: no
     images:
       traefik:
         image: traefik
@@ -93,7 +90,6 @@ solutions:
   # m1_metrics:
   #   enable:     yes
   #   namespace:  k8sdc-infra
-  #   role_tasks: no
   #   hostnames:
   #     prometheus: prometheus.k8sdc.io
   #     grafana:    grafana.k8sdc.io 
@@ -101,7 +97,6 @@ solutions:
   # l1_logging:
   #   enable:     yes
   #   namespace:  k8sdc-infra
-  #   role_tasks: no
   #   hostnames:
   #     kibana:         kibana.k8sdc.io
   #     kafka_admin:    kafka.k8sdc.io

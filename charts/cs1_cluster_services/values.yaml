@@ -12,4 +12,7 @@ dnsmasq_tag:   1.3
 healthz_image: gcr.io/google_containers/exechealthz-amd64
 healthz_tag:   1.0
 
+heapster_image: gcr.io/google_containers/heapster
+heapster_tag:   v1.2.0
+
 replicaCount: 1

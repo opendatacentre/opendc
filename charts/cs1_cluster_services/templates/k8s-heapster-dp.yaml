@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: heapster
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: cs1_cluster_services
+    product:  heapster
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    k8s-app: heapster
+    version: v6
+    kubernetes.io/cluster-service: "true"
+spec:
+  replicas: {{ default 1 .Values.replicaCount }}
+  selector:
+    matchLabels:
+      solution: cs1_cluster_services
+      product:  heapster
+  template:
+    metadata:
+      labels:
+        solution: cs1_cluster_services
+        product:  heapster
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        k8s-app: heapster
+        version: v6
+        kubernetes.io/cluster-service: "true"
+    spec:
+      containers:
+      - name: heapster
+        image: {{ .Values.heapster_image }}:{{ .Values.heapster_tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        command:
+        - /heapster
+        - --source=kubernetes:https://kubernetes.default
+        volumeMounts:
+        - name: ssl-certs
+          mountPath: /etc/ssl/certs
+          readOnly: true
+      volumes:
+      - name: ssl-certs
+        hostPath:
+          path: /etc/ssl/certs

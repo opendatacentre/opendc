@@ -1,9 +1,0 @@
----
-- name: Copy Fluentd Pod
-  copy:
-    src: logging/fluentd-es-pod.yaml
-    dest: /etc/kubernetes/manifest/fluentd-es-pod.yaml
-    owner: "{{ admin_user }}"
-    group: "{{ admin_group }}"
-  delegate_to: "{{ node }}"
-  tags: copy_fluentd

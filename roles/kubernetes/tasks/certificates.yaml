@@ -2,7 +2,7 @@
 # Generate Kubernetes certificates
 - name: certificates | Set fact for k8sdc masters FQDN 
   set_fact:
-    k8sdc_fqdn: "kubernetes.default.svc.{{ kubernetes_dns_domain }}"
+    k8sdc_fqdn: "kubernetes.default.svc.{{ solutions.cs1_cluster_services.domain }}"
 
 - name: certificates | Set fact for k8sdc masters DNS values
   set_fact:

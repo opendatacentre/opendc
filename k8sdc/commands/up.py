@@ -21,8 +21,6 @@ from k8sdc.commands.provision import ProvisionCmd
 from k8sdc.commands.client    import ClientCmd
 from k8sdc.commands.config    import ConfigCmd
 from k8sdc.commands.helm      import HelmCmd
-from k8sdc.commands.sol       import SolCmd
-from k8sdc.commands.hosts     import HostsCmd
 
 logger = logging.getLogger(__name__)
 
@@ -41,5 +39,4 @@ class UpCmd(object):
     ClientCmd().run()
     ConfigCmd().run()
     HelmCmd().run()
-    SolCmd().run()
-    # HostsCmd().run()
+

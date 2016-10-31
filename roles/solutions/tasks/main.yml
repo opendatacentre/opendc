@@ -1,16 +1,27 @@
 ---
 # cs1_cluster_services
 - include: cs1_cluster_services.yaml
-  when: solutions.cs1_cluster_services.role_tasks is defined and 
-        solutions.cs1_cluster_services.role_tasks
+  when: solutions.cs1_cluster_services.enable is defined and 
+        solutions.cs1_cluster_services.enable
   tags: cs1_cluster_services
 
+# cm1_cluster_management
+- include: cm1_cluster_management.yaml
+  when: solutions.cm1_cluster_management.enable is defined and 
+        solutions.cm1_cluster_management.enable
+  tags: cm1_cluster_management
 
 # dbs1_distributed_block_storage
 - include: dbs1_distributed_block_storage.yaml
-  when: solutions.dbs1_distributed_block_storage.role_tasks is defined and 
-        solutions.dbs1_distributed_block_storage.role_tasks
+  when: solutions.dbs1_distributed_block_storage.enable is defined and 
+        solutions.dbs1_distributed_block_storage.enable
   tags: dbs1_distributed_block_storage
 
+# im1_identity_management
 
-# Deploy Solution
+# hrp1_https_reverse_proxy
+
+# m1_metrics
+
+# l1_logging
+

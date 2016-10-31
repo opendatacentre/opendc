@@ -11,6 +11,10 @@ metadata:
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
   replicas: {{ default 1 .Values.replicaCount }}
+  selector:
+    matchLabels:
+      solution: cm1_cluster_management
+      product:  kubernetes-dashboard
   template:
     metadata:
       labels:

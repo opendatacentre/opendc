@@ -2,5 +2,5 @@
 namespace: kube-system
 image: gcr.io/google_containers/kubernetes-dashboard-amd64
 tag:   v1.4.0
-replicaCount: 1
 externalIP: 192.168.101.110
+replicaCount: 1

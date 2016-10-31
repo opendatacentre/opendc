@@ -12,7 +12,7 @@ options:
 
 commands:
   init       initialize a new k8sdc installation in the current directory.
-  up         run template, machine, provision, client, config, pull, helm, sol and hosts commands.
+  up         run template, machine, provision, client, config, pull, and helm commands.
   template   create provider specific files from templates.
   machine    create a new set of machines for k8sdc to be provisioned to.
   provision  provision k8sdc components on to the machines.
@@ -38,6 +38,7 @@ examples:
   k8sdc status
 """
 
+import os
 import sys
 import logging
 from docopt import docopt
@@ -56,7 +57,7 @@ from k8sdc.commands.hosts     import HostsCmd
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.11'
+__version__ = '0.0.12'
 commands    = {'init'      : InitCmd,
                'up'        : UpCmd,
                'template'  : TemplateCmd,
@@ -93,6 +94,12 @@ def main():
     logger.error("Unknown command: {}".format(command))
     print(__doc__)
     sys.exit(1)
+
+  if not args['<command>'] == 'init':
+    provider_file = os.path.realpath(os.path.join(os.path.curdir, 'provider.yaml'))
+    if not os.path.exists(provider_file):
+      logger.error("Cannot find file 'provider.yaml' in current directory")
+      sys.exit(1)
 
   k8sdc_command = commands[command]()
   k8sdc_command.parse([command] + args['<args>'])
