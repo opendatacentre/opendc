@@ -51,9 +51,17 @@ class InitCmd(object):
 
   def run(self):
     curdir = os.getcwd()
+    
+    # Fix for using Brew installed Python to replace the default version of Python that 
+    # comes macOS.  This is needed as the default Python cannot install package data!
+    src_path = sys.prefix
+    if not os.path.exists(os.path.join(src_path, 'k8sdc')):
+      src_path = '/usr/local'
 
-    logger.debug('provider: {}'.format(self.provider))
-    logger.debug('curdir:   {}'.format(curdir))
+    logger.debug('provider:   {}'.format(self.provider))
+    logger.debug('curdir:     {}'.format(curdir))
+    logger.debug('sys.prefix: {}'.format(sys.prefix))
+    logger.debug('src_path:   {}'.format(src_path))
     logger.debug('----------')
     logger.info("Copying files for provider: {}".format(self.provider))
 
@@ -64,14 +72,14 @@ class InitCmd(object):
 
     # Copy standard files
     for file in self.files:
-      src = os.path.join(sys.prefix + '/k8sdc', file)
+      src = os.path.join(src_path + '/k8sdc', file)
       logger.debug("Copying file: {}".format(file))
       shutil.copy2(src, curdir)
       logger.debug('----------')
 
     # Copy standard directories
     for directory in self.directories:
-      src = os.path.join(sys.prefix + '/k8sdc', directory)
+      src = os.path.join(src_path + '/k8sdc', directory)
       logger.debug("Copying directory: {}".format(directory))
       copytree(src, os.path.join(curdir, directory))
 
@@ -79,6 +87,6 @@ class InitCmd(object):
 
     # Copy provider specific directory
     provider_dir = os.path.join('providers', self.provider)
-    src = os.path.join(sys.prefix + '/k8sdc', provider_dir)
+    src = os.path.join(src_path + '/k8sdc', provider_dir)
     logger.debug("Copying directory: {}".format(provider_dir))
     copytree(src, curdir)

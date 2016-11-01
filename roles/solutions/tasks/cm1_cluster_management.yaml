@@ -1,7 +1,7 @@
 ---
 # cm1_cluster_management Solution
 
-- name: Set variables for deployment
+- name: cm1_cluster_management | Set variables for deployment
   set_fact:
     variables: >
       namespace={{ solutions.cm1_cluster_management.namespace }},
@@ -11,7 +11,7 @@
       replicaCount={{ solutions.cm1_cluster_management.replicas }}
   run_once: yes
 
-- name: Run Helm
+- name: cm1_cluster_management | Run Helm
   include: helm.yaml sol_name=cm1_cluster_management variables=variables
   delegate_to: localhost
   run_once:    yes

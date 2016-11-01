@@ -83,7 +83,7 @@
 
 
 # Deploy
-- name: Set variables for deployment
+- name: dbs1_distributed_block_storage | Set variables for deployment
   set_fact:
     variables: >
       namespace={{ solutions.dbs1_distributed_block_storage.namespace }},
@@ -91,7 +91,7 @@
       tag={{ solutions.dbs1_distributed_block_storage.images.ceph.tag }},
   run_once: yes
 
-- name: Run Helm
+- name: dbs1_distributed_block_storage | Run Helm
   include: helm.yaml sol_name=dbs1_distributed_block_storage variables=variables
   delegate_to: localhost
   run_once:    yes
