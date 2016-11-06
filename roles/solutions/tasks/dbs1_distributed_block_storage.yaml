@@ -65,7 +65,7 @@
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
     KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
-  with_items: groups['mon_hosts']
+  with_items: "{{ groups['mon_hosts'] }}"
   delegate_to: localhost
   become:   no
   run_once: yes
@@ -76,7 +76,7 @@
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
     KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
-  with_items: groups['osd_hosts']
+  with_items: "{{ groups['osd_hosts'] }}"
   delegate_to: localhost
   become:   no
   run_once: yes
@@ -98,4 +98,28 @@
   become:      no
 
 
+# Wait for Ceph to come up!
+- pause:
+    seconds: 120
 
+# Create Ceph pools
+- block:
+
+  - name: dbs1_distributed_block_storage | Get Ceph pools
+    command: ceph osd lspools
+    register: ceph_pools
+
+  - name: dbs1_distributed_block_storage | Create k8sdc-infra pool
+    command: ceph osd pool create k8sdc-infra 64 replicated
+    when: "'k8sdc-infra' not in ceph_pools.stdout"
+
+  - name: dbs1_distributed_block_storage | Create k8sdc-development pool
+    command: ceph osd pool create k8sdc-development 64 replicated
+    when: "'k8sdc-development' not in ceph_pools.stdout"
+
+  - name: dbs1_distributed_block_storage | Create k8sdc-productivity pool
+    command: ceph osd pool create k8sdc-productivity 64 replicated
+    when: "'k8sdc-productivity' not in ceph_pools.stdout"
+
+  delegate_to: "{{ groups['mon_hosts'][0] }}"
+  run_once:    yes

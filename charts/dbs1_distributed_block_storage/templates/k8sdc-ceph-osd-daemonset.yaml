@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     solution: dbs1_distributed_block_storage
-    product:  Ceph
+    product:  ceph
     type:     osd
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
@@ -14,14 +14,14 @@ spec:
   selector:
     matchLabels:
       solution: dbs1_distributed_block_storage
-      product:  Ceph
+      product:  ceph
       type:     osd
   template:
     metadata:
       name: k8sdc-dbs1-ceph-osd
       labels:
         solution: dbs1_distributed_block_storage
-        product:  Ceph
+        product:  ceph
         type:     osd
         heritage: {{ .Release.Service | quote }}
         release:  {{ .Release.Name | quote }}

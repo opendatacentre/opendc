@@ -3,7 +3,7 @@
 
 # TODO: Also need to check if previous release FAILED and it was version 1
 #       In which case need to --purge it before installing.
-- name: Check for previous release
+- name: Helm | Check for previous release
   command: >
     helm list {{ sol_name.split('_')[0] }} --all
   environment:
@@ -12,17 +12,17 @@
     KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
   register: helm_output
 
-- name: Define whether to install
+- name: Helm | Define whether to install
   set_fact:
     helm_cmd: helm install --name {{ sol_name.split('_')[0] }}
   when: helm_output.stdout == ""
 
-- name: Define whether to upgrade
+- name: Helm | Define whether to upgrade
   set_fact:
     helm_cmd: helm upgrade {{ sol_name.split('_')[0] }}
   when: not helm_output.stdout == ""
 
-- name: Deploy solution
+- name: Helm | Deploy solution
   command: >
     {{ helm_cmd }}
          --set {{ variables.replace(' ', '').strip() }}

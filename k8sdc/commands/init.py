@@ -12,6 +12,9 @@ options:
                   vagrant
                   do [NOT IMPLEMENTED]
                   aws [NOT IMPLEMENTED]
+                  azure [NOT IMPLEMENTED]
+                  gcp [NOT IMPLEMENTED]
+                  libvirt [NOT IMPLEMENTED]
                   federation [NOT IMPLEMENTED]
   -h, --help    show this help.
   --debug       show debug output.
@@ -53,7 +56,8 @@ class InitCmd(object):
     curdir = os.getcwd()
     
     # Fix for using Brew installed Python to replace the default version of Python that 
-    # comes macOS.  This is needed as the default Python cannot install package data!
+    # comes with macOS.  This is needed as the default Python cannot install package data!
+    # TODO: Improve the error checking handling for this!
     src_path = sys.prefix
     if not os.path.exists(os.path.join(src_path, 'k8sdc')):
       src_path = '/usr/local'

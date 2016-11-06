@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8sdc-keycloak
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: im1_identity_management
+    product:  keycloak
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      solution: im1_identity_management
+      product:  keycloak
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        solution: im1_identity_management
+        product:  keycloak
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+      - name: k8sdc-keycloak
+        image: {{ .Values.keycloak_image }}:{{ .Values.keycloak_tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        env:
+          - name: KEYCLOAK_USER
+            value: admin
+          - name: KEYCLOAK_PASSWORD
+            value: admin
+        args:
+          - -Dkeycloak.migration.realmName=k8sdc
+          - -Dkeycloak.migration.action=import
+          - -Dkeycloak.migration.strategy=IGNORE_EXISTING
+          - -Dkeycloak.migration.provider=singleFile
+          - -Dkeycloak.migration.file=/opt/jboss/keycloak/k8sdc/k8sdc-realm.json
+          - -Djboss.bind.address=0.0.0.0
+        volumeMounts:
+          - name: k8sdc-realm-json
+            mountPath: /opt/jboss/keycloak/k8sdc/
+          - name: k8sdc-keycloak
+            readOnly: false
+            mountPath: /opt/jboss/keycloak/standalone/data/
+        resources:
+          limits:
+            cpu: 600m
+            memory: 500Mi
+          requests:
+            cpu: 400m
+            memory: 500Mi
+      volumes:
+        - name: k8sdc-realm-json
+          configMap:
+            name: k8sdc-keycloak
+        - name: k8sdc-keycloak
+          persistentVolumeClaim:
+            claimName: k8sdc-keycloak

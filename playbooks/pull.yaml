@@ -17,4 +17,4 @@
     - name: Pull Docker images
       command: docker pull {{ item }}
       become: yes
-      with_items: images.split(',')
+      with_items: "{{ images.split(',') }}"

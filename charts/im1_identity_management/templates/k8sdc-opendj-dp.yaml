@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8sdc-opendj
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: im1_identity_management
+    product:  opendj
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      solution: im1_identity_management
+      product:  opendj
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        solution: im1_identity_management
+        product:  opendj
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+      - name: k8sdc-opendj
+        image: {{ .Values.opendj_image }}:{{ .Values.opendj_tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        ports:
+          - name: ldap
+            containerPort: 389
+            protocol: TCP
+          - name: ldaps
+            containerPort: 636
+            protocol: TCP
+        volumeMounts:
+          - name: k8sdc-opendj
+            readOnly: false
+            mountPath: /opt/opendj/instance/
+          - name: k8sdc-opendj-configmap
+            mountPath: /tmp/k8sdc/
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 200m
+            memory: 200Mi
+      volumes:
+        - name: k8sdc-opendj-configmap
+          configMap:
+            name: k8sdc-opendj
+        - name: k8sdc-opendj
+          persistentVolumeClaim:
+            claimName: k8sdc-opendj

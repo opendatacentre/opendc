@@ -58,24 +58,28 @@ solutions:
       - hostname: node3.vb.k8sdc.io
     osd_hosts:
       - hostname:   node1.vb.k8sdc.io
-        count_256m: 40
+        count_256m: 60
       - hostname:   node2.vb.k8sdc.io
-        count_256m: 40
+        count_256m: 60
       - hostname:   node3.vb.k8sdc.io
-        count_256m: 40
+        count_256m: 60
 
   im1_identity_management:
-    enable:     yes
-    namespace:  k8sdc-infra
+    enable:    yes
+    namespace: k8sdc-infra
+    use_ceph:  yes
+    replicas:  1
+    hostnames: 
+      keycloak: keycloak.k8sdc.io
     images:
       opendj:
-        image: k8sdc/opendj
-        tag:   latest
+        image:    k8sdc/opendj
+        tag:      latest
+        vol_size: 300
       keycloak:
-        image: jboss/keycloak
-        tag:   1.9.3.Final
-    hostnames: 
-      keycloack: keycloak.k8sdc.io
+        image:    jboss/keycloak
+        tag:      1.9.3.Final
+        vol_size: 1000
 
   hrp1_https_reverse_proxy:
     enable:     yes

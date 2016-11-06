@@ -1,0 +1,69 @@
+---
+# im1_identity_management Solution
+
+# Create Ceph mon host group
+- name: im1_identity_management | Create mon hosts group
+  add_host:
+    name:   "{{ item }}"
+    groups: mon_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+
+
+# Create Ceph block storage and Kubernetes PV
+- block:
+
+  - name: im1_identity_management | Check for OpenDJ Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd_opendj
+
+  - name: im1_identity_management | Create OpenDJ Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-opendj 
+      size={{ solutions.im1_identity_management.images.opendj.vol_size }} 
+      solution=im1_identity_management 
+      product=opendj
+    when: "'k8sdc-opendj' not in rbd_opendj.stdout"
+    run_once: yes
+    delegate_to: "{{ groups['mon_hosts'][0] }}"
+  
+  - name: im1_identity_management | Check for Keycloak Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd_keycloak
+
+  - name: im1_identity_management | Create Keycloak Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-keycloak 
+      size={{ solutions.im1_identity_management.images.keycloak.vol_size }} 
+      solution=im1_identity_management 
+      product=keycloak
+    when: "'k8sdc-keycloak' not in rbd_keycloak.stdout"
+    run_once: yes
+    delegate_to: "{{ groups['mon_hosts'][0] }}"
+
+  delegate_to: "{{ groups['mon_hosts'][0] }}"
+  run_once:    yes
+  when: solutions.im1_identity_management.use_ceph
+
+
+# Deploy
+- name: im1_identity_management | Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.im1_identity_management.namespace }},
+      opendj_image={{ solutions.im1_identity_management.images.opendj.image }},
+      opendj_tag={{ solutions.im1_identity_management.images.opendj.tag }},
+      keycloak_image={{ solutions.im1_identity_management.images.keycloak.image }},
+      keycloak_tag={{ solutions.im1_identity_management.images.keycloak.tag }},
+      keycloak_host={{ solutions.im1_identity_management.hostnames.keycloak }},
+      replicaCount={{ solutions.im1_identity_management.replicas }}
+  run_once: yes
+
+- name: im1_identity_management | Run Helm
+  include: helm.yaml sol_name=im1_identity_management variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: k8sdc-keycloak
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: im1_identity_management
+    product:  keycloak
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  rules:
+  - host: {{ .Values.keycloak_host }}
+    http:
+      paths:
+      - backend:
+          serviceName: k8sdc-keycloak
+          servicePort: 8080

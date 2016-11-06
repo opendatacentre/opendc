@@ -3,7 +3,7 @@
   yum:
     name={{ item }}
     state=latest
-  with_items: packages
+  with_items: "{{ packages }}"
   when: install_pkgs
   tags: packages
 

@@ -1,0 +1,61 @@
+---
+# Create a Ceph block storage image and Kubernetes PV
+
+- name: Ceph | Create Ceph block storage
+  command: rbd create --size {{ size }} {{ pool }}/{{ image }}
+    
+- name: Ceph | Map Ceph block storage
+  command: rbd map {{ pool }}/{{ image }}
+
+- name: Ceph | Get Ceph device
+  shell: rbd showmapped | grep {{ image }} | awk '{ print $5 }'
+  register: device
+
+- name: Ceph | Format Ceph device
+  shell: mkfs.xfs {{ device.stdout }}
+
+- name: Ceph | Mount Ceph device
+  mount:
+    name:   /mnt/temporary
+    src:    "{{ device.stdout }}"
+    fstype: xfs
+    state:  mounted
+
+- name: Ceph | Set permissions for Ceph mount
+  file:
+    path: /mnt/temporary
+    mode: 0777
+
+- name: Ceph | Unmount Ceph device 
+  mount:
+    name:   /mnt/temporary
+    src:    "{{ device.stdout }}"
+    fstype: xfs
+    state:  unmounted
+
+- name: Ceph | Unmap Ceph block storage
+  command: rbd unmap {{ device.stdout }}
+
+- name: Ceph | Remove temporary mount point
+  file:
+    path: /mnt/temporary
+    state: absent
+
+- block:
+
+  - name: Ceph | Create PV yaml
+    template:
+      src:  ceph_pv.yaml.j2
+      dest: /tmp/pv.yaml
+
+  - name: Ceph | Create PV
+    command: /bin/kubectl apply -f /tmp/pv.yaml
+    environment:
+      KUBECONFIG: /etc/kubernetes/kubeconfig/kubectl.kubeconfig
+
+  - name: Ceph | Remove PV yaml
+    file:
+      path:  /tmp/pv.yaml
+      state: absent
+
+  delegate_to: "{{ groups['k8sdc-masters'][0] }}"

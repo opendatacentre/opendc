@@ -17,7 +17,13 @@
         solutions.dbs1_distributed_block_storage.enable
   tags: dbs1_distributed_block_storage
 
+
 # im1_identity_management
+- include: im1_identity_management.yaml
+  when: solutions.im1_identity_management.enable is defined and 
+        solutions.im1_identity_management.enable 
+  tags: im1_identity_management
+
 
 # hrp1_https_reverse_proxy
 
