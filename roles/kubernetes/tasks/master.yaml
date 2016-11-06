@@ -237,16 +237,16 @@
       when: master_token_values is defined
   
     # kube-controller-manager
-    - name: master | Create system:controller_manager token file
-      copy:
-        dest: >-
-          /etc/kubernetes/tokens/system:kube-controller-manager-{{ inventory_hostname }}.token
-        content: >-
-          {{ master_token_values[inventory_hostname]['system_controller_manager'] | b64decode }}
-        mode:  0440
-        owner: kube
-        group: kube
-      when: master_token_values is defined
+    # - name: master | Create system:controller_manager token file
+    #   copy:
+    #     dest: >-
+    #       /etc/kubernetes/tokens/system:kube-controller-manager-{{ inventory_hostname }}.token
+    #     content: >-
+    #       {{ master_token_values[inventory_hostname]['system_controller_manager'] | b64decode }}
+    #     mode:  0440
+    #     owner: kube
+    #     group: kube
+    #   when: master_token_values is defined
 
     - name: master | Create kube-controller-manager kubeconfig file
       template: 
@@ -259,16 +259,16 @@
       when:    master_token_values is defined
 
     # kube-scheduler
-    - name: master | Create system:scheduler token file
-      copy:
-        dest: >-
-          /etc/kubernetes/tokens/system:kube-scheduler-{{ inventory_hostname }}.token
-        content: >-
-          {{ master_token_values[inventory_hostname]['system_scheduler'] | b64decode }}
-        mode:  0440
-        owner: kube
-        group: kube
-      when: master_token_values is defined
+    # - name: master | Create system:scheduler token file
+    #   copy:
+    #     dest: >-
+    #       /etc/kubernetes/tokens/system:kube-scheduler-{{ inventory_hostname }}.token
+    #     content: >-
+    #       {{ master_token_values[inventory_hostname]['system_scheduler'] | b64decode }}
+    #     mode:  0440
+    #     owner: kube
+    #     group: kube
+    #   when: master_token_values is defined
 
     - name: master | Create kube-scheduler kubeconfig file
       template: 
@@ -281,16 +281,16 @@
       when:    master_token_values is defined
 
     # kubectl
-    - name: master | Create system:kubectl token file
-      copy:
-        dest: >-
-          /etc/kubernetes/tokens/system:kubectl-{{ inventory_hostname }}.token
-        content: >-
-          {{ master_token_values[inventory_hostname]['system_kubectl'] | b64decode }}
-        mode:  0440
-        owner: kube
-        group: kube
-      when: master_token_values is defined
+    # - name: master | Create system:kubectl token file
+    #   copy:
+    #     dest: >-
+    #       /etc/kubernetes/tokens/system:kubectl-{{ inventory_hostname }}.token
+    #     content: >-
+    #       {{ master_token_values[inventory_hostname]['system_kubectl'] | b64decode }}
+    #     mode:  0440
+    #     owner: kube
+    #     group: kube
+    #   when: master_token_values is defined
 
     - name: master | Create kubectl kubeconfig file
       template: 

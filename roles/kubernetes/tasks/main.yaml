@@ -123,16 +123,3 @@
   when: '"k8sdc-nodes" in group_names'
   tags: 
     - k8s_node
-
-
-# Create Kubernetes namespaces
-- name: main | Create Kubernetes Namespaces
-  command:       /bin/kubectl create ns {{ item }}
-  environment:
-    KUBECONFIG:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
-  delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
-  run_once:      yes
-  ignore_errors: yes
-  with_items:    "{{ namespaces }}"
-  tags:
-    - k8s_ns

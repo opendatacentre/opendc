@@ -1,4 +1,16 @@
 ---
+# # Create Kubernetes namespaces
+# - name: main | Create Kubernetes Namespaces
+#   command:       /bin/kubectl create ns {{ item }}
+#   environment:
+#     KUBECONFIG:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
+#   delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
+#   run_once:      yes
+#   ignore_errors: yes
+#   with_items:    "{{ namespaces }}"
+#   tags:
+#     - k8s_ns
+
 # cs1_cluster_services
 - include: cs1_cluster_services.yaml
   when: solutions.cs1_cluster_services.enable is defined and 
@@ -30,4 +42,10 @@
 # m1_metrics
 
 # l1_logging
+
+# jm1_job_management
+
+# as1_artifact_storage
+
+# ir1_image_repository
 

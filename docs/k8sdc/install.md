@@ -7,10 +7,11 @@ ___
 
 ## Test environment
 
-**k8sdc** is a new project and therefore testing has only been conducted on a limited set of environments.  The following software versions are known to work.
+**k8sdc** is a new project and as such testing has only been conducted on a limited set of environments.  The following software versions are known to work.
 
 * macOS 10.12
 * Python 2.7.12
+* Ansible 2.1.2.0 (must be this version as 2.2 breaks certificate generation)
 * Vagrant 1.8.4
 * Virtualbox 5.0.26 r108824
 ___

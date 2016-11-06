@@ -50,6 +50,8 @@
         cert_name:  'kube_controller_manager', 
         dns_values: "{{ k8sdc_master_dns_values }}", 
         ip_values:  "{{ k8sdc_master_ip_values }}" }
+  delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+  run_once: yes
 
 
 
