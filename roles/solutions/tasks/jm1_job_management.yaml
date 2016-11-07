@@ -1,0 +1,50 @@
+# jm1_job_management Solution
+
+# Create Ceph mon host group
+- name: jm1_job_management | Create mon hosts group
+  add_host:
+    name:   "{{ item }}"
+    groups: mon_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+
+
+# Create Ceph block storage and Kubernetes PV
+- block:
+
+  - name: jm1_job_management | Check for Jenkins Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd
+
+  - name: jm1_job_management | Create Jenkins Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-jenkins
+      size={{ solutions.jm1_job_management.images.jenkins.vol_size }} 
+      solution=jm1_job_management 
+      product=jenkins
+    when: "'k8sdc-jenkins' not in rbd.stdout"
+    run_once: yes
+    delegate_to: "{{ groups['mon_hosts'][0] }}"
+
+  delegate_to: "{{ groups['mon_hosts'][0] }}"
+  run_once:    yes
+  when: solutions.jm1_job_management.use_ceph
+
+
+# Deploy
+- name: jm1_job_management | Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.jm1_job_management.namespace }},
+      image={{ solutions.jm1_job_management.images.jenkins.image }},
+      tag={{ solutions.jm1_job_management.images.jenkins.tag }},
+      host={{ solutions.jm1_job_management.hostnames.jenkins }},
+      replicaCount={{ solutions.jm1_job_management.replicas }}
+  run_once: yes
+
+- name: jm1_job_management | Run Helm
+  include: helm.yaml sol_name=jm1_job_management variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

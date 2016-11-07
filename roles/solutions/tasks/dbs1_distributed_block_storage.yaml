@@ -99,8 +99,10 @@
 
 
 # Wait for Ceph to come up!
-- pause:
-    seconds: 120
+- name: dbs1_distributed_block_storage | Wait for Ceph to come up
+  pause:
+    seconds: 240
+
 
 # Create Ceph pools
 - block:

@@ -1,4 +1,12 @@
 # Default values for m1_metrics.
-# This is a YAML-formatted file.
-# Declare name/value pairs to be passed into your templates.
-# name: value
+namespace: k8sdc-infra
+
+prometheus_image: prom/prometheus
+prometheus_tag:   v1.3.1
+prometheus_host:  prometheus.k8sdc.io
+
+grafana_image: grafana/grafana
+grafana_tag:   3.1.1-1470047149
+grafana_host:  grafana.k8sdc.io
+
+replicaCount: 1

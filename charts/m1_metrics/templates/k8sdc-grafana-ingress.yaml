@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: k8sdc-grafana
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: m1_metrics
+    product:  grafana
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  rules:
+    - host: {{ .Values.grafana_host }}
+      http:
+        paths:
+          - backend:
+              serviceName: k8sdc-grafana
+              servicePort: 80

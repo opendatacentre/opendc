@@ -3,13 +3,16 @@
 
 # TODO: Also need to check if previous release FAILED and it was version 1
 #       In which case need to --purge it before installing.
+# TODO: Ensure that bin/helm is used!
 - name: Helm | Check for previous release
-  command: >
-    helm list {{ sol_name.split('_')[0] }} --all
+  shell: >
+    helm list {{ sol_name.split('_')[0] }} --all |
+    grep "^{{ sol_name.split('_')[0] }}"
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
     KUBECONFIG:  "{{ inventory_dir }}/config/kubectl.kubeconfig"
+  failed_when: no
   register: helm_output
 
 - name: Helm | Define whether to install

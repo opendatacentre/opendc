@@ -87,16 +87,28 @@ solutions:
     images:
       traefik:
         image: traefik
-        tag:   latest
-    keepalived: yes
-    vip:        10.0.0.100
+        tag:   v1.0.3
+    keepalived: 
+      enable: no
+      vip:    10.0.0.100
 
-  # m1_metrics:
-  #   enable:     yes
-  #   namespace:  k8sdc-infra
-  #   hostnames:
-  #     prometheus: prometheus.k8sdc.io
-  #     grafana:    grafana.k8sdc.io 
+  m1_metrics:
+    enable:    yes
+    namespace: k8sdc-infra
+    use_ceph:  yes
+    replicas:  1
+    hostnames:
+      prometheus: prometheus.k8sdc.io
+      grafana:    grafana.k8sdc.io
+    images:
+      prometheus:
+        image:    prom/prometheus
+        tag:      v1.3.1
+        vol_size: 5000
+      grafana:
+        image:    grafana/grafana
+        tag:      3.1.1-1470047149
+        vol_size: 1000
 
   # l1_logging:
   #   enable:     yes
@@ -105,3 +117,21 @@ solutions:
   #     kibana:         kibana.k8sdc.io
   #     kafka_admin:    kafka.k8sdc.io
   #     logstash_admin: logstash.k8sdc.io
+
+  jm1_job_management:
+    enable:    yes
+    namespace: k8sdc-infra
+    use_ceph:  yes
+    replicas:  1
+    hostnames:
+      jenkins: jenkins.k8sdc.io
+    images:
+      jenkins:
+        image:    jenkins
+        tag:      2.7.4
+        vol_size: 10000
+
+  # as1_artifact_storage
+
+  # ir1_image_repository
+

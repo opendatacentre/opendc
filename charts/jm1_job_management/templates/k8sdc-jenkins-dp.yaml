@@ -1,11 +1,11 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: k8sdc-opendj
+  name: k8sdc-jenkins
   namespace: {{ .Values.namespace }}
   labels:
-    solution: im1_identity_management
-    product:  opendj
+    solution: jm1_job_management
+    product:  jenkins
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -14,46 +14,43 @@ spec:
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      solution: im1_identity_management
-      product:  opendj
+      solution: jm1_job_management
+      product:  jenkins
   strategy: {'type': 'Recreate'}
   template:
     metadata:
       labels:
-        solution: im1_identity_management
-        product:  opendj
+        solution: jm1_job_management
+        product:  jenkins
         heritage: {{ .Release.Service | quote }}
         release:  {{ .Release.Name | quote }}
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name: k8sdc-opendj
-          image: {{ .Values.opendj_image }}:{{ .Values.opendj_tag }}
+        - name: k8sdc-jenkins
+          image: {{ .Values.image }}:{{ .Values.tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
-            - name: ldap
-              containerPort: 389
+            - name: http
+              containerPort: 8080
               protocol: TCP
-            - name: ldaps
-              containerPort: 636
+            - name: jnlp
+              containerPort: 50000
               protocol: TCP
           volumeMounts:
-            - name: k8sdc-opendj
+            - name: k8sdc-jenkins
               readOnly: false
-              mountPath: /opt/opendj/instance/
-            - name: k8sdc-opendj-configmap
-              mountPath: /tmp/k8sdc/
+              mountPath: /var/jenkins_home/
           resources:
             limits:
-              cpu: 500m
-              memory: 500Mi
+              cpu: 1000m
+              memory: 1000Mi
             requests:
-              cpu: 200m
-              memory: 200Mi
+              cpu: 600m
+              memory: 600Mi
       volumes:
-        - name: k8sdc-opendj-configmap
-          configMap:
-            name: k8sdc-opendj
-        - name: k8sdc-opendj
+        - name: k8sdc-jenkins
           persistentVolumeClaim:
-            claimName: k8sdc-opendj
+            claimName: k8sdc-jenkins
+
+        

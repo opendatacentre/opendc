@@ -1,7 +1,7 @@
 ---
 goos:       "{{ ansible_system | lower }}"
 goarch:     amd64
-client_dir: /usr/local/bin/
+client_dir: "{{ inventory_dir }}/bin/"
 
 kubectl_http_proxy: ''
 kubectl_https_proxy: ''
@@ -14,7 +14,7 @@ kubectl_path: >-
 kubectl_url:     "{{ kubectl_host }}/{{ kubectl_path }}/kubectl"
 
 # Helm
-helm_version: 2.0.0-beta.1
+helm_version: 2.0.0-rc.2
 helm_host:    https://storage.googleapis.com
 helm_path: >-
   kubernetes-helm/helm-v{{ helm_version }}-{{ goos }}-{{ goarch }}.tar.gz

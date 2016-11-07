@@ -10,33 +10,23 @@
         force: yes
         mode:  0755
 
-    - name: Create temp directory
-      command: mktemp -d
-      register: temp_dir
-
-    - set_fact:
-        temp_dir: "{{ temp_dir.stdout }}"
-
     - name: Download helm
       get_url:
         url:  "{{ helm_url }}"
-        dest: "{{ temp_dir }}/{{ helm_url | basename }}"
+        dest: /tmp/
 
+    # NOTE: Ansible unarchive module seems to be unreliable
     - name: Extract helm
-      unarchive:
-        src:  "/{{ temp_dir }}/{{ helm_url | basename }}"
-        dest: "{{ temp_dir }}/"
+      command: >
+        tar -xzvf {{ helm_url | basename }}
+      args:
+        chdir: /tmp/
 
     - name: Copy helm
       command: >-
-        cp {{ temp_dir }}/{{ goos }}-{{ goarch }}/helm {{ client_dir }}
+        cp /tmp/{{ goos }}-{{ goarch }}/helm {{ client_dir }}
 
     - name: Set Helm permissions
       file:
         path: "{{ client_dir }}/helm"
         mode: 0755
-
-    - name: Remove temp directory
-      file:
-        path:  "{{ temp_dir }}"
-        state: absent

@@ -11,15 +11,15 @@ vagrant:
   nodes:
     - hostname: node1.vb.k8sdc.io
       ip:       192.168.101.110
-      memory:   2048
+      memory:   2200
       cpus:     4
     - hostname: node2.vb.k8sdc.io
       ip:       192.168.101.111
-      memory:   2048
+      memory:   2200
       cpus:     4
     - hostname: node3.vb.k8sdc.io
       ip:       192.168.101.112
-      memory:   2048
+      memory:   2200
       cpus:     4
   etcd:
     - master.vb.k8sdc.io

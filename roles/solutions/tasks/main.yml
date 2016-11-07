@@ -29,21 +29,31 @@
         solutions.dbs1_distributed_block_storage.enable
   tags: dbs1_distributed_block_storage
 
-
 # im1_identity_management
 - include: im1_identity_management.yaml
   when: solutions.im1_identity_management.enable is defined and 
         solutions.im1_identity_management.enable 
   tags: im1_identity_management
 
-
 # hrp1_https_reverse_proxy
+- include: hrp1_https_reverse_proxy.yaml
+  when: solutions.hrp1_https_reverse_proxy.enable is defined and 
+        solutions.hrp1_https_reverse_proxy.enable 
+  tags: hrp1_https_reverse_proxy
 
 # m1_metrics
-
+- include: m1_metrics.yaml
+  when: solutions.m1_metrics.enable is defined and 
+        solutions.m1_metrics.enable 
+  tags: m1_metrics
+  
 # l1_logging
 
 # jm1_job_management
+- include: jm1_job_management.yaml
+  when: solutions.jm1_job_management.enable is defined and 
+        solutions.jm1_job_management.enable 
+  tags: jm1_job_management
 
 # as1_artifact_storage
 

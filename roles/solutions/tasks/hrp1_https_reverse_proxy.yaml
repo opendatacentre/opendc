@@ -1,0 +1,15 @@
+# hrp1_https_reverse_proxy solution
+
+- name: hrp1_https_reverse_proxy | Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.hrp1_https_reverse_proxy.namespace }},
+      image={{ solutions.hrp1_https_reverse_proxy.images.traefik.image }},
+      tag={{ solutions.hrp1_https_reverse_proxy.images.traefik.tag }},
+  run_once: yes
+
+- name: hrp1_https_reverse_proxy | Run Helm
+  include: helm.yaml sol_name=hrp1_https_reverse_proxy variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

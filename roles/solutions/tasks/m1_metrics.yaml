@@ -1,0 +1,68 @@
+# m1_metrics solution
+
+# Create Ceph mon host group
+- name: m1_metrics | Create mon hosts group
+  add_host:
+    name:   "{{ item }}"
+    groups: mon_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+
+
+# Create Ceph block storage and Kubernetes PV
+- block:
+
+  - name: m1_metrics | Check for Prometheus Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd
+
+  - name: m1_metrics | Create Prometheus Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-prometheus
+      size={{ solutions.m1_metrics.images.prometheus.vol_size }} 
+      solution=m1_metrics 
+      product=prometheus
+    when: "'k8sdc-prometheus' not in rbd.stdout"
+    run_once: yes
+    delegate_to: "{{ groups['mon_hosts'][0] }}"
+  
+  - name: m1_metrics | Check for Grafana Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd
+
+  - name: m1_metrics | Create Grafana Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-grafana 
+      size={{ solutions.m1_metrics.images.grafana.vol_size }} 
+      solution=m1_metrics 
+      product=grafana
+    when: "'k8sdc-grafana' not in rbd.stdout"
+    run_once: yes
+    delegate_to: "{{ groups['mon_hosts'][0] }}"
+
+  delegate_to: "{{ groups['mon_hosts'][0] }}"
+  run_once:    yes
+  when: solutions.m1_metrics.use_ceph
+
+
+# Deploy
+- name: m1_metrics | Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.m1_metrics.namespace }},
+      prometheus_image={{ solutions.m1_metrics.images.prometheus.image }},
+      prometheus_tag={{ solutions.m1_metrics.images.prometheus.tag }},
+      prometheus_host={{ solutions.m1_metrics.hostnames.prometheus }},
+      grafana_image={{ solutions.m1_metrics.images.grafana.image }},
+      grafana_tag={{ solutions.m1_metrics.images.grafana.tag }},
+      grafana_host={{ solutions.m1_metrics.hostnames.grafana }}
+  run_once: yes
+
+- name: m1_metrics | Run Helm
+  include: helm.yaml sol_name=m1_metrics variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no
