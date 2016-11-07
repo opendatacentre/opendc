@@ -10,6 +10,8 @@ ___
 The following individuals have contributed to the **k8sdc** source code.
 
 * [Brady Wood](https://github.com/bradywood) has the distinction of being the first person to contribute to **k8sdc**.  Thanks Brady! :)
+* [Jun Wang](https://github.com/w0203j) has been a great help testing out various versions of **k8sdc**.
+* [Hamid Nazari](https://github.com/hamidnazari) has also helped with testing.
 ___
 
 
@@ -21,4 +23,6 @@ ___
 * The [Python Software Foundation](https://www.python.org/psf/) for [Python](https://www.python.org).
 * [Hashicorp](https://www.hashicorp.com) for [Vagrant](https://www.vagrantup.com).
 * [Gitbook](https://www.gitbook.com) for this lovely documentation application.
+
+And many more that I will be adding :-)
 

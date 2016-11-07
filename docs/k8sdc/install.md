@@ -7,7 +7,7 @@ ___
 
 ## Test environment
 
-**k8sdc** is a new project and as such testing has only been conducted on a limited set of environments.  The following software versions are known to work.
+**k8sdc** is a new project and is still considered **experimental**.  As such testing has only been conducted on a limited set of environments.  The following software versions are known to work.
 
 * macOS 10.12
 * Python 2.7.12
@@ -32,7 +32,7 @@ $ pip install k8sdc
 The following dependancies will be installed along with `k8sdc`.
 
 ```
-ansible>=2.1.1.0
+ansible>=2.1.2.0
 docopt>=0.6.2
 ```
 
@@ -63,19 +63,23 @@ ___
 
 ## Edit the provider.yaml file
 
+If you wish to change the install defaults then you can review and edit the `provider.yaml` file that has been created in the install root directory.
+
 *TODO*
 ___
 
 
 ## Generate public / private key pair for admin user
 
+You can generate your own public / private key pair for the admin user or make use of the sample ones provided.  The key pair can be found in the `keys/` directory of the install root.
+
 *TODO*
 ___
 
 
-## Install k8sdc
+## Install the base components
 
-The simplest way to install **k8sdc** is by using [`k8sdc up`](../commands/k8sdc_up.md).
+The simplest way to install the **k8sdc** base components is by using [`k8sdc up`](../commands/k8sdc_up.md).
 
 ```
 $ k8sdc up
@@ -83,11 +87,55 @@ $ k8sdc up
 
 **Note**
 
-The default installation directory for the `kubectl` and `helm` commands is `/usr/local/bin/`.  As such this directory must be in your `PATH` environment variable so that the Solutions can be deployed.
-
+The default installation directory for the `kubectl` and `helm` commands is in the `bin/` directory of the install root.
 ___
 
 
 ## Validate the install
 
-The next thing you will want to do is [validate](validate.md) that **k8sdc** has installed correctly.
+Once `k8sdc up` has completed you should have a working installation of the **k8sdc** base components.  To test this use the following commands.
+
+```
+$ export KUBECONFIG=`pwd`/config/kubectl.kubeconfig
+$ bin/kubectl get nodes
+```
+
+You should see the set of Kubernetes hosts, i.e.
+
+```
+NAME                STATUS    AGE
+node1.vb.k8sdc.io   Ready     5m
+node2.vb.k8sdc.io   Ready     5m
+node3.vb.k8sdc.io   Ready     5m
+```
+___
+
+
+## Install the Solutions
+
+Once the **k8sdc** base components are installed the [*Solutions*](../reference/solution.md) can be applied.
+
+For the moment you will need to create a new *Namespace*.  However this will soon be unecessary.
+
+```
+$ bin/kubectl create ns k8sdc-infra
+```
+
+The the *Solutions* can be installed using [`k8sdc sol`](../commands/k8sdc_sol.md).
+
+```
+$ k8sdc sol
+```
+
+Currently the following *Solutions* will be installed.
+
+* [(cs1) Cluster Services](../reference/solutions/cs1_cluster_services.md)
+* [(cm1) Cluster Management](../reference/solutions/cm1_cluster_management.md)
+* [(dbs1) Distributed Block Storage](../reference/solutions/dbs1_distributed_block_storage.md)
+* [(im1) Identity Management](../reference/solutions/im1_identity_management.md)
+* [(hrp1) HTTP/S Reverse Proxy](../reference/solutions/hrp1_https_reverse_proxy.md)
+* [(m1) Metrics](../reference/solutions/m1_metrics.md)
+* [(jm1) Job Management](../reference/solutions/jm1_job_management.md)
+
+
+Edit `hosts`

@@ -17,4 +17,4 @@ ___
 
 ## Solutions
 
-* [Distributed Block Storage (Ceph)](../solutions/distributed_block_storage_ceph.md)
+* [(dbs1) Distributed Block Storage](../solutions/dbs1_distributed_block_storage.md)

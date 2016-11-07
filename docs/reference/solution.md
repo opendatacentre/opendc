@@ -23,7 +23,7 @@ The *Solutions* that are currently implemented by **k8sdc** are listed in the fo
 | [(as1) Artifact Storage][sol_art_st_artifactory]               | [Artifact Storage][cap_art_st]               | [Artifactory][prd_artifactory]                                                                                                                    |
 | [(ir1) Image Repository][sol_image_repo_portus]                     | [Image Repository][cap_image_repo]           | [Portus][prd_portus]                                                                                                                              |
 
-[cap_clust_serv]:         capabilities/cluster_services_kubernetes.md
+[cap_clust_serv]:         capabilities/cluster_services.md
 [sol_cs1_clust_serv_kub]: solutions/cs1_cluster_services.md
 [prd_kub_dns]:            https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns
 [prd_heapster]:           https://github.com/kubernetes/heapster      
