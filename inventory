@@ -3,8 +3,10 @@
 k8sdc-masters
 k8sdc-nodes
 etcd
-k8sdc-ca
 fileserver
+k8sdc-ca
+timeserver
+docker-registry-mirror
 
 [k8sdc:vars]
 ansible_user=XXXXX
@@ -42,10 +44,10 @@ node5.k8sdc.io
 node6.k8sdc.io
 node7.k8sdc.io
 
-[k8sdc-ca]
+[fileserver]
 master.k8sdc.io
 
-[fileserver]
+[k8sdc-ca]
 master.k8sdc.io
 
 [timeserver]

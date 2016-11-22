@@ -1,5 +1,5 @@
 ---
-- name: Get k8sdc-ca certificate
+- name: Generate a local kubeconfig file
   hosts:
     - localhost
   tasks:

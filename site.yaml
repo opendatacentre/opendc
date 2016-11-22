@@ -1,15 +1,13 @@
 ---
-# TODO: Ensure that version 7 of CentOS / RHEL is being used
 - name: Test distribution
   hosts:
     - k8sdc
   tasks:
     - assert:
-        that: ansible_os_family == "RedHat"
+        that: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
   tags: confirm_os
 
 
-# TODO: Add NTP so that services like Ceph work properly
 - name: Common components setup
   hosts:
     - k8sdc
@@ -57,6 +55,15 @@
   roles:
     - docker
   tags: docker_setup
+
+
+- name: Docker registry mirror setup
+  hosts: 
+    - docker-registry-mirror
+  become:  yes
+  roles:
+    - registry-mirror
+  tags: docker_registry_mirror_setup
 
 
 - name: Kubernetes setup

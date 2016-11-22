@@ -55,10 +55,10 @@
       namespace={{ solutions.m1_metrics.namespace }},
       prometheus_image={{ solutions.m1_metrics.images.prometheus.image }},
       prometheus_tag={{ solutions.m1_metrics.images.prometheus.tag }},
-      prometheus_host={{ solutions.m1_metrics.hostnames.prometheus }},
+      prometheus_host={{ solutions.m1_metrics.hostnames[0] }},
       grafana_image={{ solutions.m1_metrics.images.grafana.image }},
       grafana_tag={{ solutions.m1_metrics.images.grafana.tag }},
-      grafana_host={{ solutions.m1_metrics.hostnames.grafana }}
+      grafana_host={{ solutions.m1_metrics.hostnames[1] }}
   run_once: yes
 
 - name: m1_metrics | Run Helm

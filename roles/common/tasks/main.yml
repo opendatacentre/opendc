@@ -1,4 +1,7 @@
 ---
+- name: Set timezone
+  command: timedatectl set-timezone {{ timezone }}
+
 - name: Install packages
   yum:
     name={{ item }}
@@ -6,6 +9,12 @@
   with_items: "{{ packages }}"
   when: install_pkgs
   tags: packages
+
+- name: Start NTPD and ensure it runs on startup
+  service:
+    enabled: yes
+    name:    ntpd
+    state:   started
 
 - name: Copy hosts file
   template:
@@ -18,8 +27,7 @@
     gid:   "{{ admin_gid }}"
     name:  "{{ admin_group }}"
     state: present
-  tags:
-    - admin_group
+  tags: admin_group
 
 - name: Create admin user
   user:

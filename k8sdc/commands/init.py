@@ -14,7 +14,6 @@ options:
                   aws [NOT IMPLEMENTED]
                   azure [NOT IMPLEMENTED]
                   gcp [NOT IMPLEMENTED]
-                  libvirt [NOT IMPLEMENTED]
                   federation [NOT IMPLEMENTED]
   -h, --help    show this help.
   --debug       show debug output.
@@ -38,7 +37,7 @@ class InitCmd(object):
   """Initialize a new k8sdc installation"""
 
   files       = ['site.yaml', 'LICENSE', 'ansible.cfg']
-  directories = ['roles', 'group_vars', 'host_vars', 'playbooks', 'keys', 'utilities', 'charts']
+  directories = ['roles', 'group_vars', 'host_vars', 'playbooks', 'keys', 'charts']
 
   def parse(self, argv):
     args = docopt(__doc__, argv=argv)

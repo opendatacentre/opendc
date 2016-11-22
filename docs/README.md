@@ -4,6 +4,7 @@ ___
 **k8sdc**, aka Kubernetes Datacenter, provides a set of curated open source productivity, development and infrastructure [*Products*](reference/product.md).  These *Products* are integrated and secured *"out of the box"* with management provided by [Kubernetes](http://kubernetes.io), [Helm](https://helm.sh) and [Ansible](http://kubernetes.io).
 
 <img src="k8sdc/images/k8sdc_overview.png" alt="k8sdc overview" width="420"/>
+
 ___
 
 
@@ -15,6 +16,7 @@ ___
 * Development and hosting of digital content with development and infrastructure *Products*.
 
 The intention is to give small / medium and non-profit organisations the ability to easily stand up an infrastructure that rivals the *Capabilities* of an enterprise, thus freeing them to focus their resources on providing business value.
+
 ___
 
 
@@ -32,12 +34,14 @@ ___
 ## Topology
 
 Details about the **k8sdc** topology can be found [here](k8sdc/topology.md).
+
 ___
 
 
 ## Installation
 
 Details about how to install **k8sdc** can be found [here](k8sdc/install.md).
+
 ___
 
 

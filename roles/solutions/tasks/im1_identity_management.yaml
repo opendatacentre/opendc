@@ -58,7 +58,7 @@
       opendj_tag={{ solutions.im1_identity_management.images.opendj.tag }},
       keycloak_image={{ solutions.im1_identity_management.images.keycloak.image }},
       keycloak_tag={{ solutions.im1_identity_management.images.keycloak.tag }},
-      keycloak_host={{ solutions.im1_identity_management.hostnames.keycloak }},
+      keycloak_host={{ solutions.im1_identity_management.hostnames[0] }},
       replicaCount={{ solutions.im1_identity_management.replicas }}
   run_once: yes
 

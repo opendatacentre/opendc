@@ -12,16 +12,16 @@ options:
 
 commands:
   init       initialize a new k8sdc installation in the current directory.
-  up         run template, machine, provision, client, config, pull (not yet), and helm commands.
+  up         run template, machine, provision, client, config, pull, and helm commands.
   template   create provider specific files from templates.
   machine    create a new set of machines for k8sdc to be provisioned to.
   provision  provision k8sdc components on to the machines.
   client     install kubectl and helm clients locally.
   config     generate a local kubeconfig file.
-  pull       pull k8sdc solution images to the Docker repository cache. [NOT IMPLEMENTED]
+  pull       pull k8sdc solution images to the Docker repository cache.
   helm       deploy Helm to the k8s cluster.
   sol        deploy k8sdc solutions to the k8s cluster.
-  hosts      update the local /etc/hosts with k8sdc hosts and services. [NOT IMPLEMENTED]
+  hosts      update the local /etc/hosts with k8sdc hosts and services.
   security   manage k8sdc security, i.e. ssh config, certificates, tokens, etc. [NOT IMPLEMENTED]
   upgrade    upgrade playbooks. [NOT IMPLEMENTED]
   start      start k8sdc machines. [NOT IMPLEMENTED]
@@ -57,7 +57,7 @@ from k8sdc.commands.hosts     import HostsCmd
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.16'
+__version__ = '0.0.17'
 commands    = {'init'      : InitCmd,
                'up'        : UpCmd,
                'template'  : TemplateCmd,

@@ -1,15 +1,23 @@
 ---
-# # Create Kubernetes namespaces
-# - name: main | Create Kubernetes Namespaces
-#   command:       /bin/kubectl create ns {{ item }}
-#   environment:
-#     KUBECONFIG:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
-#   delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
-#   run_once:      yes
-#   ignore_errors: yes
-#   with_items:    "{{ namespaces }}"
-#   tags:
-#     - k8s_ns
+# Create Kubernetes namespaces
+- name: main | Get Kubernetes Namespaces
+  command: /bin/kubectl get ns
+  register: k8s_current_namespaces
+  delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
+  run_once:      yes
+  tags: k8s_ns
+
+- name: main | Create Kubernetes Namespaces
+  command:       /bin/kubectl create ns {{ item }}
+  environment:
+    KUBECONFIG:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
+  delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
+  run_once:      yes
+  ignore_errors: yes
+  with_items:    "{{ k8s_namespaces }}"
+  when: item not in k8s_current_namespaces.stdout
+  tags: k8s_ns
+
 
 # cs1_cluster_services
 - include: cs1_cluster_services.yaml

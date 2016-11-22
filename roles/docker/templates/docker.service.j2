@@ -12,8 +12,8 @@ ExecStart=/usr/bin/docker daemon \
           --mtu=${FLANNEL_MTU} \
           --ip-masq=false \
           --selinux-enabled=false \
-          --registry-mirror=http://{{ docker_registry_cache }} \
-          {% for registry in registries %}--insecure-registry={{ registry }}{% if not loop.last %} \
+          --registry-mirror=http://{{ docker_registry_mirror_ip }}:5000 \
+          {% for registry in docker_insecure_registries %}--insecure-registry={{ registry }}{% if not loop.last %} \
           {% endif %}{% endfor %}
           
 LimitNOFILE=1048576

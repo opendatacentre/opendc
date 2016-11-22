@@ -7,13 +7,14 @@ ___
 
 ## Test environment
 
-**k8sdc** is a new project and is still considered **experimental**.  As such testing has only been conducted on a limited set of environments.  The following software versions are known to work.
+**k8sdc** is a new project and is still considered **experimental**.  As such testing has only been conducted with the Vagrant *Provider* on a limited set of environments.  The following software versions are known to work.
 
-* macOS 10.12
-* Python 2.7.12
-* Ansible 2.1.2.0 (must be this version as 2.2 breaks certificate generation)
-* Vagrant 1.8.4
-* Virtualbox 5.0.26 r108824
+* macOS 10.12, CentOS 7.
+* Python 2.7.11, 2.7.12.
+* Ansible 2.1.2.0 (must be this version as 2.2 breaks certificate generation).
+* Vagrant 1.8.7.
+* Virtualbox 5.0.28, 5.1.8.
+
 ___
 
 
@@ -32,8 +33,10 @@ $ pip install k8sdc
 The following dependancies will be installed along with `k8sdc`.
 
 ```
-ansible>=2.1.2.0
+ansible==2.1.2.0
 docopt>=0.6.2
+Jinja2>=2.8
+pprintpp>=0.2.3
 ```
 
 **Note**
@@ -56,8 +59,9 @@ $ k8sdc init -p vagrant
 
 To install using the Vagrant *Provider* the following software versions must be installed.
 
-* Vagrant 1.8.4
+* Vagrant 1.8.7
 * Virtualbox 5.0.26 and above
+
 ___
 
 
@@ -85,9 +89,11 @@ The simplest way to install the **k8sdc** base components is by using [`k8sdc up
 $ k8sdc up
 ```
 
-**Note**
+**Notes**
 
-The default installation directory for the `kubectl` and `helm` commands is in the `bin/` directory of the install root.
+* The default installation directory for the `kubectl` and `helm` commands is in the `bin/` directory of the install root.
+* The initial install will take some time as the *Solution* images are also pulled so that the *Solutions* can be installed much faster.
+
 ___
 
 
@@ -113,15 +119,7 @@ ___
 
 ## Install the Solutions
 
-Once the **k8sdc** base components are installed the [*Solutions*](../reference/solution.md) can be applied.
-
-For the moment you will need to create a new *Namespace*.  However this will soon be unecessary.
-
-```
-$ bin/kubectl create ns k8sdc-infra
-```
-
-The the *Solutions* can be installed using [`k8sdc sol`](../commands/k8sdc_sol.md).
+Once the **k8sdc** base components are installed the [*Solutions*](../reference/solution.md) can be installed.
 
 ```
 $ k8sdc sol
@@ -137,5 +135,53 @@ Currently the following *Solutions* will be installed.
 * [(m1) Metrics](../reference/solutions/m1_metrics.md)
 * [(jm1) Job Management](../reference/solutions/jm1_job_management.md)
 
+___
 
-Edit `hosts`
+
+## Modify the local hosts file
+
+Once the **k8sdc** *Solutions* are installed the local `hosts` file can be updated so that the *Solution* web UIs are accessible on the installation machine.
+
+```
+$ sudo k8sdc hosts
+```
+
+**Note**
+
+It is important to run the `k8sdc` command as `root`.
+___
+
+
+## Access the Solutions
+
+Now you can access the web UIs of the *Solutions*  that provide one.
+
+
+#### (cm1) Cluster Management
+
+http://dashboard.k8sdc.io
+
+#### (im1) Identity Management
+
+http://keycloak.k8sdc.io
+
+#### (m1) Metrics
+
+http://grafana.k8sdc.io
+
+http://prometheus.k8sdc.io
+
+**Note**
+
+Prometheus is currently non-functional.  
+
+#### (jm1) Job Management
+
+http://jenkins.k8sdc.io
+
+**Note**
+
+More integration work needs to be done.
+
+
+

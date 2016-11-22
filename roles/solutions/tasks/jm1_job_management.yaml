@@ -39,7 +39,7 @@
       namespace={{ solutions.jm1_job_management.namespace }},
       image={{ solutions.jm1_job_management.images.jenkins.image }},
       tag={{ solutions.jm1_job_management.images.jenkins.tag }},
-      host={{ solutions.jm1_job_management.hostnames.jenkins }},
+      host={{ solutions.jm1_job_management.hostnames[0] }},
       replicaCount={{ solutions.jm1_job_management.replicas }}
   run_once: yes
 

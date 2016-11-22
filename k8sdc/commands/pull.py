@@ -26,6 +26,8 @@ logger = logging.getLogger(__name__)
 class PullCmd(object):
   """Pull k8sdc solution images to the Docker repository cache."""
 
+  tag = None
+
   def parse(self, argv):
     args = docopt(__doc__, argv=argv)
     logger.debug("k8sdc pull - args:\n{}".format(args))

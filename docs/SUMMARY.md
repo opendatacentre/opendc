@@ -7,6 +7,7 @@
 * [Install](k8sdc/install.md)
 * [Roadmap](k8sdc/roadmap.md)
 * [Acknowledgements](k8sdc/acknowledgements.md)
+* [Changelog](k8sdc/changelog.md)
 
 
 ### Guides

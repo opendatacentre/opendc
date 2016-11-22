@@ -25,7 +25,6 @@ add_data_files('group_vars', data_files)
 add_data_files('host_vars', data_files)
 add_data_files('playbooks', data_files)
 add_data_files('keys', data_files)
-add_data_files('utilities', data_files)
 add_data_files('charts', data_files)
 
 with open('README.rst') as readme_file:
@@ -43,12 +42,12 @@ setup(name             = 'k8sdc',
       author           = __author__,
       author_email     = __email__,
       url              = 'https://github.com/desdrury/k8sdc',
-      license          = 'Apache License version 2.0',
-      classifiers      = ['Development Status :: 2 - Pre-Alpha',
+      license          = 'GNU General Public License v2 (GPLv2)',
+      classifiers      = ['Development Status :: 3 - Alpha',
                           'Environment :: Console',
                           'Intended Audience :: System Administrators',
                           'Intended Audience :: Developers',
-                          'License :: OSI Approved :: Apache Software License',
+                          'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
                           'Natural Language :: English',
                           'Programming Language :: Python :: 2.7'],
       packages         = find_packages(),

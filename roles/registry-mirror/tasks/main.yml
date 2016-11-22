@@ -1,0 +1,46 @@
+---
+- name: Check if pip is installed
+  stat:
+    path: /bin/pip
+  register: pip_file
+
+- block:
+
+  - name: Download ez_setup.py
+    get_url:
+      url: https://bootstrap.pypa.io/ez_setup.py
+      dest: /tmp/ez_setup.py
+      mode: 0755
+
+  - name: Install easy_install
+    command: /tmp/ez_setup.py
+
+  - name: Install pip
+    command: easy_install pip
+
+  when: not pip_file.stat.exists
+
+- name: Get installed Python modules
+  command: pip freeze
+  register: pip_modules
+
+- name: Install docker-py==1.7.0 module
+  command: pip install --upgrade docker-py==1.7.0
+  when: "'docker-py==1.7.0' not in pip_modules.stdout"
+
+- name: Create /var/lib/registry
+  file:
+    path: /var/lib/registry
+    state: directory
+
+- name: Start Docker registry mirror
+  docker_container:
+    name:            registry-mirror
+    image:           "{{ docker_registry_mirror_image }}:{{ docker_registry_mirror_tag }}"
+    state:           started
+    restart_policy:  always
+    env:
+      REGISTRY_PROXY_REMOTEURL: http://registry-1.docker.io
+    published_ports: 5000:5000
+    volumes:
+      - /var/lib/registry:/var/lib/registry    

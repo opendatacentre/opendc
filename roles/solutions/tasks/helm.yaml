@@ -3,10 +3,9 @@
 
 # TODO: Also need to check if previous release FAILED and it was version 1
 #       In which case need to --purge it before installing.
-# TODO: Ensure that bin/helm is used!
 - name: Helm | Check for previous release
   shell: >
-    helm list {{ sol_name.split('_')[0] }} --all |
+    {{ inventory_dir }}/bin/helm list {{ sol_name.split('_')[0] }} --all |
     grep "^{{ sol_name.split('_')[0] }}"
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
@@ -27,7 +26,7 @@
 
 - name: Helm | Deploy solution
   command: >
-    {{ helm_cmd }}
+    {{ inventory_dir }}/bin/{{ helm_cmd }}
          --set {{ variables.replace(' ', '').strip() }}
          {{ sol_name }}
   args:

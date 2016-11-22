@@ -1,8 +1,6 @@
 ---
-cluster_name:   k8sdc
 interface:      eth1
 main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
-api_server_ip:  "{{ hostvars[groups['k8sdc-masters'][0]]['ansible_' + interface].ipv4.address }}"
 use_firewalld:  no
 admin_user:     k8sdc
 admin_uid:      5000
@@ -10,25 +8,13 @@ admin_group:    k8sdc
 admin_gid:      5000
 private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
 public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
-fileserver:     "{{ groups['fileserver'][0] }}"
 download_dir:   /var/download/
+timezone:       "Australia/Melbourne"
 install_pkgs:   true
 packages:
   - socat
   - ceph-common
+  - ntp
 
-
-# Kubernetes security
-k8s_regen_certs:  false
-k8s_regen_tokens: false
-k8s_regen_users:  false
-k8s_users:
-  k8sdc:
-    pass: password123
-    role: admin
-
-
-kubernetes_api_port:     6443
-docker_registry_cache: 192.168.1.201:5000
-registries:
-  - gcr.io
+# kubernetes
+api_server_ip:  "{{ hostvars[groups['k8sdc-masters'][0]]['ansible_' + interface].ipv4.address }}"

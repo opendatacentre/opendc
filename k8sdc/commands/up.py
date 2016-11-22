@@ -20,6 +20,7 @@ from k8sdc.commands.machine   import MachineCmd
 from k8sdc.commands.provision import ProvisionCmd
 from k8sdc.commands.client    import ClientCmd
 from k8sdc.commands.config    import ConfigCmd
+from k8sdc.commands.pull      import PullCmd
 from k8sdc.commands.helm      import HelmCmd
 
 logger = logging.getLogger(__name__)
@@ -38,5 +39,6 @@ class UpCmd(object):
     ProvisionCmd().run()
     ClientCmd().run()
     ConfigCmd().run()
+    PullCmd().run()
     HelmCmd().run()
 

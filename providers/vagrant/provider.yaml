@@ -1,7 +1,7 @@
 ---
 vagrant:
   vm_box:         centos/7
-  vm_box_version: 1607.01
+  vm_box_version: 1610.01
   provider:       virtualbox
   masters:
     - hostname: master.vb.k8sdc.io

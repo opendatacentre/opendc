@@ -1,19 +1,40 @@
 ---
-kubectl_http_proxy:  ''
-kubectl_https_proxy: ''
-
-fileserver_http_proxy:  ''
-fileserver_https_proxy: ''
-
-docker_repo_cache_http_proxy:  ''
-docker_repo_cache_https_proxy: ''
-
-namespaces:
+# Kubernetes
+cluster_name:   k8sdc
+kubernetes_api_port: 6443
+k8s_regen_certs:  false
+k8s_regen_tokens: false
+k8s_regen_users:  false
+k8s_users:
+  k8sdc:
+    pass: password123
+    role: admin
+k8s_namespaces:
   - kube-system
   - k8sdc-infra
   - k8sdc-development
   - k8sdc-productivity
+kubectl_http_proxy:  ''
+kubectl_https_proxy: ''
 
+
+# Docker
+docker_registry_mirror_ip:    "{{ hostvars[groups['docker-registry-mirror'][0]]['ansible_' + interface].ipv4.address }}"
+docker_registry_mirror_image: registry
+docker_registry_mirror_tag:   2.4.1
+docker_registry_mirror_http_proxy:  ''
+docker_registry_mirror_https_proxy: ''
+docker_insecure_registries:
+  - "{{ docker_registry_mirror_ip }}"
+
+
+# Fileserver
+fileserver: "{{ groups['fileserver'][0] }}"
+fileserver_http_proxy:  ''
+fileserver_https_proxy: ''
+
+
+# Solutions
 solutions:
   cs1_cluster_services:
     enable:     yes
@@ -24,13 +45,13 @@ solutions:
     images:
       kubedns:
         image: gcr.io/google_containers/kubedns-amd64
-        tag:   1.6
+        tag:   1.9
       dnsmasq:
         image: gcr.io/google_containers/kube-dnsmasq-amd64
-        tag:   1.3
+        tag:   1.4
       healthz:
         image: gcr.io/google_containers/exechealthz-amd64
-        tag:   1.0
+        tag:   v1.2.0
       heapster:
         image: gcr.io/google_containers/heapster
         tag:   v1.2.0
@@ -40,6 +61,8 @@ solutions:
     namespace:   kube-system
     external_ip: "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_' + interface].ipv4.address }}"
     replicas:    1
+    hostnames:
+      - dashboard.k8sdc.io
     images:
       kube_dashboard:
         image: gcr.io/google_containers/kubernetes-dashboard-amd64
@@ -70,7 +93,7 @@ solutions:
     use_ceph:  yes
     replicas:  1
     hostnames: 
-      keycloak: keycloak.k8sdc.io
+      - keycloak.k8sdc.io
     images:
       opendj:
         image:    k8sdc/opendj
@@ -98,8 +121,8 @@ solutions:
     use_ceph:  yes
     replicas:  1
     hostnames:
-      prometheus: prometheus.k8sdc.io
-      grafana:    grafana.k8sdc.io
+      - prometheus.k8sdc.io
+      - grafana.k8sdc.io
     images:
       prometheus:
         image:    prom/prometheus
@@ -124,7 +147,7 @@ solutions:
     use_ceph:  yes
     replicas:  1
     hostnames:
-      jenkins: jenkins.k8sdc.io
+      - jenkins.k8sdc.io
     images:
       jenkins:
         image:    jenkins
