@@ -99,5 +99,24 @@ class VagrantProvider(Provider):
     pass
 
 
+class DOProvider(Provider):
+  """This Class provides functionality for the Digital Ocean Provider"""
+
+  templates = {'inventory.j2'   : 'inventory'}
+
+  def validate(self):
+    # Validate provider_data using Schema
+    pass
+
+  def create_machines(self):
+    """Create Droplets"""
+    logger.info("Creating machines")
+
+
+  def destroy_machines(self):
+    """Destroy Droplets"""
+    pass
+
 providers = {'bare'    : BareProvider,
-             'vagrant' : VagrantProvider}
+             'vagrant' : VagrantProvider,
+             'do'      : DOProvider}

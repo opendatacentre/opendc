@@ -34,17 +34,3 @@
   roles:
     - common
   tags: common
-
-
-# - name: Configure Master Nodes
-
-
-# - name: Configure Nodes
-
-
-# - name: Configure Etcd Nodes
-
-
-# - name: Configure Fileserver Node
-
-# Create local kubconfig and kubectl

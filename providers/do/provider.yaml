@@ -1,0 +1,25 @@
+---
+do:
+  vm_box:         centos/7
+  do_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  do_region: sgp1
+  interface: eth0
+  masters:
+    - hostname: master.do.k8sdc.io
+      do_size: 1gb
+  nodes:
+    - hostname: node1.do.k8sdc.io
+      do_size: 4gb
+    - hostname: node2.do.k8sdc.io
+      do_size: 4gb
+    - hostname: node3.do.k8sdc.io
+      do_size: 4gb
+  etcd:
+    - master.do.k8sdc.io
+    - node1.do.k8sdc.io
+    - node2.do.k8sdc.io
+    - node3.do.k8sdc.io
+  fileserver:
+    - master.do.k8sdc.io
+  k8sdc_ca:
+    - master.do.k8sdc.io
