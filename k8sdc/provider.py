@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 from jinja2 import Environment, FileSystemLoader
-from k8sdc.utility import execute, load_yaml_file
+from k8sdc.utility import execute, load_yaml_file, call_ansible
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ class VagrantProvider(Provider):
 class DOProvider(Provider):
   """This Class provides functionality for the Digital Ocean Provider"""
 
-  templates = {'inventory.j2'   : 'inventory'}
+  templates = {}
 
   def validate(self):
     # Validate provider_data using Schema
@@ -111,6 +111,17 @@ class DOProvider(Provider):
   def create_machines(self):
     """Create Droplets"""
     logger.info("Creating machines")
+
+    result = execute("pip freeze", output=False)
+    dopy_found = False
+    for item in result:
+      if item.startswith("dopy"):
+        dopy_found = True
+    if not dopy_found:
+      logger.error("Unable to find Python module \'dopy\'")
+      sys.exit(1)    
+
+    call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/machine.yaml')))
 
 
   def destroy_machines(self):

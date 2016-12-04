@@ -1,0 +1,15 @@
+---
+- name: Check if public key already exists
+  stat:
+    path: "{{ inventory_dir }}/keys/{{ do.ssh_key_name }}.pub"
+  register: public_key
+
+- name: Generate SSH public / private key
+  command: >
+    ssh-keygen 
+      -b 2048 
+      -t rsa 
+      -C "k8sdc" 
+      -N "" 
+      -f {{ inventory_dir }}/keys/{{ do.ssh_key_name }}
+  when: do.generate_keys and not public_key.stat.exists

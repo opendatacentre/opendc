@@ -1,0 +1,56 @@
+---
+- name: Generate SSH Keys
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
+  roles: 
+    - do-ssh-key
+  tags: do-ssh-keys
+
+- name: Create Digital Ocean Resources
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
+  roles:
+    - do-resources
+  tags: do-resources
+
+- name: Create Inventory File
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
+  roles:
+    - do-inventory-file
+  tags: do-inventory-file
+
+- name: Common Node Configuration
+  hosts:
+    - k8sdc-masters
+    - k8sdc-nodes
+  gather_facts: yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
+  pre_tasks:
+    - name: Pause for 60 seconds for nodes to fully come up
+      pause:
+        seconds: 60
+  roles:
+    - do-common
+  tags: do-common
+
+- name: Update interface
+  hosts:
+    - localhost
+  gather_facts: no
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
+  tasks:
+    - name: Update interface in group_vars/all.yml
+      lineinfile:
+        dest: "{{ inventory_dir }}/group_vars/all.yml"
+        regexp: "^interface"
+        line: "interface: {{ do.interface }}"
+  tags: update_interface

@@ -1,4 +1,7 @@
 127.0.0.1  localhost
-{% for host in play_hosts %}
+{% for host in groups['k8sdc-masters'] %}
+{{ hostvars[host]['ansible_' + interface]['ipv4']['address'] }} {{ host }} {{ hostvars[host]['ansible_hostname'] }}
+{% endfor %}
+{% for host in groups['k8sdc-nodes'] %}
 {{ hostvars[host]['ansible_' + interface]['ipv4']['address'] }} {{ host }} {{ hostvars[host]['ansible_hostname'] }}
 {% endfor %}

@@ -12,6 +12,8 @@
   hosts:
     - k8sdc
   become:  yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - common
   tags: common_setup
@@ -21,6 +23,8 @@
   hosts:
     - k8sdc-ca
   become: yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - k8sdc-ca
   tags: 
@@ -32,6 +36,8 @@
   hosts: 
     - etcd
   become:  yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - etcd
   tags: etcd_setup
@@ -42,6 +48,8 @@
     - k8sdc-masters
     - k8sdc-nodes
   become:  yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - flannel
   tags: flannel_setup
@@ -52,6 +60,8 @@
     - k8sdc-masters
     - k8sdc-nodes
   become:  yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - docker
   tags: docker_setup
@@ -61,6 +71,8 @@
   hosts: 
     - docker-registry-mirror
   become:  yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - registry-mirror
   tags: docker_registry_mirror_setup
@@ -71,6 +83,8 @@
     - k8sdc-masters
     - k8sdc-nodes
   become: yes
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
   roles:  
     - kubernetes
   tags: k8s_setup

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 # Overide of shutil.copytree to cope with dest directory already existing
-def copytree(src, dest, symlinks=False, ignore=None):
+def copytree(src, dest, symlinks=False, ignore=None, merge=False):
   logger.debug("src:  {}".format(src))
   logger.debug("dest: {}".format(dest))
   logger.debug('Copying files ...')
@@ -26,8 +26,10 @@ def copytree(src, dest, symlinks=False, ignore=None):
     for item in os.listdir(src):
       s = os.path.join(src, item)
       d = os.path.join(dest, item)
-      if os.path.isdir(s):
+      if os.path.isdir(s) and not merge:
         shutil.copytree(s, d, symlinks, ignore)
+      elif os.path.isdir(s) and merge:
+        copytree(s, d, symlinks, ignore, merge)
       else:
         shutil.copy2(s, d)
   else:
@@ -52,21 +54,24 @@ def load_yaml_file(yaml_file):
   return contents
 
 
-def execute(command):
+def execute(command, output=True):
   cmd     = shlex.split(command)
   process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+  result  = []
 
   while True:
     nextline = process.stdout.readline()
     if nextline == '' and process.poll() is not None:
       break
-    logger.info(nextline.rstrip())
+    result.append(nextline)
+    if output:
+      logger.info(nextline.rstrip())
 
   output     = process.communicate()[0]
   returncode = process.returncode
 
   if returncode == 0:
-    return output
+    return result
   else:
     raise CalledProcessError(returncode = returncode,
                              cmd        = command,

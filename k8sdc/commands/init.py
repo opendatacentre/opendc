@@ -92,4 +92,4 @@ class InitCmd(object):
     provider_dir = os.path.join('providers', self.provider)
     src = os.path.join(src_path + '/k8sdc', provider_dir)
     logger.debug("Copying directory: {}".format(provider_dir))
-    copytree(src, curdir)
+    copytree(src, curdir, merge=True)

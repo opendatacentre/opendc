@@ -1,0 +1,63 @@
+---
+- name: Create SSH Key
+  digital_ocean:
+    api_token:   "{{ do.do_token }}"
+    name:        "{{ do.ssh_key_name }}"
+    command:     ssh
+    state:       present
+    ssh_pub_key: "{{ lookup('file', '{{ inventory_dir }}/keys/{{ do.ssh_key_name }}.pub') }}"
+  register: k8sdc_do_key
+
+
+# Master Nodes
+- name: Create Master Droplets
+  digital_ocean:
+    api_token:    "{{ do.do_token }}"
+    state:        present
+    command:      droplet
+    name:         "{{ item.hostname }}"
+    size_id:      "{{ item.do_size }}"
+    region_id:    "{{ do.do_region }}"
+    image_id:     "{{ do.do_image }}"
+    ssh_key_ids:  "{{ k8sdc_do_key.ssh_key.id }}"
+    unique_name:  true
+    private_networking: true
+    wait_timeout: 500
+  register: k8sdc_master_droplets
+  with_items: "{{ do.masters }}"
+
+- name: Add Master Droplets to 'k8sdc-masters' Group
+  add_host: 
+    hostname:         "{{ item.droplet.name }}"
+    ansible_host: "{{ item.droplet.ip_address }}"
+    groups:           k8sdc-masters
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "{{ inventory_dir }}/keys/{{ do.ssh_key_name }}"
+  with_items: "{{ k8sdc_master_droplets.results }}"
+
+
+# Nodes
+- name: Create Node Droplets
+  digital_ocean:
+    api_token:    "{{ do.do_token }}"
+    state:        present
+    command:      droplet
+    name:         "{{ item.hostname }}"
+    size_id:      "{{ item.do_size }}"
+    region_id:    "{{ do.do_region }}"
+    image_id:     "{{ do.do_image }}"
+    ssh_key_ids:  "{{ k8sdc_do_key.ssh_key.id }}"
+    unique_name:  true
+    private_networking: true
+    wait_timeout: 500
+  register: k8sdc_node_droplets
+  with_items: "{{ do.nodes }}"
+
+- name: Add Node Droplets to 'k8sdc-nodes' Group
+  add_host: 
+    hostname:         "{{ item.droplet.name }}"
+    ansible_host: "{{ item.droplet.ip_address }}"
+    groups:           k8sdc-nodes
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: "{{ inventory_dir }}/keys/{{ do.ssh_key_name }}"
+  with_items: "{{ k8sdc_node_droplets.results }}"

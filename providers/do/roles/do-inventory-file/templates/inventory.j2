@@ -1,0 +1,47 @@
+{% for master in do.masters -%}
+{{ master.hostname }} ansible_host={{ hostvars[master.hostname]['ansible_host'] }}
+{% endfor -%}
+{% for node in do.nodes -%}
+{{ node.hostname }} ansible_host={{ hostvars[node.hostname]['ansible_host'] }}
+{% endfor %}
+
+[k8sdc:children]
+k8sdc-masters
+k8sdc-nodes
+etcd
+fileserver
+k8sdc-ca
+timeserver
+docker-registry-mirror
+
+[k8sdc:vars]
+ansible_ssh_user=root
+ansible_connection=ssh
+ansible_private_key_file=keys/{{ do.ssh_key_name }}
+
+[k8sdc-masters]
+{% for master in do.masters -%}
+{{ master.hostname }}
+{% endfor %}
+
+[k8sdc-nodes]
+{% for node in do.nodes -%}
+{{ node.hostname }}
+{% endfor %}
+
+[etcd]
+{% for etcd in do.etcd -%}
+{{ etcd }}
+{% endfor %}
+
+[fileserver]
+{{ do.fileserver }}
+
+[k8sdc-ca]
+{{ do.k8sdc_ca }}
+
+[timeserver]
+{{ do.timeserver }}
+
+[docker-registry-mirror]
+{{ do.docker_registry_mirror }}

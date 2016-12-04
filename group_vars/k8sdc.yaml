@@ -76,15 +76,15 @@ solutions:
         image: ceph/daemon
         tag:   tag-build-master-jewel-centos-7
     mon_hosts:
-      - hostname: node1.vb.k8sdc.io
-      - hostname: node2.vb.k8sdc.io
-      - hostname: node3.vb.k8sdc.io
+      - hostname: "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_fqdn'] }}"
+      - hostname: "{{ hostvars[groups['k8sdc-nodes'][1]]['ansible_fqdn'] }}"
+      - hostname: "{{ hostvars[groups['k8sdc-nodes'][2]]['ansible_fqdn'] }}"
     osd_hosts:
-      - hostname:   node1.vb.k8sdc.io
+      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_fqdn'] }}"
         count_256m: 60
-      - hostname:   node2.vb.k8sdc.io
+      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][1]]['ansible_fqdn'] }}"
         count_256m: 60
-      - hostname:   node3.vb.k8sdc.io
+      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][2]]['ansible_fqdn'] }}"
         count_256m: 60
 
   im1_identity_management:

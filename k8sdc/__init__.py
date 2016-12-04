@@ -30,7 +30,7 @@ commands:
   destroy    remove k8sdc machines. [NOT IMPLEMENTED]
 
 environment variables:
-  K8SDC_SHOW_STACK=False  show full stack of any caught exceptions . [NOT IMPLEMENTED]
+  K8SDC_SHOW_STACK=False  show full stack of any caught exceptions. [NOT IMPLEMENTED]
 
 examples:
   k8sdc init --provider vagrant
@@ -57,7 +57,7 @@ from k8sdc.commands.hosts     import HostsCmd
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.17'
+__version__ = '0.0.18'
 commands    = {'init'      : InitCmd,
                'up'        : UpCmd,
                'template'  : TemplateCmd,

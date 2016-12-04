@@ -1,0 +1,1 @@
+`kubectl` and `helm` be installed in this directory if `k8sdc clients` is run without any options.
