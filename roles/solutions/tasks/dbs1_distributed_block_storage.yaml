@@ -60,7 +60,8 @@
 
 # Label nodes
 - name: dbs1_distributed_block_storage | Label mon hosts
-  command: kubectl label --overwrite node {{ item }} k8sdc_dbs1_mon=True
+  command: >
+    {{ inventory_dir }}/bin/kubectl label --overwrite node {{ item }} k8sdc_dbs1_mon=True
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
@@ -71,7 +72,8 @@
   run_once: yes
 
 - name: dbs1_distributed_block_storage | Label osd hosts
-  command: kubectl label --overwrite node {{ item }} k8sdc_dbs1_osd=True
+  command: >
+    {{ inventory_dir }}/bin/kubectl label --overwrite node {{ item }} k8sdc_dbs1_osd=True
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"

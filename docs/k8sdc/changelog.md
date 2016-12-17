@@ -1,6 +1,22 @@
 # Changelog
 ___
 
+## 0.0.19
+
+* Upgrade Kubernetes server and client to 1.5.1.
+* Bugfix for labeling nodes in dbs1_distributed_block_storage solution.
+
+___
+
+
+## 0.0.18
+
+* Implemented Digital Ocean Provider.
+* Other minor updates and fixes.
+
+___
+
+
 ## 0.0.17
 ___
 
