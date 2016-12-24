@@ -1,6 +1,15 @@
 # Changelog
 ___
 
+## 0.0.20
+
+* Upgraded CentOS Vagrant box to 1611.01.
+* Upgraded Helm to 2.1.3.
+* Bugfix to cs1_cluster_services Solution due to switch to k8s 1.5.1.
+
+___
+
+
 ## 0.0.19
 
 * Upgrade Kubernetes server and client to 1.5.1.

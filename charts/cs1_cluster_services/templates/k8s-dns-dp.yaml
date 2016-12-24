@@ -30,11 +30,11 @@ spec:
         version: v18
         kubernetes.io/cluster-service: "true"
     spec:
+      dnsPolicy: Default
       containers:
         - name: kubedns
           image: {{ .Values.kubedns_image }}:{{ .Values.kubedns_tag }}
-          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
-          dnsPolicy: Default
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}          
           resources:
             limits:
               cpu: 100m
