@@ -18,10 +18,8 @@
     args:
       chdir: /tmp/k8sdc-ca/
 
-  - name: Get private key
-    slurp:
-      src: "/tmp/k8sdc-ca/{{ cert_name }}.key"
-    register: "{{ cert_name }}_key"
+  - name: Copy private key
+    command: cp /tmp/k8sdc-ca/{{ cert_name }}.key /etc/k8sdc-ca/
 
   - name: Generate certificate signing request
     command: >
@@ -46,10 +44,8 @@
     args:
       chdir: /tmp/k8sdc-ca/
 
-  - name: Get certificate
-    slurp:
-      src: "/tmp/k8sdc-ca/{{ cert_name }}.crt"
-    register: "{{ cert_name }}_cert"
+  - name: Copy certificate
+    command: cp /tmp/k8sdc-ca/{{ cert_name }}.crt /etc/k8sdc-ca/
 
   always:
 

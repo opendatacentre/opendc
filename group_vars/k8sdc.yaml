@@ -25,7 +25,7 @@ docker_registry_mirror_tag:   2.4.1
 docker_registry_mirror_http_proxy:  ''
 docker_registry_mirror_https_proxy: ''
 docker_insecure_registries:
-  - "{{ docker_registry_mirror_ip }}"
+  - "{{ docker_registry_mirror_ip }}:5000"
 
 
 # Fileserver
@@ -44,14 +44,14 @@ solutions:
     replicas:   1
     images:
       kubedns:
-        image: gcr.io/google_containers/kubedns-amd64
-        tag:   1.9
+        image: gcr.io/google_containers/k8s-dns-kube-dns-amd64
+        tag:   1.11.0
       dnsmasq:
-        image: gcr.io/google_containers/kube-dnsmasq-amd64
-        tag:   1.4
-      healthz:
-        image: gcr.io/google_containers/exechealthz-amd64
-        tag:   v1.2.0
+        image: gcr.io/google_containers/k8s-dns-dnsmasq-amd64
+        tag:   1.11.0
+      sidecar:
+        image: gcr.io/google_containers/k8s-dns-sidecar-amd64
+        tag:   1.11.0
       heapster:
         image: gcr.io/google_containers/heapster
         tag:   v1.2.0
@@ -66,7 +66,7 @@ solutions:
     images:
       kube_dashboard:
         image: gcr.io/google_containers/kubernetes-dashboard-amd64
-        tag:   v1.4.0
+        tag:   v1.5.1
 
   dbs1_distributed_block_storage:
     enable:     yes

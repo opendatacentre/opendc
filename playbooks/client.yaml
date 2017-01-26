@@ -24,7 +24,7 @@
 
     - name: Copy helm
       command: >-
-        cp /tmp/{{ goos }}-{{ goarch }}/helm {{ client_dir }}
+        cp /tmp/{{ goos }}-{{ goarch }}/helm "{{ client_dir }}"
 
     - name: Set Helm permissions
       file:

@@ -5,8 +5,10 @@
 #       In which case need to --purge it before installing.
 - name: Helm | Check for previous release
   shell: >
-    {{ inventory_dir }}/bin/helm list {{ sol_name.split('_')[0] }} --all |
+    bin/helm list {{ sol_name.split('_')[0] }} --all |
     grep "^{{ sol_name.split('_')[0] }}"
+  args:
+    chdir: "{{ inventory_dir }}"
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"
@@ -26,11 +28,11 @@
 
 - name: Helm | Deploy solution
   command: >
-    {{ inventory_dir }}/bin/{{ helm_cmd }}
+    bin/{{ helm_cmd }}
          --set {{ variables.replace(' ', '').strip() }}
-         {{ sol_name }}
+         "{{ inventory_dir }}/charts/{{ sol_name }}"
   args:
-    chdir: "{{ inventory_dir }}/charts/"
+    chdir: "{{ inventory_dir }}"
   environment:
     http_proxy:  "{{ kubectl_http_proxy }}"
     https_proxy: "{{ kubectl_https_proxy }}"

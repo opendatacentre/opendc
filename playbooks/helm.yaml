@@ -4,7 +4,9 @@
     - localhost
   tasks: 
     - name: Helm init
-      command: "{{ inventory_dir }}/bin/helm init"
+      command: bin/helm init
+      args:
+        chdir: "{{ inventory_dir }}"
       environment:
         http_proxy:  "{{ kubectl_http_proxy }}"
         https_proxy: "{{ kubectl_https_proxy }}"

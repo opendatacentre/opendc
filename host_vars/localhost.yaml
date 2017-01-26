@@ -7,7 +7,7 @@ kubectl_http_proxy: ''
 kubectl_https_proxy: ''
 
 # kubectl
-kubectl_version: 1.5.1
+kubectl_version: 1.5.2
 kubectl_host:    https://storage.googleapis.com
 kubectl_path: >-
   kubernetes-release/release/v{{ kubectl_version }}/bin/{{ goos }}/{{ goarch }}

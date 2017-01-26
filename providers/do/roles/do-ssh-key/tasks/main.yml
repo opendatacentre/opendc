@@ -11,5 +11,5 @@
       -t rsa 
       -C "k8sdc" 
       -N "" 
-      -f {{ inventory_dir }}/keys/{{ do.ssh_key_name }}
+      -f "{{ inventory_dir }}/keys/{{ do.ssh_key_name }}"
   when: do.generate_keys and not public_key.stat.exists

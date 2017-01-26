@@ -148,22 +148,12 @@
         owner: kube
         group: kube
 
-    tags: k8s_certs
+    tags: 
+      - k8s_node_certs
+      - k8s_certs
 
   # Tokens
   - block:
-  
-    # kubelet
-    # - name: node | Create system:kubelet token file
-    #   copy:
-    #     dest: >-
-    #       /etc/kubernetes/tokens/system:kubelet-{{ inventory_hostname }}.token
-    #     content: >-
-    #       {{ node_token_values[inventory_hostname]['system_kubelet'] | b64decode }}
-    #     mode:  0440
-    #     owner: kube
-    #     group: kube
-    #   when: node_token_values is defined
 
     - name: node | Create kubelet kubeconfig file
       template: 
@@ -174,18 +164,6 @@
         group: kube     
       notify:  Restart kubelet
       when:    node_token_values is defined
-    
-    # proxy
-    # - name: node | Create system:kube-proxy token file
-    #   copy:
-    #     dest: >-
-    #       /etc/kubernetes/tokens/system:kube-proxy-{{ inventory_hostname }}.token
-    #     content: >-
-    #       {{ node_token_values[inventory_hostname]['system_proxy'] | b64decode }}
-    #     mode:  0440
-    #     owner: kube
-    #     group: kube
-    #   when: node_token_values is defined
 
     - name: node | Create kube-proxy kubeconfig file
       template: 

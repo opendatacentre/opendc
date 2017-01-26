@@ -11,8 +11,8 @@
       kubedns_tag={{ solutions.cs1_cluster_services.images.kubedns.tag }},
       dnsmasq_image={{ solutions.cs1_cluster_services.images.dnsmasq.image }},
       dnsmasq_tag={{ solutions.cs1_cluster_services.images.dnsmasq.tag }},
-      healthz_image={{ solutions.cs1_cluster_services.images.healthz.image }},
-      healthz_tag={{ solutions.cs1_cluster_services.images.healthz.tag }},
+      sidecar_image={{ solutions.cs1_cluster_services.images.sidecar.image }},
+      sidecar_tag={{ solutions.cs1_cluster_services.images.sidecar.tag }},
       heapster_image={{ solutions.cs1_cluster_services.images.heapster.image }},
       heapster_image={{ solutions.cs1_cluster_services.images.heapster.image }},
       replicaCount={{ solutions.cs1_cluster_services.replicas }}

@@ -40,9 +40,9 @@
   command: pip freeze
   register: pip_modules
 
-- name: Install docker-py==1.7.0 module
-  command: pip install --upgrade docker-py==1.7.0
-  when: "'docker-py==1.7.0' not in pip_modules.stdout"
+- name: Install docker-py==1.10.6 module
+  command: pip install --upgrade docker-py==1.10.6
+  when: "'docker-py==1.10.6' not in pip_modules.stdout"
 
 - name: Create /var/lib/registry
   file:

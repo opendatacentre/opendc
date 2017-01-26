@@ -15,6 +15,10 @@
     - "{{ inventory_dir }}/provider.yaml"
   roles:
     - do-resources
+  post_tasks:
+    - name: Pause for 60 seconds for nodes to fully come up
+      pause:
+        seconds: 60
   tags: do-resources
 
 - name: Create Inventory File
@@ -33,10 +37,6 @@
   gather_facts: yes
   vars_files:
     - "{{ inventory_dir }}/provider.yaml"
-  pre_tasks:
-    - name: Pause for 60 seconds for nodes to fully come up
-      pause:
-        seconds: 60
   roles:
     - do-common
   tags: do-common

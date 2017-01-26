@@ -1,6 +1,6 @@
 ---
 do:
-  do_token: XXXXXXXXXXXXXXXXXXXX
+  do_token: c09f8e2162f4d8e259a9a8878e8902c714a0da79b6c21bdaae41cdb597df8599
   do_region:      sgp1
   do_image:       17384153
   generate_keys:  yes

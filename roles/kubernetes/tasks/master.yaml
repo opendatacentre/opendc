@@ -180,15 +180,11 @@
         group: kube
 
     # kube-apiserver
-    - name: master | Create kube-apiserver certificate
-      copy:
-        dest: /etc/kubernetes/certs/kube_apiserver.crt
-        content: "{{ kube_apiserver_cert.content | b64decode }}"
-        mode:  0440
-        owner: kube
-        group: kube
-      notify: Restart kube-apiserver
-      when: kube_apiserver_cert is defined
+    - name: master | Get kube-apiserver private key
+      slurp:
+        src: /etc/k8sdc-ca/kube_apiserver.key
+      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+      register: kube_apiserver_key
 
     - name: master | Create kube-apiserver private key
       copy:
@@ -197,19 +193,27 @@
         mode:  0440
         owner: kube
         group: kube
-      notify: Restart kube-apiserver
-      when: kube_apiserver_key is defined
 
-    # kube-controller-manager
-    - name: master | Create kube-controller-manager certificate
+    - name: master | Get kube-apiserver certificate
+      slurp:
+        src: /etc/k8sdc-ca/kube_apiserver.crt
+      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+      register: kube_apiserver_cert
+
+    - name: master | Create kube-apiserver certificate
       copy:
-        dest: /etc/kubernetes/certs/kube_controller_manager.crt
-        content: "{{ kube_controller_manager_cert.content | b64decode }}"
+        dest: /etc/kubernetes/certs/kube_apiserver.crt
+        content: "{{ kube_apiserver_cert.content | b64decode }}"
         mode:  0440
         owner: kube
         group: kube
-      notify: Restart kube-controller-manager
-      when: kube_controller_manager_cert is defined
+
+    # kube-controller-manager
+    - name: master | Get kube-controller-manager private key
+      slurp:
+        src: /etc/k8sdc-ca/kube_controller_manager.key
+      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+      register: kube_controller_manager_key
 
     - name: master | Create kube-controller-manager private key
       copy:
@@ -218,10 +222,24 @@
         mode:  0440
         owner: kube
         group: kube
-      notify: Restart kube-controller-manager
-      when: kube_controller_manager_key is defined
 
-    tags: k8s_certs
+    - name: master | Get kube-controller-manager certificate
+      slurp:
+        src: /etc/k8sdc-ca/kube_controller_manager.crt
+      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+      register: kube_controller_manager_cert
+
+    - name: master | Create kube-controller-manager certificate
+      copy:
+        dest: /etc/kubernetes/certs/kube_controller_manager.crt
+        content: "{{ kube_controller_manager_cert.content | b64decode }}"
+        mode:  0440
+        owner: kube
+        group: kube
+
+    tags: 
+      - k8s_master_certs
+      - k8s_certs
 
   # Tokens
   - block:
@@ -235,18 +253,6 @@
         group: kube
       notify: Restart kube-apiserver
       when: master_token_values is defined
-  
-    # kube-controller-manager
-    # - name: master | Create system:controller_manager token file
-    #   copy:
-    #     dest: >-
-    #       /etc/kubernetes/tokens/system:kube-controller-manager-{{ inventory_hostname }}.token
-    #     content: >-
-    #       {{ master_token_values[inventory_hostname]['system_controller_manager'] | b64decode }}
-    #     mode:  0440
-    #     owner: kube
-    #     group: kube
-    #   when: master_token_values is defined
 
     - name: master | Create kube-controller-manager kubeconfig file
       template: 
@@ -258,18 +264,6 @@
       notify:  Restart kube-controller-manager
       when:    master_token_values is defined
 
-    # kube-scheduler
-    # - name: master | Create system:scheduler token file
-    #   copy:
-    #     dest: >-
-    #       /etc/kubernetes/tokens/system:kube-scheduler-{{ inventory_hostname }}.token
-    #     content: >-
-    #       {{ master_token_values[inventory_hostname]['system_scheduler'] | b64decode }}
-    #     mode:  0440
-    #     owner: kube
-    #     group: kube
-    #   when: master_token_values is defined
-
     - name: master | Create kube-scheduler kubeconfig file
       template: 
         src:   kubeconfig/kube-scheduler.kubeconfig.j2 
@@ -279,18 +273,6 @@
         group: kube
       notify:  Restart kube-scheduler
       when:    master_token_values is defined
-
-    # kubectl
-    # - name: master | Create system:kubectl token file
-    #   copy:
-    #     dest: >-
-    #       /etc/kubernetes/tokens/system:kubectl-{{ inventory_hostname }}.token
-    #     content: >-
-    #       {{ master_token_values[inventory_hostname]['system_kubectl'] | b64decode }}
-    #     mode:  0440
-    #     owner: kube
-    #     group: kube
-    #   when: master_token_values is defined
 
     - name: master | Create kubectl kubeconfig file
       template: 
