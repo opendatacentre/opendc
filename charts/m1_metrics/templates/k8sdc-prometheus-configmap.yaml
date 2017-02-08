@@ -11,33 +11,102 @@ metadata:
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 data:
   prometheus.yml: |
-    # my global config
     global:
-      scrape_interval:     15s # By default, scrape targets every 15 seconds.
-      evaluation_interval: 15s # By default, scrape targets every 15 seconds.
-      # scrape_timeout is set to the global default (10s).
+      scrape_interval:     10s
+      scrape_timeout:      10s
+      evaluation_interval: 10s
 
-      # Attach these labels to any time series or alerts when communicating with
-      # external systems (federation, remote storage, Alertmanager).
-      external_labels:
-          monitor: 'codelab-monitor'
-
-    # Load and evaluate rules in this file every 'evaluation_interval' seconds.
-    rule_files:
-      # - "first.rules"
-      # - "second.rules"
-
-    # A scrape configuration containing exactly one endpoint to scrape:
-    # Here it's Prometheus itself.
     scrape_configs:
-      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-      - job_name: 'prometheus'
 
-        # Override the global default and scrape targets from this job every 5 seconds.
-        scrape_interval: 5s
+      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L37
+      - job_name: 'kubernetes-nodes'
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - source_labels: [__address__]
+            regex: '(.*):10250'
+            replacement: '${1}:10255'
+            target_label: __address__
 
-        # metrics_path defaults to '/metrics'
-        # scheme defaults to 'http'.
+      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L79
+      - job_name: 'kubernetes-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+            action: replace
+            target_label: __scheme__
+            regex: (https?)
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+            action: replace
+            target_label: __address__
+            regex: (.+)(?::\d+);(\d+)
+            replacement: $1:$2
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            action: replace
+            target_label: kubernetes_name
 
-        target_groups:
-          - targets: ['localhost:9090']
+      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L119
+      - job_name: 'kubernetes-services'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
+        kubernetes_sd_configs:
+          - role: service
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
+            action: keep
+            regex: true
+          - source_labels: [__address__]
+            target_label: __param_target
+          - target_label: __address__
+            replacement: blackbox
+          - source_labels: [__param_target]
+            target_label: instance
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: kubernetes_name
+
+      # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L156
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: (.+):(?:\d+);(\d+)
+            replacement: ${1}:${2}
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: kubernetes_pod_name

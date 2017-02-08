@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k8sdc-nginx-docker-registry
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: ir1_image_repository
+    product:  nginx
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  5000: "k8sdc-infra/k8sdc-docker-registry:5000"

@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: k8sdc-nginx-docker-registry
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: ir1_image_repository
+    product:  nginx
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      solution: ir1_image_repository
+      product:  nginx
+  template:
+    metadata:
+      labels:
+        solution: ir1_image_repository
+        product:  nginx
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+      - name: k8sdc-nginx-docker-registry
+        image: {{ .Values.nginx_image }}:{{ .Values.nginx_tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        # readinessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 10254
+        #     scheme: HTTP
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 10254
+        #     scheme: HTTP
+        #   initialDelaySeconds: 10
+        #   timeoutSeconds: 1
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        ports:
+          - containerPort: 5000
+            hostPort: 5000
+        args:
+        - /nginx-ingress-controller
+        - --default-backend-service=$(POD_NAMESPACE)/dummy
+        - --tcp-services-configmap=$(POD_NAMESPACE)/k8sdc-nginx-docker-registry

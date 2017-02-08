@@ -15,7 +15,7 @@ def get_provider():
     sys.exit(1)
 
   provider_data = load_yaml_file(yaml_file)
-  provider_name = provider_data.keys()[0]
+  provider_name = provider_data['provider']
 
   if provider_name not in providers.keys():
     logger.error("Unknown provider in 'provider.yaml': {}".format(provider_name))

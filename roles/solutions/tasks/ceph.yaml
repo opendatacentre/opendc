@@ -1,6 +1,5 @@
 ---
 # Create a Ceph block storage image and Kubernetes PV
-
 - name: Ceph | Create Ceph block storage
   command: rbd create --size {{ size }} {{ pool }}/{{ image }}
     

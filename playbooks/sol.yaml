@@ -2,7 +2,11 @@
 - name: Solutions setup
   hosts:
     - k8sdc
-  become: yes
+  become:       yes
+  gather_facts: yes
+  vars_files:
+    - "{{ inventory_dir }}/group_vars/k8sdc.yaml"
+    - "{{ inventory_dir }}/provider.yaml"
   roles:
     - solutions
   tags: solutions_setup

@@ -2,7 +2,7 @@
 namespace: k8sdc-infra
 
 image: jenkins
-tag:   2.7.4
+tag:   2.32.1
 host:  jenkins.k8sdc.io
 
 replicaCount: 1

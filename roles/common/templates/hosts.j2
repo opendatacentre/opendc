@@ -1,4 +1,5 @@
 127.0.0.1  localhost
+{{ solutions.ir1_image_repository.images.nginx.vip }} {{ solutions.ir1_image_repository.images.nginx.fqdn }} 
 {% for host in groups['k8sdc-masters'] %}
 {{ hostvars[host]['ansible_' + interface]['ipv4']['address'] }} {{ host }} {{ hostvars[host]['ansible_hostname'] }}
 {% endfor %}

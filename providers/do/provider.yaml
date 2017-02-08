@@ -1,31 +1,66 @@
 ---
-do:
-  do_token: c09f8e2162f4d8e259a9a8878e8902c714a0da79b6c21bdaae41cdb597df8599
-  do_region:      sgp1
-  do_image:       17384153
-  generate_keys:  yes
-  ssh_key_name:   k8sdc_doadmin
-  do_admin_user:  doadmin
-  do_admin_uid:   4000
-  do_admin_group: doadmin
-  do_admin_gid:   4000
-  interface:      eth0
-  masters:
-    - hostname: master.do.k8sdc.io
-      do_size:  2gb
-  nodes:
-    - hostname: node1.do.k8sdc.io
-      do_size: 4gb
-    - hostname: node2.do.k8sdc.io
-      do_size: 4gb
-    - hostname: node3.do.k8sdc.io
-      do_size: 4gb
-  etcd:
-    - master.do.k8sdc.io
-    - node1.do.k8sdc.io
-    - node2.do.k8sdc.io
-    - node3.do.k8sdc.io
-  fileserver:             master.do.k8sdc.io
-  k8sdc_ca:               master.do.k8sdc.io
-  timeserver:             master.do.k8sdc.io
-  docker_registry_mirror: master.do.k8sdc.io
+# Digital Ocean
+provider:  do
+do_token:  c09f8e2162f4d8e259a9a8878e8902c714a0da79b6c21bdaae41cdb597df8599
+do_region: sgp1
+do_image:  17384153
+
+# k8sdc
+generate_keys:  yes
+ssh_key_name:   k8sdc_doadmin
+do_admin_user:  doadmin # remove do_ ?
+do_admin_uid:   4000 # remove do_ ?
+do_admin_group: doadmin # remove do_ ?
+do_admin_gid:   4000 # remove do_ ?
+interface:      eth0
+timezone:       "Australia/Melbourne"
+
+# Hosts
+masters:
+  - hostname: master.do.k8sdc.io
+    do_size:  2gb
+nodes:
+  - hostname: node1.do.k8sdc.io
+    do_size: 4gb
+  - hostname: node2.do.k8sdc.io
+    do_size: 4gb
+  - hostname: node3.do.k8sdc.io
+    do_size: 4gb
+etcd:
+  - master.do.k8sdc.io
+  - node1.do.k8sdc.io
+  - node2.do.k8sdc.io
+  - node3.do.k8sdc.io
+fileserver:             master.do.k8sdc.io
+k8sdc_ca:               master.do.k8sdc.io
+timeserver:             master.do.k8sdc.io
+docker_registry_mirror: master.do.k8sdc.io
+
+# Solutions
+do_solutions:
+  cm1_cluster_management:
+    hostnames:
+      - dashboard.prod.do.k8sdc.io
+
+  im1_identity_management:
+    hostnames:
+      - keycloak.prod.do.k8sdc.io
+
+  m1_metrics:
+    images:
+      prometheus:
+        fqdn: prometheus.prod.do.k8sdc.io
+      grafana:
+        fqdn: grafana.prod.do.k8sdc.io
+
+  jm1_job_management:
+    hostnames:
+      - jenkins.prod.do.k8sdc.io
+
+  ir1_image_repository:
+    images:
+      nginx:
+        fqdn: registry.prod.do.k8sdc.io
+        vip:  128.199.245.220
+
+solutions: "{{ base_solutions | combine(do_solutions, recursive=true) }}"

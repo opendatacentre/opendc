@@ -18,16 +18,6 @@ kubectl_http_proxy:  ''
 kubectl_https_proxy: ''
 
 
-# Docker
-docker_registry_mirror_ip:    "{{ hostvars[groups['docker-registry-mirror'][0]]['ansible_' + interface].ipv4.address }}"
-docker_registry_mirror_image: registry
-docker_registry_mirror_tag:   2.4.1
-docker_registry_mirror_http_proxy:  ''
-docker_registry_mirror_https_proxy: ''
-docker_insecure_registries:
-  - "{{ docker_registry_mirror_ip }}:5000"
-
-
 # Fileserver
 fileserver: "{{ groups['fileserver'][0] }}"
 fileserver_http_proxy:  ''
@@ -35,7 +25,7 @@ fileserver_https_proxy: ''
 
 
 # Solutions
-solutions:
+base_solutions:
   cs1_cluster_services:
     enable:     yes
     namespace:  kube-system
@@ -76,15 +66,15 @@ solutions:
         image: ceph/daemon
         tag:   tag-build-master-jewel-centos-7
     mon_hosts:
-      - hostname: "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_fqdn'] }}"
-      - hostname: "{{ hostvars[groups['k8sdc-nodes'][1]]['ansible_fqdn'] }}"
-      - hostname: "{{ hostvars[groups['k8sdc-nodes'][2]]['ansible_fqdn'] }}"
+      - hostname: "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_nodename'] }}"
+      - hostname: "{{ hostvars[groups['k8sdc-nodes'][1]]['ansible_nodename'] }}"
+      - hostname: "{{ hostvars[groups['k8sdc-nodes'][2]]['ansible_nodename'] }}"
     osd_hosts:
-      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_fqdn'] }}"
+      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_nodename'] }}"
         count_256m: 60
-      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][1]]['ansible_fqdn'] }}"
+      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][1]]['ansible_nodename'] }}"
         count_256m: 60
-      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][2]]['ansible_fqdn'] }}"
+      - hostname:   "{{ hostvars[groups['k8sdc-nodes'][2]]['ansible_nodename'] }}"
         count_256m: 60
 
   im1_identity_management:
@@ -120,18 +110,17 @@ solutions:
     namespace: k8sdc-infra
     use_ceph:  yes
     replicas:  1
-    hostnames:
-      - prometheus.k8sdc.io
-      - grafana.k8sdc.io
     images:
       prometheus:
         image:    prom/prometheus
-        tag:      v1.3.1
+        tag:      v1.5.0
         vol_size: 5000
+        fqdn:     prometheus.k8sdc.io
       grafana:
         image:    grafana/grafana
         tag:      3.1.1-1470047149
         vol_size: 1000
+        fqdn:     grafana.k8sdc.io
 
   # l1_logging:
   #   enable:     yes
@@ -143,7 +132,7 @@ solutions:
 
   jm1_job_management:
     enable:    yes
-    namespace: k8sdc-infra
+    namespace: k8sdc-development
     use_ceph:  yes
     replicas:  1
     hostnames:
@@ -151,10 +140,34 @@ solutions:
     images:
       jenkins:
         image:    jenkins
-        tag:      2.7.4
+        tag:      2.32.1
         vol_size: 10000
 
   # as1_artifact_storage
 
-  # ir1_image_repository
+  ir1_image_repository:
+    enable:    yes
+    namespace: k8sdc-infra
+    use_ceph:  yes
+    replicas:  1
+    images:
+      registry:
+        image:    registry
+        tag:      2.6.0
+        vol_size: 20000
+      nginx:
+        image: gcr.io/google_containers/nginx-ingress-controller
+        tag:   0.8.3
+        fqdn:  registry.k8sdc.io
+
+
+# Docker
+docker_registry_mirror_ip:    "{{ hostvars[groups['docker-registry-mirror'][0]]['ansible_' + interface].ipv4.address }}"
+docker_registry_mirror_image: registry
+docker_registry_mirror_tag:   2.4.1
+docker_registry_mirror_http_proxy:  ''
+docker_registry_mirror_https_proxy: ''
+docker_insecure_registries:
+  - "{{ docker_registry_mirror_ip }}:5000"
+  - "{{ solutions.ir1_image_repository.images.nginx.fqdn }}:5000"
 

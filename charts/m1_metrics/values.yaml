@@ -2,11 +2,11 @@
 namespace: k8sdc-infra
 
 prometheus_image: prom/prometheus
-prometheus_tag:   v1.3.1
-prometheus_host:  prometheus.k8sdc.io
+prometheus_tag:   v1.5.0
+prometheus_fqdn:  prometheus.k8sdc.io
 
 grafana_image: grafana/grafana
 grafana_tag:   3.1.1-1470047149
-grafana_host:  grafana.k8sdc.io
+grafana_fqdn:  grafana.k8sdc.io
 
 replicaCount: 1

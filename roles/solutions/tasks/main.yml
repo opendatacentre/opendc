@@ -66,4 +66,8 @@
 # as1_artifact_storage
 
 # ir1_image_repository
+- include: ir1_image_repository.yaml
+  when: solutions.ir1_image_repository.enable is defined and 
+        solutions.ir1_image_repository.enable 
+  tags: ir1_image_repository
 

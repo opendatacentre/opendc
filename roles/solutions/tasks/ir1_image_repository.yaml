@@ -1,0 +1,51 @@
+---
+# ir1_image_repository Solution
+
+# Create Ceph mon host group
+- name: Ceph | Create mon hosts group
+  add_host:
+    name:   "{{ item }}"
+    groups: mon_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+
+
+# Create Ceph block storage and Kubernetes PV
+- block:
+
+  - name: ir1_image_repository | Check for Docker Registry Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd
+
+  - name: ir1_image_repository | Create Docker Registry Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-docker-registry
+      size={{ solutions.ir1_image_repository.images.registry.vol_size }} 
+      solution=ir1_image_repository 
+      product=docker-registry
+    when: "'k8sdc-docker-registry' not in rbd.stdout"
+
+  delegate_to: "{{ groups['mon_hosts'][0] }}"
+  run_once:    yes
+  when: solutions.ir1_image_repository.use_ceph
+
+
+# Deploy
+- name: ir1_image_repository | Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.ir1_image_repository.namespace }},
+      docker_registry_image={{ solutions.ir1_image_repository.images.registry.image }},
+      docker_registry_tag={{ solutions.ir1_image_repository.images.registry.tag }},
+      nginx_image={{ solutions.ir1_image_repository.images.nginx.image }},
+      nginx_tag={{ solutions.ir1_image_repository.images.nginx.tag }},
+      nginx_fqdn={{ solutions.ir1_image_repository.images.nginx.fqdn }},
+      replicaCount={{ solutions.ir1_image_repository.replicas }}
+  run_once: yes
+
+- name: ir1_image_repository | Run Helm
+  include: helm.yaml sol_name=ir1_image_repository variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

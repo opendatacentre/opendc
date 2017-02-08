@@ -1,5 +1,8 @@
 # m1_metrics solution
 
+# - debug:
+#     var: hostvars[groups['k8sdc-nodes'][1]]
+
 # Create Ceph mon host group
 - name: m1_metrics | Create mon hosts group
   add_host:
@@ -55,10 +58,10 @@
       namespace={{ solutions.m1_metrics.namespace }},
       prometheus_image={{ solutions.m1_metrics.images.prometheus.image }},
       prometheus_tag={{ solutions.m1_metrics.images.prometheus.tag }},
-      prometheus_host={{ solutions.m1_metrics.hostnames[0] }},
+      prometheus_fqdn={{ solutions.m1_metrics.images.prometheus.fqdn }},
       grafana_image={{ solutions.m1_metrics.images.grafana.image }},
       grafana_tag={{ solutions.m1_metrics.images.grafana.tag }},
-      grafana_host={{ solutions.m1_metrics.hostnames[1] }}
+      grafana_fqdn={{ solutions.m1_metrics.images.grafana.fqdn }}
   run_once: yes
 
 - name: m1_metrics | Run Helm

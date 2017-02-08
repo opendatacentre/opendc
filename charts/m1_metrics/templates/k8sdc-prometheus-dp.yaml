@@ -30,25 +30,26 @@ spec:
         - name: k8sdc-prometheus
           image: {{ .Values.prometheus_image }}:{{ .Values.prometheus_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
-          # env:
-          #   - name:  NODE_ENV
-          #     value: production
+          args:
+            - '-storage.local.retention=6h'
+            - '-storage.local.memory-chunks=500000'
+            - '-config.file=/etc/prometheus/prometheus.yml'
           ports:
-            - name: http
+            - name:          http
               containerPort: 9090
-              protocol: TCP
+              protocol:      TCP
           volumeMounts:
-            - name: k8sdc-prometheus
+            - name:      k8sdc-prometheus
               mountPath: /prometheus/
-            - name: k8sdc-prometheus-configmap
+            - name:      k8sdc-prometheus-configmap
               mountPath: /etc/prometheus/
           resources:
             limits:
-              cpu: 500m
+              cpu:    500m
               memory: 800Mi
             requests:
-              cpu: 400m
-              memory: 500Mi
+              cpu:    500m
+              memory: 800Mi
       volumes:
         - name: k8sdc-prometheus-configmap
           configMap:

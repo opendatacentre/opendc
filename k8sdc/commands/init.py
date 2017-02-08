@@ -10,7 +10,7 @@ options:
                 provider type. One of the following:
                   bare
                   vagrant
-                  do [NOT IMPLEMENTED]
+                  do
                   aws [NOT IMPLEMENTED]
                   azure [NOT IMPLEMENTED]
                   gcp [NOT IMPLEMENTED]

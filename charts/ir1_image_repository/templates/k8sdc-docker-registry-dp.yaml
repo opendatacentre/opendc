@@ -1,0 +1,53 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8sdc-docker-registry
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: ir1_image_repository
+    product:  docker-registry
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      solution: ir1_image_repository
+      product:  docker-registry
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        solution: ir1_image_repository
+        product:  docker-registry
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+        - name: k8sdc-docker-registry
+          image: {{ .Values.docker_registry_image }}:{{ .Values.docker_registry_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - name: k8sdc-docker-registry
+              readOnly: false
+              mountPath: /var/lib/registry/
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+      volumes:
+        - name: k8sdc-docker-registry
+          persistentVolumeClaim:
+            claimName: k8sdc-docker-registry
+
+        
