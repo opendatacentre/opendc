@@ -1,19 +1,19 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: k8sdc-grafana
+  name: k8sdc-prometheus
   namespace: {{ .Values.namespace }}
   labels:
     solution: m1_metrics
-    product:  grafana
+    product:  prometheus
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
   rules:
-    - host: {{ .Values.grafana_fqdn }}
+    - host: {{ .Values.prometheus_fqdn }}
       http:
         paths:
           - backend:
-              serviceName: k8sdc-grafana
-              servicePort: 80
+              serviceName: k8sdc-prometheus
+              servicePort: http

@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: k8sdc-prom-node-exporter
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: m1_metrics
+    product:  prometheus-node-exporter
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  template:
+    metadata:
+      labels: 
+        solution: m1_metrics
+        product:  prometheus-node-exporter
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      hostNetwork: true
+      hostPID:     true
+      containers:
+        - name: k8sdc-prom-node-exporter
+          image: {{ .Values.prom_node_exporter_image }}:{{ .Values.prom_node_exporter_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          ports:
+            - name: prom-node-exp
+              #^ must be an IANA_SVC_NAME (at most 15 characters, ..)
+              containerPort: 9100
+              hostPort:      9100
+      

@@ -1,8 +1,8 @@
 # Default values for jm1_job_management.
-namespace: k8sdc-infra
+namespace: k8sdc-development
 
 image: jenkins
 tag:   2.32.1
-host:  jenkins.k8sdc.io
+fqdn:  jenkins.k8sdc.io
 
 replicaCount: 1

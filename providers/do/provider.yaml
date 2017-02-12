@@ -1,7 +1,7 @@
 ---
 # Digital Ocean
 provider:  do
-do_token:  c09f8e2162f4d8e259a9a8878e8902c714a0da79b6c21bdaae41cdb597df8599
+do_token:  XXXXXXXXXXXXXXX
 do_region: sgp1
 do_image:  17384153
 
@@ -39,8 +39,9 @@ docker_registry_mirror: master.do.k8sdc.io
 # Solutions
 do_solutions:
   cm1_cluster_management:
-    hostnames:
-      - dashboard.prod.do.k8sdc.io
+    images:
+      kube_dashboard:
+        fqdn:  dashboard.prod.do.k8sdc.io
 
   im1_identity_management:
     hostnames:
@@ -53,14 +54,22 @@ do_solutions:
       grafana:
         fqdn: grafana.prod.do.k8sdc.io
 
-  jm1_job_management:
-    hostnames:
-      - jenkins.prod.do.k8sdc.io
+  l1_logging:
+    images:
+      elasticsearch:
+        fqdn: elasticsearch.prod.do.k8sdc.io
 
   ir1_image_repository:
     images:
       nginx:
         fqdn: registry.prod.do.k8sdc.io
         vip:  128.199.245.220
+
+  jm1_job_management:
+    images:
+      jenkins:
+        fqdn: jenkins.prod.do.k8sdc.io
+
+
 
 solutions: "{{ base_solutions | combine(do_solutions, recursive=true) }}"

@@ -59,6 +59,8 @@
       prometheus_image={{ solutions.m1_metrics.images.prometheus.image }},
       prometheus_tag={{ solutions.m1_metrics.images.prometheus.tag }},
       prometheus_fqdn={{ solutions.m1_metrics.images.prometheus.fqdn }},
+      prom_node_exporter_image={{ solutions.m1_metrics.images.prom_node_exporter.image }},
+      prom_node_exporter_tag={{ solutions.m1_metrics.images.prom_node_exporter.tag }},
       grafana_image={{ solutions.m1_metrics.images.grafana.image }},
       grafana_tag={{ solutions.m1_metrics.images.grafana.tag }},
       grafana_fqdn={{ solutions.m1_metrics.images.grafana.fqdn }}

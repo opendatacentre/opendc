@@ -10,12 +10,8 @@ metadata:
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: 3
-  selector:
-    matchLabels:
-      solution: m1_metrics
-      product:  grafana
   strategy: {'type': 'Recreate'}
   template:
     metadata:
@@ -27,21 +23,36 @@ spec:
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name: k8sdc-grafana
+        - name:  k8sdc-grafana
           image: {{ .Values.grafana_image }}:{{ .Values.grafana_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
-            - name: http
+            - name:          http
               containerPort: 3000
-              protocol: TCP
+              protocol:      TCP
+          env:          
+            - name:  GF_AUTH_BASIC_ENABLED
+              value: "true"
+            - name:  GF_AUTH_ANONYMOUS_ENABLED
+              value: "false"
+          volumeMounts:
+            - name:      k8sdc-grafana
+              mountPath: /var
           resources:
             limits:
-              cpu: 500m
-              memory: 800Mi
+              cpu:    200m
+              memory: 200Mi
             requests:
-              cpu: 400m
-              memory: 500Mi
-
+              cpu:    200m
+              memory: 200Mi
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 3000
+      volumes:
+        - name: k8sdc-grafana
+          persistentVolumeClaim:
+            claimName: k8sdc-grafana
 
 
         

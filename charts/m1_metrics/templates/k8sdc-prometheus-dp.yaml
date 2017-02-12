@@ -27,7 +27,7 @@ spec:
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name: k8sdc-prometheus
+        - name:  k8sdc-prometheus
           image: {{ .Values.prometheus_image }}:{{ .Values.prometheus_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           args:

@@ -7,6 +7,7 @@
       namespace={{ solutions.cm1_cluster_management.namespace }},
       image={{ solutions.cm1_cluster_management.images.kube_dashboard.image }},
       tag={{ solutions.cm1_cluster_management.images.kube_dashboard.tag }},
+      fqdn={{ solutions.cm1_cluster_management.images.kube_dashboard.fqdn }},
       externalIP={{ solutions.cm1_cluster_management.external_ip }},
       replicaCount={{ solutions.cm1_cluster_management.replicas }}
   run_once: yes

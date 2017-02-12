@@ -5,8 +5,11 @@ prometheus_image: prom/prometheus
 prometheus_tag:   v1.5.0
 prometheus_fqdn:  prometheus.k8sdc.io
 
+prom_node_exporter_image: prom/node-exporter
+prom_node_exporter_tag:   0.12.0
+
 grafana_image: grafana/grafana
-grafana_tag:   3.1.1-1470047149
+grafana_tag:   4.1.1
 grafana_fqdn:  grafana.k8sdc.io
 
 replicaCount: 1
