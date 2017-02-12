@@ -1,0 +1,52 @@
+# l1_logging solution
+
+# Create Ceph mon host group
+- name: l1_logging | Create mon hosts group
+  add_host:
+    name:   "{{ item }}"
+    groups: mon_hosts
+  with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+
+
+# Create Ceph block storage and Kubernetes PV
+- block:
+
+  - name: l1_logging | Check for Elasticsearch Ceph block storage
+    command: rbd ls k8sdc-infra
+    register: rbd
+
+  - name: l1_logging | Create Elasticsearch Ceph block storage
+    include: >
+      ceph.yaml 
+      pool=k8sdc-infra 
+      image=k8sdc-elasticsearch
+      size={{ solutions.l1_logging.images.elasticsearch.vol_size }} 
+      solution=l1_logging 
+      product=elasticsearch
+    when: "'k8sdc-elasticsearch' not in rbd.stdout"
+
+  delegate_to: "{{ groups['mon_hosts'][0] }}"
+  run_once:    yes
+  when: solutions.l1_logging.use_ceph
+
+
+# Deploy
+- name: l1_logging | Set variables for deployment
+  set_fact:
+    variables: >
+      namespace={{ solutions.l1_logging.namespace }},
+      elasticsearch_image={{ solutions.l1_logging.images.elasticsearch.image }},
+      elasticsearch_tag={{ solutions.l1_logging.images.elasticsearch.tag }},
+      elasticsearch_fqdn={{ solutions.l1_logging.images.elasticsearch.fqdn }},
+      filebeat_image={{ solutions.l1_logging.images.filebeat.image }},
+      filebeat_tag={{ solutions.l1_logging.images.filebeat.tag }},
+      kibana_image={{ solutions.l1_logging.images.kibana.image }},
+      kibana_tag={{ solutions.l1_logging.images.kibana.tag }},
+      kibana_fqdn={{ solutions.l1_logging.images.kibana.fqdn }},
+  run_once: yes
+
+- name: l1_logging | Run Helm
+  include: helm.yaml sol_name=l1_logging variables=variables
+  delegate_to: localhost
+  run_once:    yes
+  become:      no

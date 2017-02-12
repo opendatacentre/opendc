@@ -1,8 +1,5 @@
 # m1_metrics solution
 
-# - debug:
-#     var: hostvars[groups['k8sdc-nodes'][1]]
-
 # Create Ceph mon host group
 - name: m1_metrics | Create mon hosts group
   add_host:

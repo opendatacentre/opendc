@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: k8sdc-filebeat
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  filebeat
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  template:
+    metadata:
+      labels: 
+        solution: l1_logging
+        product:  filebeat
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+        - name: k8sdc-filebeat
+          image: {{ .Values.filebeat_image }}:{{ .Values.filebeat_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          resources:
+            limits:
+              cpu: 100m
+            requests:
+              cpu: 100m
+          volumeMounts:
+            - name:      containers
+              mountPath: /hostfs/var/lib/docker/containers
+            - name:      k8sdc-filebeat
+              mountPath: /etc/filebeat
+      volumes:
+        - name: containers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: k8sdc-filebeat
+          configMap:
+            name: k8sdc-filebeat

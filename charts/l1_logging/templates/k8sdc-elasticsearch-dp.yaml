@@ -1,0 +1,82 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8sdc-elasticsearch
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  elasticsearch
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 3
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        solution: l1_logging
+        product:  elasticsearch
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+      annotations:
+        pod.beta.kubernetes.io/init-containers: '[
+          {
+          "name": "sysctl",
+            "image": "busybox",
+            "command": ["sysctl", "-w", "vm.max_map_count=262144"],
+            "imagePullPolicy": "IfNotPresent",
+            "securityContext": {
+              "privileged": true
+            }
+          }
+        ]'
+    spec:
+      containers:
+        - name:  k8sdc-elasticsearch
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - IPC_LOCK
+          image: {{ .Values.elasticsearch_image }}:{{ .Values.elasticsearch_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          ports:
+            - name:          api
+              containerPort: 9200
+              protocol:      TCP
+            - name:          transport
+              containerPort: 9300
+              protocol:      TCP
+          env:          
+            - name:  "ES_JAVA_OPTS"
+              value: "-Xms1g -Xmx1g"
+            - name:  NAMESPACE
+              value: {{ .Values.namespace }}
+            - name:  "CLUSTER_NAME"
+              value: "k8sdc"
+            - name:  NODE_MASTER
+              value: "true"
+            - name:  NODE_DATA
+              value: "true"
+            - name:  HTTP_ENABLE
+              value: "true"
+          volumeMounts:
+            - name:      k8sdc-elasticsearch
+              mountPath: /data
+          resources:
+            limits:
+              cpu:    500m
+              memory: 1400Mi
+            requests:
+              cpu:    500m
+              memory: 1400Mi
+      volumes:
+        - name: k8sdc-elasticsearch
+          persistentVolumeClaim:
+            claimName: k8sdc-elasticsearch
+
+
+        

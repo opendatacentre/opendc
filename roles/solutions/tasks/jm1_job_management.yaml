@@ -13,13 +13,13 @@
 - block:
 
   - name: jm1_job_management | Check for Jenkins Ceph block storage
-    command: rbd ls k8sdc-infra
+    command: rbd ls k8sdc-development
     register: rbd
 
   - name: jm1_job_management | Create Jenkins Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-infra 
+      pool=k8sdc-development
       image=k8sdc-jenkins
       size={{ solutions.jm1_job_management.images.jenkins.vol_size }} 
       solution=jm1_job_management 

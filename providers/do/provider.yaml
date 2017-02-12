@@ -1,7 +1,7 @@
 ---
 # Digital Ocean
 provider:  do
-do_token:  XXXXXXXXXXXXXXX
+do_token:  XXXXXXXXXXX
 do_region: sgp1
 do_image:  17384153
 
@@ -58,6 +58,8 @@ do_solutions:
     images:
       elasticsearch:
         fqdn: elasticsearch.prod.do.k8sdc.io
+      kibana:
+        fqdn: kibana.prod.do.k8sdc.io
 
   ir1_image_repository:
     images:

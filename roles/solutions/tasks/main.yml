@@ -19,6 +19,10 @@
   tags: k8s_ns
 
 
+#
+# kube-system
+#
+
 # cs1_cluster_services
 - include: cs1_cluster_services.yaml
   when: solutions.cs1_cluster_services.enable is defined and 
@@ -30,6 +34,11 @@
   when: solutions.cm1_cluster_management.enable is defined and 
         solutions.cm1_cluster_management.enable
   tags: cm1_cluster_management
+
+
+#
+# k8sdc-infra
+#
 
 # dbs1_distributed_block_storage
 - include: dbs1_distributed_block_storage.yaml
@@ -56,12 +65,10 @@
   tags: m1_metrics
   
 # l1_logging
-
-# jm1_job_management
-- include: jm1_job_management.yaml
-  when: solutions.jm1_job_management.enable is defined and 
-        solutions.jm1_job_management.enable 
-  tags: jm1_job_management
+- include: l1_logging.yaml
+  when: solutions.l1_logging.enable is defined and 
+        solutions.l1_logging.enable 
+  tags: l1_logging
 
 # as1_artifact_storage
 
@@ -71,3 +78,13 @@
         solutions.ir1_image_repository.enable 
   tags: ir1_image_repository
 
+
+#
+# k8sdc-development
+#
+
+# jm1_job_management
+- include: jm1_job_management.yaml
+  when: solutions.jm1_job_management.enable is defined and 
+        solutions.jm1_job_management.enable 
+  tags: jm1_job_management
