@@ -1,6 +1,26 @@
 ---
+# Node
+interface:      eth1
+main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
+use_firewalld:  no
+admin_user:     k8sdc
+admin_uid:      5000
+admin_group:    k8sdc
+admin_gid:      5000
+private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
+public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
+download_dir:   /var/download/
+timezone:       "Australia/Melbourne"
+install_pkgs:   true
+packages:
+  - socat
+  - ceph-common
+  - ntp
+
+
 # Kubernetes
 cluster_name:        k8sdc
+api_server_ip:       "{{ hostvars[groups['k8sdc-masters'][0]]['ansible_' + interface].ipv4.address }}"
 kubernetes_api_port: 6443
 k8s_regen_certs:     false
 k8s_regen_tokens:    false
@@ -90,8 +110,6 @@ base_solutions:
     namespace: k8sdc-infra
     use_ceph:  yes
     replicas:  1
-    hostnames: 
-      - keycloak.k8sdc.io
     images:
       opendj:
         image:    k8sdc/opendj
@@ -101,6 +119,7 @@ base_solutions:
         image:    jboss/keycloak
         tag:      1.9.3.Final
         vol_size: 1000
+        fqdn:     keycloak.k8sdc.io
 
   hrp1_https_reverse_proxy:
     enable:     yes
@@ -150,7 +169,7 @@ base_solutions:
       kibana:
         image:    kibana
         tag:      5.2.0
-        #vol_size: 1000
+        vol_size: 5000
         fqdn:     kibana.k8sdc.io
 
   # as1_artifact_storage

@@ -3,28 +3,26 @@
   hosts:
     - localhost
   become: yes
-  vars_files: 
-    - "{{ inventory_dir}}/group_vars/k8sdc.yaml"
+  vars_files:
+    - "{{ inventory_dir }}/group_vars/k8sdc.yaml"
+    - "{{ inventory_dir }}/provider.yaml"
   tasks:
     - name: Get hostnames from Solutions
       set_fact:
         hostnames: >-
           {%- for solution in solutions -%}
-            {%- if solutions[solution].hostnames is defined -%}
-              {%- for hostname in solutions[solution].hostnames -%}
-                {{ hostname }}
-                {%- if not loop.last -%},{%- endif -%}              
-              {%- endfor -%}
-              {%- if not loop.last -%},{%- endif -%}
-            {%- endif -%}
+            {%- for image_name in solutions[solution].images -%}
+              {%- if solutions[solution].images[image_name].fqdn is defined -%}
+                {{ solutions[solution].images[image_name].fqdn }},
+              {%- endif -%}                        
+            {%- endfor -%}
           {%- endfor -%}
 
-
-    # TODO: Make this use a VIP provided by keepalived
+    # TODO: Make this use a VIP provided by keepalived instead of the 1st node!
     - name: Add hosts entries
       lineinfile:
         dest:   /etc/hosts
         state:  present
         line:   "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_' + interface].ipv4.address }} {{ item }}"
         regexp: "{{ item }}$"
-      with_items: hostnames.split(',')[:-1]
+      with_items: "{{ hostnames.split(',')[:-1] }}"

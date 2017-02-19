@@ -3,7 +3,7 @@ goos:       "{{ ansible_system | lower }}"
 goarch:     amd64
 client_dir: "{{ inventory_dir }}/bin/"
 
-kubectl_http_proxy: ''
+kubectl_http_proxy:  ''
 kubectl_https_proxy: ''
 
 # kubectl

@@ -2,6 +2,10 @@
 - name: Pull k8sdc solution images to the Docker repository cache
   hosts: 
     - docker-registry-mirror
+  gather_facts: no
+  vars_files:
+    - "{{ inventory_dir }}/group_vars/k8sdc.yaml"
+    - "{{ inventory_dir }}/provider.yaml"
   tasks:
     - name: Get Docker image details from Solutions
       set_fact:

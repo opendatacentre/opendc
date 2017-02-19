@@ -1,9 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  creationTimestamp: null
-  name: grafana-import-dashboards
-  namespace: monitoring
+  name: k8sdc-grafana
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: m1_metrics
+    product:  grafana
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 data:
   grafana-net-2-dashboard.json: |
     {
@@ -296,7 +301,7 @@ data:
             "expr": "rate(prometheus_local_storage_ingested_samples_total[5m])",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{job}}",
+            "legendFormat": "\{\{job\}\}",
             "metric": "",
             "refId": "A",
             "step": 2
@@ -386,7 +391,7 @@ data:
           "targets": [{
             "expr": "rate(prometheus_target_interval_length_seconds_count[5m])",
             "intervalFactor": 2,
-            "legendFormat": "{{job}}",
+            "legendFormat": "\{\{job\}\}",
             "refId": "A",
             "step": 2
           }],
@@ -455,7 +460,7 @@ data:
             "expr": "prometheus_target_interval_length_seconds{quantile!=\"0.01\", quantile!=\"0.05\"}",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{quantile}} ({{interval}})",
+            "legendFormat": "\{\{quantile\}\} (\{\{interval\}\})",
             "metric": "",
             "refId": "A",
             "step": 2
@@ -546,7 +551,7 @@ data:
             "expr": "prometheus_evaluator_duration_milliseconds{quantile!=\"0.01\", quantile!=\"0.05\"}",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{quantile}}",
+            "legendFormat": "\{\{quantile\}\}",
             "refId": "A",
             "step": 2
           }],
@@ -1473,7 +1478,7 @@ data:
             "expr": "sum(rate(container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\",instance=~\"^$instance$\",namespace=~\"^$namespace$\"}[1m])) by (pod_name)",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{ pod_name }}",
+            "legendFormat": "\{\{ pod_name \}\}",
             "metric": "container_cpu",
             "refId": "A",
             "step": 240
@@ -1555,7 +1560,7 @@ data:
             "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\",instance=~\"^$instance$\",namespace=~\"^$namespace$\"}) by (pod_name)",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{ pod_name }}",
+            "legendFormat": "\{\{ pod_name \}\}",
             "metric": "",
             "refId": "A",
             "step": 240
@@ -1636,7 +1641,7 @@ data:
             "expr": "sum (rate (container_network_receive_bytes_total{image!=\"\",name=~\"^k8s_.*\",instance=~\"^$instance$\",namespace=~\"^$namespace$\"}[1m])) by (pod_name)",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{ pod_name }} < in",
+            "legendFormat": "\{\{ pod_name \}\} < in",
             "metric": "network",
             "refId": "A",
             "step": 240
@@ -1644,7 +1649,7 @@ data:
             "expr": "- sum (rate (container_network_transmit_bytes_total{image!=\"\",name=~\"^k8s_.*\",instance=~\"^$instance$\",namespace=~\"^$namespace$\"}[1m])) by (pod_name)",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{ pod_name }} > out",
+            "legendFormat": "\{\{ pod_name \}\} > out",
             "metric": "network",
             "refId": "B",
             "step": 240
@@ -1725,7 +1730,7 @@ data:
             "expr": "sum(container_fs_usage_bytes{image!=\"\",name=~\"^k8s_.*\",instance=~\"^$instance$\",namespace=~\"^$namespace$\"}) by (pod_name)",
             "interval": "",
             "intervalFactor": 2,
-            "legendFormat": "{{ pod_name }}",
+            "legendFormat": "\{\{ pod_name \}\}",
             "metric": "network",
             "refId": "A",
             "step": 240

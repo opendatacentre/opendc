@@ -1,50 +1,50 @@
 ---
 - name: Create Admin Group
   group: 
-    name:  "{{ do.do_admin_group }}"
-    gid:   "{{ do.do_admin_gid }}"
+    name:  "{{ do_admin_group }}"
+    gid:   "{{ do_admin_gid }}"
     state: present
 
 - name: Create Admin User
   user:
-    name:    "{{ do.do_admin_user }}"
-    uid:     "{{ do.do_admin_uid }}"
-    group:   "{{ do.do_admin_group }}"
+    name:    "{{ do_admin_user }}"
+    uid:     "{{ do_admin_uid }}"
+    group:   "{{ do_admin_group }}"
     comment: "k8sdc Digital Ocean admin user"
     state:   present
 
 - name: Make .ssh directory
   file:
-    path:  /home/{{ do.do_admin_user }}/.ssh
+    path:  /home/{{ do_admin_user }}/.ssh
     state: directory
-    owner: "{{ do.do_admin_user }}"
-    group: "{{ do.do_admin_group }}"
+    owner: "{{ do_admin_user }}"
+    group: "{{ do_admin_group }}"
     mode:  0500
 
 - name: Copy over private key
   copy:
-    src:   "{{ inventory_dir }}/keys/{{ do.ssh_key_name }}"
-    dest:  /home/{{ do.do_admin_user }}/.ssh/{{ do.ssh_key_name }}
-    owner: "{{ do.do_admin_user }}"
-    group: "{{ do.do_admin_group }}"
+    src:   "{{ inventory_dir }}/keys/{{ do_ssh_key_name }}"
+    dest:  /home/{{ do_admin_user }}/.ssh/{{ do_ssh_key_name }}
+    owner: "{{ do_admin_user }}"
+    group: "{{ do_admin_group }}"
     mode:  0400
 
 - name: Add public key to authorized keys
   authorized_key:
-    user: "{{ do.do_admin_user }}"
-    key:  "{{ lookup('file', '{{ inventory_dir }}/keys/{{ do.ssh_key_name }}.pub') }}"
+    user: "{{ do_admin_user }}"
+    key:  "{{ lookup('file', '{{ inventory_dir }}/keys/{{ do_ssh_key_name }}.pub') }}"
 
 - name: Add admin user to sudoers.d
   lineinfile:
     create: yes
-    dest:   /etc/sudoers.d/{{ do.do_admin_user }}
-    line:   "{{ do.do_admin_user }} ALL=NOPASSWD:ALL"
+    dest:   /etc/sudoers.d/{{ do_admin_user }}
+    line:   "{{ do_admin_user }} ALL=NOPASSWD:ALL"
     state:  present
 
 - name: Set permissions on admin sudoers file
   file:
     mode: 0440
-    dest: /etc/sudoers.d/{{ do.do_admin_user }}
+    dest: /etc/sudoers.d/{{ do_admin_user }}
 
 # TODO: Update inventory file to use doadmin user
 

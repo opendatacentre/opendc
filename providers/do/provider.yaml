@@ -1,21 +1,18 @@
 ---
 # Digital Ocean
-provider:  do
-do_token:  XXXXXXXXXXX
-do_region: sgp1
-do_image:  17384153
+provider:         do
+do_token:         XXXXXXXXXXXX
+do_region:        sgp1
+do_image:         17384153
+do_generate_keys: yes
+do_ssh_key_name:  k8sdc_do_admin_key
+do_admin_user:    doadmin
+do_admin_uid:     4000 
+do_admin_group:   doadmin
+do_admin_gid:     4000
 
-# k8sdc
-generate_keys:  yes
-ssh_key_name:   k8sdc_doadmin
-do_admin_user:  doadmin # remove do_ ?
-do_admin_uid:   4000 # remove do_ ?
-do_admin_group: doadmin # remove do_ ?
-do_admin_gid:   4000 # remove do_ ?
-interface:      eth0
-timezone:       "Australia/Melbourne"
 
-# Hosts
+# Inventory
 masters:
   - hostname: master.do.k8sdc.io
     do_size:  2gb
@@ -36,42 +33,47 @@ k8sdc_ca:               master.do.k8sdc.io
 timeserver:             master.do.k8sdc.io
 docker_registry_mirror: master.do.k8sdc.io
 
-# Solutions
+
+# Node (overrides values in k8sdc.yaml)
+interface: eth0
+timezone:  "Australia/Melbourne"
+
+
+# Solutions (overrides values in k8sdc.yaml)
 do_solutions:
   cm1_cluster_management:
     images:
       kube_dashboard:
-        fqdn:  dashboard.prod.do.k8sdc.io
+        fqdn:  dashboard.do.k8sdc.io
 
   im1_identity_management:
-    hostnames:
-      - keycloak.prod.do.k8sdc.io
+    images:
+      keycloak:
+        fqdn: keycloak.do.k8sdc.io
 
   m1_metrics:
     images:
       prometheus:
-        fqdn: prometheus.prod.do.k8sdc.io
+        fqdn: prometheus.do.k8sdc.io
       grafana:
-        fqdn: grafana.prod.do.k8sdc.io
+        fqdn: grafana.do.k8sdc.io
 
   l1_logging:
     images:
       elasticsearch:
-        fqdn: elasticsearch.prod.do.k8sdc.io
+        fqdn: elasticsearch.do.k8sdc.io
       kibana:
-        fqdn: kibana.prod.do.k8sdc.io
+        fqdn: kibana.do.k8sdc.io
 
   ir1_image_repository:
     images:
       nginx:
-        fqdn: registry.prod.do.k8sdc.io
+        fqdn: registry.do.k8sdc.io
         vip:  128.199.245.220
 
   jm1_job_management:
     images:
       jenkins:
-        fqdn: jenkins.prod.do.k8sdc.io
-
-
+        fqdn: jenkins.do.k8sdc.io
 
 solutions: "{{ base_solutions | combine(do_solutions, recursive=true) }}"

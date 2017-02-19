@@ -2,6 +2,9 @@
 - name: Generate a local kubeconfig file
   hosts:
     - localhost
+  vars_files:
+    - "{{ inventory_dir }}/group_vars/k8sdc.yaml"
+    - "{{ inventory_dir }}/provider.yaml"
   tasks:
     - name: Fetch k8sdc-ca.crt
       slurp:
