@@ -1,6 +1,6 @@
 ---
-docker_version: 1.10.3
-docker_pkgname: docker-{{ docker_version }}
+docker_version: 1.12.6
+docker_pkgname: docker-{{ docker_version }}.tgz
 docker_url:     https://get.docker.com/builds/Linux/x86_64/{{ docker_pkgname }}
 docker_uid:     5002
 docker_gid:     5012

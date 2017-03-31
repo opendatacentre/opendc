@@ -1,5 +1,5 @@
 ---
-- name: Generate SSH Keys
+- name:  Generate SSH Keys
   hosts: localhost
   gather_facts: no
   vars_files:
@@ -8,7 +8,7 @@
     - do-ssh-key
   tags: do-ssh-keys
 
-- name: Create Digital Ocean Resources
+- name:  Create Digital Ocean Resources
   hosts: localhost
   gather_facts: no
   vars_files:
@@ -21,7 +21,7 @@
         seconds: 60
   tags: do-resources
 
-- name: Create Inventory File
+- name:  Create Inventory File
   hosts: localhost
   gather_facts: no
   vars_files:

@@ -1,5 +1,6 @@
 [Unit]
-Description=Kubernetes Kubelet Server
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 After=docker.service
 Requires=docker.service
 
@@ -8,17 +9,21 @@ WorkingDirectory=/var/lib/kubelet
 EnvironmentFile=-/etc/kubernetes/config/config
 EnvironmentFile=-/etc/kubernetes/config/kubelet
 ExecStart=/usr/bin/kubelet \
+      $ADDRESS \
+      $HOSTNAME \
+      $API_SERVERS \
+      --allow-privileged=true \
+      $CLUSTER_DNS \
+      $CLUSTER_DOMAIN \
+      --container-runtime=docker \
+      $KUBECONFIG \
+      --serialize-image-pulls=false \
       $KUBE_LOGTOSTDERR \
       $KUBE_LOG_LEVEL \
       $KUBE_ALLOW_PRIV \
-      $KUBELET_ADDRESS \
-      $KUBELET_HOSTNAME \
-      $KUBELET_API_SERVER \
-      $KUBELET_DNS_IP \
-      $KUBELET_DNS_DOMAIN \
-      $KUBELET_KUBECONFIG \
-      $KUBELET_ARGS
-Restart=always
+      $ARGS
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

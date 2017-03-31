@@ -1,0 +1,9 @@
+---
+- name: Create Inventory File
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "{{ inventory_dir }}/provider.yaml"
+  roles:
+    - vb-inventory-file
+  tags: vb-inventory-file

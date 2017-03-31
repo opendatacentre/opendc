@@ -1,32 +1,80 @@
 ---
-vagrant:
-  vm_box:         centos/7
-  vm_box_version: 1611.01
-  provider:       virtualbox
-  masters:
-    - hostname: master.vb.k8sdc.io
-      ip:       192.168.101.100
-      memory:   2048
-      cpus:     2
-  nodes:
-    - hostname: node1.vb.k8sdc.io
-      ip:       192.168.101.110
-      memory:   2200
-      cpus:     4
-    - hostname: node2.vb.k8sdc.io
-      ip:       192.168.101.111
-      memory:   2200
-      cpus:     4
-    - hostname: node3.vb.k8sdc.io
-      ip:       192.168.101.112
-      memory:   2200
-      cpus:     4
-  etcd:
-    - master.vb.k8sdc.io
-    - node1.vb.k8sdc.io
-    - node2.vb.k8sdc.io
-    - node3.vb.k8sdc.io
-  fileserver:             master.vb.k8sdc.io
-  k8sdc_ca:               master.vb.k8sdc.io
-  timeserver:             master.vb.k8sdc.io
-  docker_registry_mirror: master.vb.k8sdc.io
+# Vagrant
+provider:       vagrant
+vm_box:         centos/7
+vm_box_version: 1611.01
+vm_provider:    virtualbox
+
+# Inventory
+masters:
+  - hostname: master.vb.k8sdc.io
+    ip:       192.168.101.100
+    memory:   2048
+    cpus:     2
+nodes:
+  - hostname: node1.vb.k8sdc.io
+    ip:       192.168.101.110
+    memory:   2200
+    cpus:     4
+  - hostname: node2.vb.k8sdc.io
+    ip:       192.168.101.111
+    memory:   2200
+    cpus:     4
+  - hostname: node3.vb.k8sdc.io
+    ip:       192.168.101.112
+    memory:   2200
+    cpus:     4
+etcd:
+  - master.vb.k8sdc.io
+  - node1.vb.k8sdc.io
+  - node2.vb.k8sdc.io
+  - node3.vb.k8sdc.io
+fileserver:             master.vb.k8sdc.io
+k8sdc_ca:               master.vb.k8sdc.io
+timeserver:             master.vb.k8sdc.io
+vbcker_registry_mirror: master.vb.k8sdc.io
+
+
+# Node (overrides values in k8sdc.yaml)
+interface: eth0
+timezone:  "Australia/Melbourne"
+
+
+# Solutions (overrides values in k8sdc.yaml)
+vb_solutions:
+  cm1_cluster_management:
+    images:
+      kube_dashboard:
+        fqdn:  dashboard.vb.k8sdc.io
+
+  im1_identity_management:
+    images:
+      keycloak:
+        fqdn: keycloak.vb.k8sdc.io
+
+  m1_metrics:
+    images:
+      prometheus:
+        fqdn: prometheus.vb.k8sdc.io
+      grafana:
+        fqdn: grafana.vb.k8sdc.io
+
+  l1_logging:
+    images:
+      elasticsearch:
+        fqdn: elasticsearch.vb.k8sdc.io
+      kibana:
+        fqdn: kibana.vb.k8sdc.io
+
+  ir1_image_repository:
+    images:
+      nginx:
+        fqdn: registry.vb.k8sdc.io
+        vip:  128.199.245.220
+
+  jm1_job_management:
+    images:
+      jenkins:
+        fqdn: jenkins.vb.k8sdc.io
+
+solutions: "{{ base_solutions | combine(vb_solutions, recursive=true) }}"

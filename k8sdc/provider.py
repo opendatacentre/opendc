@@ -77,8 +77,7 @@ class BareProvider(Provider):
 class VagrantProvider(Provider):
   """This Class provides functionality for the Vagrant Provider"""
 
-  templates = {'Vagrantfile.j2' : 'Vagrantfile',
-               'inventory.j2'   : 'inventory'}
+  templates = {'Vagrantfile.j2' : 'Vagrantfile'}
 
   def validate(self):
     # Validate provider_data using Schema
@@ -87,12 +86,20 @@ class VagrantProvider(Provider):
   def create_machines(self):
     """Create Vagrant machines"""
     logger.info("Creating machines")
+
+    # Confirm Vagrantfile has been created
     vagrantfile = os.path.realpath(os.path.join(os.path.curdir, 'Vagrantfile'))
     if not os.path.exists(vagrantfile):
       logger.error("Cannot find file: {}".format(vagrantfile))
       logger.error("Are you sure that \'k8sdc template\' has been run?")
       sys.exit(1)
+
+    # Call Vagrant
     execute("vagrant up --no-provision")
+
+    # Call machine playbook
+    call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/machine.yaml')))
+
 
   def destroy_machines(self):
     """Destroy Vagrant machines"""
@@ -112,6 +119,7 @@ class DOProvider(Provider):
     """Create Droplets"""
     logger.info("Creating machines")
 
+    # Confirm dopy is installed
     result = execute("pip freeze", output=False)
     dopy_found = False
     for item in result:
@@ -121,6 +129,7 @@ class DOProvider(Provider):
       logger.error("Unable to find Python module \'dopy\'")
       sys.exit(1)    
 
+    # Call machine playbook
     call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/machine.yaml')))
 
 

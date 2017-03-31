@@ -2,6 +2,7 @@
 # kubernetes proxy config
 #
 
-KUBE_PROXY_KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig/kube-proxy.kubeconfig"
-KUBE_PROXY_MODE="--proxy-mode=userspace"
-KUBE_PROXY_ARGS=""
+CLUSTER_CIDR="--cluster-cidr={{ cluster_cidr }}"
+MODE="--proxy-mode=iptables"
+KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig/kube-proxy.kubeconfig"
+ARGS=""
