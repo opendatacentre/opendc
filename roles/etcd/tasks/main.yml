@@ -22,8 +22,8 @@
 - name: Download Etcd
   command: scp -o StrictHostKeyChecking=no \
            -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }} \
-           {{ admin_user }}@{{ fileserver }}:/{{ download_dir }}/{{ etcd_pkgname }} \
-           "/{{ download_dir }}/{{ etcd_pkgname }}"
+           {{ admin_user }}@{{ fileserver }}:{{ download_dir }}/{{ etcd_pkgname }} \
+           "{{ download_dir }}{{ etcd_pkgname }}"
   when: not etcd_pkg.stat.exists
 
 - name: Extract Etcd

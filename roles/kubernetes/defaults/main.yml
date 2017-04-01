@@ -4,5 +4,5 @@ kubernetes_url:          https://storage.googleapis.com/kubernetes-release/relea
 kubernetes_uid:          5003
 kubernetes_gid:          5013
 kubernetes_srv_addr:     10.254.0.0/16
-k8s_privileged:   true
+k8s_privileged:          true
 kubernetes_admission:    --admission_control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota

@@ -4,7 +4,6 @@
 
 ADDRESS="--address={{ main_ip }}"
 HOSTNAME="--hostname_override={{ ansible_fqdn }}"
-API_SERVERS="--api_servers=https://{{ api_server_ip }}:{{ kubernetes_api_port }}"
 CLUSTER_DNS="--cluster-dns={{ solutions.cs1_cluster_services.cluster_ip }}"
 CLUSTER_DOMAIN="--cluster-domain={{ solutions.cs1_cluster_services.domain }}"
 KUBECONFIG="--kubeconfig=/etc/kubernetes/kubeconfig/kubelet.kubeconfig"

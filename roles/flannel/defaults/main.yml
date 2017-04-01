@@ -1,6 +1,6 @@
 ---
-flannel_version:  0.5.5
-flannel_pkgname:  flannel-{{ flannel_version }}-linux-amd64.tar.gz
+flannel_version:  0.7.0
+flannel_pkgname:  flannel-v{{ flannel_version }}-linux-amd64.tar.gz
 flannel_url:      https://github.com/coreos/flannel/releases/download/v{{ flannel_version }}/{{ flannel_pkgname }}
 flannel_network:  "{{ cluster_cidr }}"
 flannel_subnet:   24

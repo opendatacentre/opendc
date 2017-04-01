@@ -29,7 +29,7 @@
 - name: Extract Flannel
   unarchive:
     copy: no
-    src:  /{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+    src:  /{{ download_dir }}/{{ flannel_pkgname }}
     dest: /{{ download_dir }}/
 
 - name: Check for Flannel binary
@@ -41,10 +41,11 @@
   service:
     name:  flannel
     state: stopped
+  ignore_errors: true
   when: flannel_binary.stat.exists
 
 - name: Copy Flannel binary
-  command: cp /{{ download_dir }}/flannel-{{ flannel_version }}/flanneld /bin/
+  command: cp /{{ download_dir }}/flanneld /bin/
 
 - name: Copy Flannel config file
   template:

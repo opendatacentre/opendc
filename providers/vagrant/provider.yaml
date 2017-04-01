@@ -36,23 +36,36 @@ docker_registry_mirror: master.vb.k8sdc.io
 
 
 # Node (overrides values in k8sdc.yaml)
-interface: eth0
+interface: eth1
 timezone:  "Australia/Melbourne"
 
 
 # Solutions (overrides values in k8sdc.yaml)
 vb_solutions:
+  
+  cs1_cluster_services:
+    enable: yes
+
   cm1_cluster_management:
+    enable: yes
     images:
       kube_dashboard:
         fqdn:  dashboard.vb.k8sdc.io
 
+  dbs1_distributed_block_storage:
+    enable: yes
+
   im1_identity_management:
+    enable: yes
     images:
       keycloak:
         fqdn: keycloak.vb.k8sdc.io
 
+  hrp1_https_reverse_proxy:
+    enable: yes
+
   m1_metrics:
+    enable: yes
     images:
       prometheus:
         fqdn: prometheus.vb.k8sdc.io
@@ -60,6 +73,7 @@ vb_solutions:
         fqdn: grafana.vb.k8sdc.io
 
   l1_logging:
+    enable: yes
     images:
       elasticsearch:
         fqdn: elasticsearch.vb.k8sdc.io
@@ -67,12 +81,14 @@ vb_solutions:
         fqdn: kibana.vb.k8sdc.io
 
   ir1_image_repository:
+    enable: yes
     images:
       nginx:
         fqdn: registry.vb.k8sdc.io
         vip:  128.199.245.220
 
   jm1_job_management:
+    enable: yes
     images:
       jenkins:
         fqdn: jenkins.vb.k8sdc.io

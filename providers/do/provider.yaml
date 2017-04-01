@@ -41,17 +41,30 @@ timezone:  "Australia/Melbourne"
 
 # Solutions (overrides values in k8sdc.yaml)
 do_solutions:
+  
+  cs1_cluster_services:
+    enable: yes
+
   cm1_cluster_management:
+    enable: yes
     images:
       kube_dashboard:
         fqdn:  dashboard.do.k8sdc.io
 
+  dbs1_distributed_block_storage:
+    enable: yes
+
   im1_identity_management:
+    enable: yes
     images:
       keycloak:
         fqdn: keycloak.do.k8sdc.io
 
+  hrp1_https_reverse_proxy:
+    enable: yes
+
   m1_metrics:
+    enable: yes
     images:
       prometheus:
         fqdn: prometheus.do.k8sdc.io
@@ -59,6 +72,7 @@ do_solutions:
         fqdn: grafana.do.k8sdc.io
 
   l1_logging:
+    enable: yes
     images:
       elasticsearch:
         fqdn: elasticsearch.do.k8sdc.io
@@ -66,12 +80,14 @@ do_solutions:
         fqdn: kibana.do.k8sdc.io
 
   ir1_image_repository:
+    enable: yes
     images:
       nginx:
         fqdn: registry.do.k8sdc.io
         vip:  128.199.245.220
 
   jm1_job_management:
+    enable: yes
     images:
       jenkins:
         fqdn: jenkins.do.k8sdc.io
