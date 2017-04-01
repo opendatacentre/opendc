@@ -1,8 +1,8 @@
 {% for master in masters -%}
-{{ master.hostname }} ansible_host={{ hostvars[master.hostname]['ansible_host'] }}
+{{ master.hostname }} ansible_host={{ master.ip }} ansible_private_key_file='{{ inventory_dir }}/.vagrant/machines/{{ master.hostname }}/virtualbox/private_key'
 {% endfor -%}
 {% for node in nodes -%}
-{{ node.hostname }} ansible_host={{ hostvars[node.hostname]['ansible_host'] }}
+{{ node.hostname }} ansible_host={{ node.ip }} ansible_private_key_file='{{ inventory_dir }}/.vagrant/machines/{{ node.hostname }}/virtualbox/private_key'
 {% endfor %}
 
 [k8sdc:children]
@@ -15,9 +15,8 @@ timeserver
 docker-registry-mirror
 
 [k8sdc:vars]
-ansible_ssh_user=root
+ansible_ssh_user=vagrant
 ansible_connection=ssh
-ansible_private_key_file=keys/{{ do_ssh_key_name }}
 
 [k8sdc-masters]
 {% for master in masters -%}

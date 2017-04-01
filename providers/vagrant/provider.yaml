@@ -32,7 +32,7 @@ etcd:
 fileserver:             master.vb.k8sdc.io
 k8sdc_ca:               master.vb.k8sdc.io
 timeserver:             master.vb.k8sdc.io
-vbcker_registry_mirror: master.vb.k8sdc.io
+docker_registry_mirror: master.vb.k8sdc.io
 
 
 # Node (overrides values in k8sdc.yaml)

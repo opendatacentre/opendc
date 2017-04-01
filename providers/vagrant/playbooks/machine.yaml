@@ -1,5 +1,5 @@
 ---
-- name: Create Inventory File
+- name:  Create Inventory File
   hosts: localhost
   gather_facts: no
   vars_files:
