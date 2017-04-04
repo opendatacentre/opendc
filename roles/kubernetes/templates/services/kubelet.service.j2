@@ -1,0 +1,26 @@
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/var/lib/kubelet
+ExecStart=/usr/bin/kubelet \
+      --api-servers=https://{{ api_server_ip }}:{{ kubernetes_api_port }} \
+      --address={{ main_ip }} \
+      --hostname_override={{ ansible_fqdn }} \
+      --allow-privileged=true \
+      --cgroup-driver systemd \
+      --cluster-dns={{ solutions.cs1_cluster_services.cluster_ip }} \
+      --cluster-domain={{ solutions.cs1_cluster_services.domain }} \
+      --container-runtime=docker \
+      --kubeconfig=/etc/kubernetes/kubeconfig/kubelet.kubeconfig \
+      --serialize-image-pulls=false \
+      --logtostderr=true \
+      --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

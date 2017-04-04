@@ -8,6 +8,7 @@
     name:   "{{ item }}"
     groups: mon_hosts
   with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
+  tags: dbs1_distributed_block_storage_create_fs
 
 - name: dbs1_distributed_block_storage | Create osd hosts group
   add_host:
@@ -15,6 +16,7 @@
     count_256m: "{{ solutions.dbs1_distributed_block_storage.osd_hosts | selectattr('hostname','equalto', item) | map(attribute='count_256m') | first }}"
     groups:     osd_hosts
   with_items: "{{ solutions.dbs1_distributed_block_storage.osd_hosts | map(attribute='hostname') | list }}"
+  tags: dbs1_distributed_block_storage_create_fs
 
 
 # Create Ceph filesystems
@@ -41,18 +43,32 @@
     command: mkfs -t xfs /var/ceph/ceph_d0
     when: not ceph_filesystem.stat.exists
 
-  - name: dbs1_distributed_block_storage | Create /mnt/ceph_d0
-    file:
-      path:  /mnt/ceph_d0
-      state: directory
+  # - name: dbs1_distributed_block_storage | Create /mnt/ceph_d0
+  #   file:
+  #     path:  /mnt/ceph_d0
+  #     state: directory
 
-  - name: dbs1_distributed_block_storage | Mount /var/ceph/ceph_d0 on /mnt/ceph_d0
-    mount:
-      name:   /mnt/ceph_d0
-      src:    /var/ceph/ceph_d0
-      fstype: xfs
-      opts:   loop,noauto
-      state:  mounted
+  # - name: dbs1_distributed_block_storage | Mount /var/ceph/ceph_d0 on /mnt/ceph_d0
+  #   mount:
+  #     name:   /mnt/ceph_d0
+  #     src:    /var/ceph/ceph_d0
+  #     fstype: xfs
+  #     opts:   loop,noauto
+  #     state:  mounted
+
+  - name: dbs1_distributed_block_storage | Create Systemd mount
+    copy:
+      src:  mnt-ceph_d0.mount
+      dest: /usr/lib/systemd/system/mnt-ceph_d0.mount
+
+  - name: dbs1_distributed_block_storage | Reload Systemd
+    command: systemctl daemon-reload
+
+  - name: dbs1_distributed_block_storage | Enable and start mount
+    service:
+      name:    mnt-ceph_d0.mount
+      enabled: yes
+      state:   started
 
   when: '"osd_hosts" in group_names'
   tags: dbs1_distributed_block_storage_create_fs
@@ -132,3 +148,9 @@
 
   delegate_to: "{{ groups['mon_hosts'][0] }}"
   run_once:    yes
+
+
+# TODO: Add Ceph client configuration to all worker nodes
+# Copy from mon0
+
+

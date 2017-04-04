@@ -1,0 +1,14 @@
+[Unit]
+Description=Ceph storage
+After=flannel.service
+Before=docker.service
+
+[Mount]
+What=/var/ceph/ceph_d0
+Where=/mnt/ceph_d0
+Type=xfs
+Options=loop,noauto,nofail
+TimeoutSec=120
+
+[Install]
+WantedBy=multi-user.target

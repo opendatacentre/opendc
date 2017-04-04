@@ -74,21 +74,12 @@
 - block:
 
   - name: node | Copy kubelet service file
-    copy:
-      src:  services/kubelet.service
+    template:
+      src:  services/kubelet.service.j2
       dest: /usr/lib/systemd/system/kubelet.service
     notify:
       - Reload Systemd
       - Restart kubelet
-
-  - name: node | Copy kubelet config file
-    template:
-      src:   config/kubelet.j2
-      dest:  /etc/kubernetes/config/kubelet
-      mode:  0640
-      owner: kube
-      group: kube
-    notify: Restart kubelet
 
   - name: node | Enable kubelet service
     service:
