@@ -8,7 +8,9 @@
     name:   "{{ item }}"
     groups: mon_hosts
   with_items: "{{ solutions.dbs1_distributed_block_storage.mon_hosts | map(attribute='hostname') | list }}"
-  tags: dbs1_distributed_block_storage_create_fs
+  tags: 
+    - dbs1_distributed_block_storage_create_fs
+    - dbs1_distributed_block_storage_copy_files
 
 - name: dbs1_distributed_block_storage | Create osd hosts group
   add_host:
@@ -16,7 +18,9 @@
     count_256m: "{{ solutions.dbs1_distributed_block_storage.osd_hosts | selectattr('hostname','equalto', item) | map(attribute='count_256m') | first }}"
     groups:     osd_hosts
   with_items: "{{ solutions.dbs1_distributed_block_storage.osd_hosts | map(attribute='hostname') | list }}"
-  tags: dbs1_distributed_block_storage_create_fs
+  tags:
+    - dbs1_distributed_block_storage_create_fs
+    - dbs1_distributed_block_storage_copy_files
 
 
 # Create Ceph filesystems
@@ -42,19 +46,6 @@
   - name: dbs1_distributed_block_storage | Format /var/ceph/ceph_d0
     command: mkfs -t xfs /var/ceph/ceph_d0
     when: not ceph_filesystem.stat.exists
-
-  # - name: dbs1_distributed_block_storage | Create /mnt/ceph_d0
-  #   file:
-  #     path:  /mnt/ceph_d0
-  #     state: directory
-
-  # - name: dbs1_distributed_block_storage | Mount /var/ceph/ceph_d0 on /mnt/ceph_d0
-  #   mount:
-  #     name:   /mnt/ceph_d0
-  #     src:    /var/ceph/ceph_d0
-  #     fstype: xfs
-  #     opts:   loop,noauto
-  #     state:  mounted
 
   - name: dbs1_distributed_block_storage | Create Systemd mount
     copy:
@@ -150,7 +141,28 @@
   run_once:    yes
 
 
-# TODO: Add Ceph client configuration to all worker nodes
-# Copy from mon0
+# Add Ceph client configuration to non OSD nodes
+- block:
+  
+  - name: dbs1_distributed_block_storage | Archive Ceph client files
+    command: tar cvf /tmp/ceph.tar .
+    args:
+      chdir: /etc/ceph/
+    delegate_to: "{{ groups['osd_hosts'][0] }}"
+    run_once:    yes
 
+  - name: dbs1_distributed_block_storage | Fetch client files from OSD node
+    command: >
+      scp -o StrictHostKeyChecking=no
+          -i /home/{{ admin_user }}/.ssh/{{ private_key | basename }}
+          {{ admin_user }}@{{ groups['osd_hosts'][0] }}:/tmp/ceph.tar
+          /tmp/ceph.tar
+
+  - name: dbs1_distributed_block_storage | Extract Ceph client files
+    command: tar xvf /tmp/ceph.tar
+    args:
+      chdir: /etc/ceph/
+
+  when: '"osd_hosts" not in group_names'
+  tags: dbs1_distributed_block_storage_copy_files
 
