@@ -35,6 +35,10 @@ timeserver:             master.vb.k8sdc.io
 docker_registry_mirror: master.vb.k8sdc.io
 
 
+# Kubernetes (overrides values in k8sdc.yaml)
+cluster_name: opendc-vagrant
+
+
 # Node (overrides values in k8sdc.yaml)
 interface: eth1
 timezone:  "Australia/Melbourne"

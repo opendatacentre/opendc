@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: k8sdc-filebeat
+  name: opendc-filebeat
   namespace: {{ .Values.namespace }}
   labels:
     solution: l1_logging
@@ -20,7 +20,7 @@ spec:
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name: k8sdc-filebeat
+        - name: opendc-filebeat
           image: {{ .Values.filebeat_image }}:{{ .Values.filebeat_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           resources:
@@ -30,13 +30,23 @@ spec:
               cpu: 100m
           volumeMounts:
             - name:      containers
-              mountPath: /hostfs/var/lib/docker/containers
-            - name:      k8sdc-filebeat
+              mountPath: /var/log/containers/
+            - name:      pods
+              mountPath: /var/log/pods/
+            - name:      docker
+              mountPath: /var/lib/docker/containers/
+            - name:      opendc-filebeat
               mountPath: /etc/filebeat
       volumes:
         - name: containers
           hostPath:
-            path: /var/lib/docker/containers
-        - name: k8sdc-filebeat
+            path: /var/log/containers/
+        - name: pods
+          hostPath:
+            path: /var/log/pods/
+        - name: docker
+          hostPath:
+            path: /var/lib/docker/containers/
+        - name: opendc-filebeat
           configMap:
-            name: k8sdc-filebeat
+            name: opendc-filebeat

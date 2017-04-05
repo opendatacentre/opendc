@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: k8sdc-kibana
+  name: opendc-kibana
   namespace: {{ .Values.namespace }}
   labels:
     solution: l1_logging
@@ -15,5 +15,5 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: k8sdc-kibana
+              serviceName: opendc-kibana
               servicePort: 80

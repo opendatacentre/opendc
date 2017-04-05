@@ -3,13 +3,17 @@ namespace: k8sdc-infra
 
 elasticsearch_image: elasticsearch
 elasticsearch_tag:   5.2.0
-elasticsearch_fqdn:  elasticsearch.k8sdc.io
+elasticsearch_fqdn:  elasticsearch.opendc.io
 
 filebeat_image: giantswarm/filebeat
 filebeat_tag:   5.2.0
 
+logstash_image:    logstash
+logstash_tag:      5.2.0
+logstash_replicas: 1
+
 kibana_image: kibana
 kibana_tag:   5.2.0
-kibana_fqdn:  kibana.k8sdc.io
+kibana_fqdn:  kibana.opendc.io
 
 replicaCount: 1

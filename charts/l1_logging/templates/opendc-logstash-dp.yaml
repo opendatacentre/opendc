@@ -1,30 +1,30 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: k8sdc-kibana
+  name: opendc-logstash
   namespace: {{ .Values.namespace }}
   labels:
     solution: l1_logging
-    product:  kibana
+    product:  logstash
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.logstash_replicas }}
   revisionHistoryLimit: 3
   strategy: {'type': 'Recreate'}
   template:
     metadata:
       labels:
         solution: l1_logging
-        product:  kibana
+        product:  logstash
         heritage: {{ .Release.Service | quote }}
         release:  {{ .Release.Name | quote }}
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name:  k8sdc-kibana
-          image: {{ .Values.kibana_image }}:{{ .Values.kibana_tag }}
+        - name:  opendc-logstash
+          image: {{ .Values.logstash_image }}:{{ .Values.logstash_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
             - name:          ui
@@ -32,7 +32,7 @@ spec:
               protocol:      TCP
           env:          
             - name:  "ELASTICSEARCH_URL"
-              value: "http://k8sdc-elasticsearch:9200"
+              value: "http://opendc-elasticsearch:9200"
           resources:
             limits:
               cpu:    200m
@@ -40,3 +40,6 @@ spec:
             requests:
               cpu:    200m
               memory: 200Mi
+          volumeMounts:
+            - name:      opendc-logstash
+                mountPath: /etc/logstash/

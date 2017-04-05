@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opendc-filebeat
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  filebeat
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  filebeat.yml: |
+    filebeat.prospectors:
+
+    - input_type: log
+      
+      paths:
+        - /var/log/containers/*.log
+      
+      symlinks:         true
+      
+      tags:
+        - pod
+      
+      json.keys_under_root: true      
+      json.add_error_key:   true
+      json.message_key:     log
+      
+      # multiline.pattern: '^\['
+      # multiline.negate:  true
+      # multiline.match:   after
+
+      # document_type: kube-logs
+
+    output.elasticsearch:
+      hosts: ["opendc-elasticsearch:9200"]
+      template.enabled:   true
+      template.name:      "filebeat"
+      template.path:      "filebeat.template.json"
+      template.overwrite: false
+
+    logging.level: info

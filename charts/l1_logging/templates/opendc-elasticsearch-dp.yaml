@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: k8sdc-elasticsearch
+  name: opendc-elasticsearch
   namespace: {{ .Values.namespace }}
   labels:
     solution: l1_logging
@@ -35,7 +35,7 @@ spec:
         ]'
     spec:
       containers:
-        - name:  k8sdc-elasticsearch
+        - name:  opendc-elasticsearch
           securityContext:
             privileged: true
             capabilities:
@@ -56,7 +56,7 @@ spec:
             - name:  NAMESPACE
               value: {{ .Values.namespace }}
             - name:  "CLUSTER_NAME"
-              value: "k8sdc"
+              value: "opendc"
             - name:  NODE_MASTER
               value: "true"
             - name:  NODE_DATA
@@ -64,19 +64,19 @@ spec:
             - name:  HTTP_ENABLE
               value: "true"
           volumeMounts:
-            - name:      k8sdc-elasticsearch
+            - name:      opendc-elasticsearch
               mountPath: /data
           resources:
             limits:
-              cpu:    500m
-              memory: 1400Mi
+              cpu:    1000m
+              memory: 1200Mi
             requests:
-              cpu:    500m
-              memory: 1400Mi
+              cpu:    1000m
+              memory: 1200Mi
       volumes:
-        - name: k8sdc-elasticsearch
+        - name: opendc-elasticsearch
           persistentVolumeClaim:
-            claimName: k8sdc-elasticsearch
+            claimName: opendc-elasticsearch
 
 
         

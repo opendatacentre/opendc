@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opendc-logstash
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  logstash
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  logstash.conf: |
+    filter {
+      if [type] == "kube-logs" {
+
+        mutate {
+          rename => ["log", "message"]
+        }
+
+        date {
+          match => ["time", "ISO8601"]
+          remove_field => ["time"]
+        }
+
+        grok {
+            match => { "source" => "/var/log/containers/%{DATA:pod_name}_%{DATA:namespace}_%{GREEDYDATA:container_name}-%{DATA:container_id}.log" }
+            remove_field => ["source"]
+        }
+      }
+    }

@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: opendc-kibana
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  kibana
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 3
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        solution: l1_logging
+        product:  kibana
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+        - name:  opendc-kibana
+          image: {{ .Values.kibana_image }}:{{ .Values.kibana_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          ports:
+            - name:          ui
+              containerPort: 5601
+              protocol:      TCP
+          env:          
+            - name:  "ELASTICSEARCH_URL"
+              value: "http://opendc-elasticsearch:9200"
+          resources:
+            limits:
+              cpu:    200m
+              memory: 200Mi
+            requests:
+              cpu:    200m
+              memory: 200Mi

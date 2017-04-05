@@ -1,20 +1,21 @@
 apiVersion: v1
-kind: Service
+kind: PersistentVolumeClaim
 metadata:
-  name: k8sdc-kibana
+  name: opendc-elasticsearch
   namespace: {{ .Values.namespace }}
   labels:
     solution: l1_logging
-    product:  kibana
+    product:  elasticsearch
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
   selector:
-    solution: l1_logging
-    product:  kibana
-  ports:
-  - name:       ui
-    port:       80
-    targetPort: ui
-    protocol:   TCP
+    matchLabels:
+      solution: l1_logging
+      product:  elasticsearch

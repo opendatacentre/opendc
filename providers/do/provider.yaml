@@ -34,6 +34,10 @@ timeserver:             master.do.k8sdc.io
 docker_registry_mirror: master.do.k8sdc.io
 
 
+# Kubernetes (overrides values in k8sdc.yaml)
+cluster_name: opendc-do
+
+
 # Node (overrides values in k8sdc.yaml)
 interface: eth0
 timezone:  "Australia/Melbourne"
