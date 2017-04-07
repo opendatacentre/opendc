@@ -10,7 +10,13 @@ metadata:
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 data:
-  logstash.conf: |
+  opendc.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+
     filter {
       if [type] == "kube-logs" {
 
@@ -27,5 +33,13 @@ data:
             match => { "source" => "/var/log/containers/%{DATA:pod_name}_%{DATA:namespace}_%{GREEDYDATA:container_name}-%{DATA:container_id}.log" }
             remove_field => ["source"]
         }
+      }
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["http://opendc-elasticsearch:9200"]
+        index => "opendc-%{+YYYY.MM.dd}"
+        document_type => "k8s-pods"
       }
     }

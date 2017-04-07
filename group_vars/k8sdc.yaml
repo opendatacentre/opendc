@@ -128,7 +128,7 @@ base_solutions:
     images:
       traefik:
         image: traefik
-        tag:   v1.0.3
+        tag:   v1.2.1
     keepalived: 
       enable: no
       vip:    10.0.0.100
@@ -167,6 +167,10 @@ base_solutions:
       filebeat:
         image:    giantswarm/filebeat
         tag:      5.2.0
+      logstash:
+        image:    logstash
+        tag:      5.2.0
+        replicas: 1
       kibana:
         image:    kibana
         tag:      5.2.0

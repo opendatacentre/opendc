@@ -31,13 +31,17 @@ data:
       # multiline.negate:  true
       # multiline.match:   after
 
-      # document_type: kube-logs
+      document_type: kube-logs
 
-    output.elasticsearch:
-      hosts: ["opendc-elasticsearch:9200"]
-      template.enabled:   true
-      template.name:      "filebeat"
-      template.path:      "filebeat.template.json"
-      template.overwrite: false
+    # output.elasticsearch:
+    #   hosts: ["opendc-elasticsearch:9200"]
+    #   template.enabled:   true
+    #   template.name:      "filebeat"
+    #   template.path:      "filebeat.template.json"
+    #   template.overwrite: false
+
+    output.logstash:
+      hosts: ["opendc-logstash:5044"]
+      index: filebeat
 
     logging.level: info

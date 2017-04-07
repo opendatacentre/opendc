@@ -1,4 +1,4 @@
 # Default values for hrp1_https_reverse_proxy.
 namespace: k8sdc-infra
 image:     traefik
-tag:       v1.0.3
+tag:       v1.2.1

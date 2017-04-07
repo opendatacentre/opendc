@@ -27,19 +27,25 @@ spec:
           image: {{ .Values.logstash_image }}:{{ .Values.logstash_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
-            - name:          ui
-              containerPort: 5601
+            - name:          beats
+              containerPort: 5044
               protocol:      TCP
-          env:          
-            - name:  "ELASTICSEARCH_URL"
-              value: "http://opendc-elasticsearch:9200"
+          args:
+            - -f
+            - /config-dir/opendc.conf
           resources:
             limits:
-              cpu:    200m
-              memory: 200Mi
+              cpu:    1000m
+              memory: 1200Mi
             requests:
-              cpu:    200m
-              memory: 200Mi
+              cpu:    1000m
+              memory: 1200Mi
           volumeMounts:
             - name:      opendc-logstash
-                mountPath: /etc/logstash/
+              mountPath: /config-dir/
+      volumes:
+        - name: opendc-logstash
+          configMap:
+            name: opendc-logstash
+
+

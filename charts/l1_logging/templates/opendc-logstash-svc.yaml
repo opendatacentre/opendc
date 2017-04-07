@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opendc-logstash
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  logstash
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    solution: l1_logging
+    product:  logstash
+  ports:
+  - name:       beats
+    port:       5044
+    targetPort: beats
+    protocol:   TCP
