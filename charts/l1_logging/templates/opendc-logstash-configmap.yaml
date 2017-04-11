@@ -18,7 +18,7 @@ data:
     }
 
     filter {
-      if [type] == "kube-logs" {
+      if [type] == "kube-pods" {
 
         mutate {
           rename => ["log", "message"]
