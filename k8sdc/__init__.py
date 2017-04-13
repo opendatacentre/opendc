@@ -57,7 +57,7 @@ from k8sdc.commands.hosts     import HostsCmd
 logger      = logging.getLogger(__name__)
 __author__  = 'Des Drury'
 __email__   = 'des@drury-family.com'
-__version__ = '0.0.21.alpha.18'
+__version__ = '0.0.21.alpha.19'
 commands    = {'init'      : InitCmd,
                'up'        : UpCmd,
                'template'  : TemplateCmd,

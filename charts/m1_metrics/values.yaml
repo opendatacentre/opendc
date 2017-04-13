@@ -6,7 +6,11 @@ prometheus_tag:   v1.5.0
 prometheus_fqdn:  prometheus.k8sdc.io
 
 prom_node_exporter_image: prom/node-exporter
-prom_node_exporter_tag:   0.12.0
+prom_node_exporter_tag:   v0.14.0
+
+kube_state_metrics_image:    gcr.io/google_containers/kube-state-metrics
+kube_state_metrics_tag:      v0.4.1
+kube_state_metrics_replicas: 1
 
 grafana_image: grafana/grafana
 grafana_tag:   4.1.1

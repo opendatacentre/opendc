@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: k8sdc-grafana
+  name: opendc-grafana
   namespace: {{ .Values.namespace }}
   labels:
     solution: m1_metrics

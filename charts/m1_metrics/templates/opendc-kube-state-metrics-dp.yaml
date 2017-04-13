@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: opendc-kube-state-metrics
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: m1_metrics
+    product:  kube-state-metrics
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.kube_state_metrics_replicas }}
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      labels:
+        solution: m1_metrics
+        product:  kube-state-metrics
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+      - name: kube-state-metrics
+        image: {{ .Values.kube_state_metrics_image }}:{{ .Values.kube_state_metrics_tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        ports:
+        - name: http-metrics
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        resources:
+          requests:
+            memory: 30Mi
+            cpu: 100m
+          limits:
+            memory: 50Mi
+            cpu: 200m

@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: opendc-prometheus
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: m1_metrics
+    product:  prometheus
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  rules:
+    - host: {{ .Values.prometheus_fqdn }}
+      http:
+        paths:
+          - backend:
+              serviceName: opendc-prometheus
+              servicePort: http

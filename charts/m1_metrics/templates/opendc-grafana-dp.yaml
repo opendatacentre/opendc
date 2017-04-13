@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: k8sdc-grafana
+  name: opendc-grafana
   namespace: {{ .Values.namespace }}
   labels:
     solution: m1_metrics
@@ -23,7 +23,7 @@ spec:
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name:  k8sdc-grafana
+        - name:  opendc-grafana
           image: {{ .Values.grafana_image }}:{{ .Values.grafana_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
@@ -36,7 +36,7 @@ spec:
             - name:  GF_AUTH_ANONYMOUS_ENABLED
               value: "false"
           volumeMounts:
-            - name:      k8sdc-grafana
+            - name:      opendc-grafana
               mountPath: /var
           resources:
             limits:
@@ -50,9 +50,9 @@ spec:
               path: /login
               port: 3000
       volumes:
-        - name: k8sdc-grafana
+        - name: opendc-grafana
           persistentVolumeClaim:
-            claimName: k8sdc-grafana
+            claimName: opendc-grafana
 
 
         

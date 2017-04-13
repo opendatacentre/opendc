@@ -1,7 +1,7 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
-  name: k8sdc-grafana
+  name: opendc-grafana
   namespace: {{ .Values.namespace }}
   labels:
     solution: m1_metrics
@@ -10,10 +10,12 @@ metadata:
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-  rules:
-    - host: {{ .Values.grafana_fqdn }}
-      http:
-        paths:
-          - backend:
-              serviceName: k8sdc-grafana
-              servicePort: 80
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  selector:
+    matchLabels:
+      solution: m1_metrics
+      product:  grafana

@@ -1,7 +1,7 @@
 # Default values for cm1_cluster_management.
 namespace: kube-system
 image: gcr.io/google_containers/kubernetes-dashboard-amd64
-tag:   v1.5.1
+tag:   v1.6.0
 fqdn:  dashboard.k8sdc.io
 externalIP: 192.168.101.110
 replicaCount: 1

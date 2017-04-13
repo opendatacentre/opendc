@@ -80,7 +80,7 @@ base_solutions:
     images:
       kube_dashboard:
         image: gcr.io/google_containers/kubernetes-dashboard-amd64
-        tag:   v1.5.1
+        tag:   v1.6.0
         fqdn:  dashboard.k8sdc.io
 
   #
@@ -146,7 +146,11 @@ base_solutions:
         fqdn:     prometheus.k8sdc.io
       prom_node_exporter:
         image:    prom/node-exporter
-        tag:      0.12.0
+        tag:      v0.14.0
+      kube_state_metrics:
+        image:    gcr.io/google_containers/kube-state-metrics
+        tag:      v0.4.1
+        replicas: 1
       grafana:
         image:    grafana/grafana
         tag:      4.1.1

@@ -1,20 +1,22 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8sdc-grafana
+  name: opendc-kube-state-metrics
   namespace: {{ .Values.namespace }}
   labels:
     solution: m1_metrics
-    product:  grafana
+    product:  kube-state-metrics
     heritage: {{ .Release.Service | quote }}
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    prometheus.io/scrape: 'true'
 spec:
   selector:
     solution: m1_metrics
-    product:  grafana
+    product:  kube-state-metrics
   ports:
-  - name:       http
-    port:       80
-    targetPort: http
+  - name:       http-metrics
+    port:       8080
+    targetPort: http-metrics
     protocol:   TCP

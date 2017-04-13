@@ -58,6 +58,9 @@
       prometheus_fqdn={{ solutions.m1_metrics.images.prometheus.fqdn }},
       prom_node_exporter_image={{ solutions.m1_metrics.images.prom_node_exporter.image }},
       prom_node_exporter_tag={{ solutions.m1_metrics.images.prom_node_exporter.tag }},
+      kube_state_metrics_image={{ solutions.m1_metrics.images.kube_state_metrics.image }},
+      kube_state_metrics_tag={{ solutions.m1_metrics.images.kube_state_metrics.tag }},
+      kube_state_metrics_replicas={{ solutions.m1_metrics.images.kube_state_metrics.replicas }},
       grafana_image={{ solutions.m1_metrics.images.grafana.image }},
       grafana_tag={{ solutions.m1_metrics.images.grafana.tag }},
       grafana_fqdn={{ solutions.m1_metrics.images.grafana.fqdn }}
