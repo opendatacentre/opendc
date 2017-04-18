@@ -1,0 +1,228 @@
+---
+# Node
+interface:      eth1
+main_ip:        "{{ hostvars[inventory_hostname]['ansible_' + interface].ipv4.address }}"
+use_firewalld:  no
+admin_user:     opendc
+admin_uid:      5000
+admin_group:    opendc
+admin_gid:      5000
+private_key:    "{{ playbook_dir}}/keys/sample_admin_private.pem"
+public_key:     "{{ playbook_dir}}/keys/sample_admin_public.pub"
+download_dir:   /var/download/
+timezone:       "Australia/Melbourne"
+install_pkgs:   true
+packages:
+  - socat
+  - ceph-common
+  - ntp
+
+
+# Kubernetes
+cluster_name:        opendc
+api_server_ip:       "{{ hostvars[groups['opendc-masters'][0]]['ansible_' + interface].ipv4.address }}"
+kubernetes_api_port: 6443
+cluster_cidr:        11.0.0.0/8
+k8s_regen_certs:     false
+k8s_regen_tokens:    false
+k8s_regen_users:     false
+k8s_users:
+  opendc:
+    pass: password123
+    role: admin
+k8s_namespaces:
+  - kube-system
+  - opendc-infra
+  - opendc-development
+  - opendc-productivity
+kubectl_http_proxy:  ''
+kubectl_https_proxy: ''
+
+
+# Fileserver
+fileserver: "{{ groups['fileserver'][0] }}"
+fileserver_http_proxy:  ''
+fileserver_https_proxy: ''
+
+
+# Solutions
+base_solutions:
+
+  #
+  # kube-system
+  #
+
+  cs1_cluster_services:
+    enable:     yes
+    namespace:  kube-system
+    domain:     opendc.io
+    cluster_ip: 10.254.1.1
+    replicas:   1
+    images:
+      kubedns:
+        image: gcr.io/google_containers/k8s-dns-kube-dns-amd64
+        tag:   1.11.0
+      dnsmasq:
+        image: gcr.io/google_containers/k8s-dns-dnsmasq-amd64
+        tag:   1.11.0
+      sidecar:
+        image: gcr.io/google_containers/k8s-dns-sidecar-amd64
+        tag:   1.11.0
+      heapster:
+        image: gcr.io/google_containers/heapster
+        tag:   v1.2.0
+
+  cm1_cluster_management:
+    enable:      yes
+    namespace:   kube-system
+    external_ip: "{{ hostvars[groups['opendc-nodes'][0]]['ansible_' + interface].ipv4.address }}"
+    replicas:    1
+    images:
+      kube_dashboard:
+        image: gcr.io/google_containers/kubernetes-dashboard-amd64
+        tag:   v1.6.0
+        fqdn:  dashboard.opendc.io
+
+  #
+  # opendc-infra
+  #
+
+  dbs1_distributed_block_storage:
+    enable:     yes
+    namespace:  opendc-infra
+    images:
+      ceph:
+        image: ceph/daemon
+        tag:   tag-build-master-jewel-centos-7
+    mon_hosts:
+      - hostname: "{{ hostvars[groups['opendc-nodes'][0]]['ansible_nodename'] }}"
+      - hostname: "{{ hostvars[groups['opendc-nodes'][1]]['ansible_nodename'] }}"
+      - hostname: "{{ hostvars[groups['opendc-nodes'][2]]['ansible_nodename'] }}"
+    osd_hosts:
+      - hostname:   "{{ hostvars[groups['opendc-nodes'][0]]['ansible_nodename'] }}"
+        count_256m: 60
+      - hostname:   "{{ hostvars[groups['opendc-nodes'][1]]['ansible_nodename'] }}"
+        count_256m: 60
+      - hostname:   "{{ hostvars[groups['opendc-nodes'][2]]['ansible_nodename'] }}"
+        count_256m: 60
+
+  im1_identity_management:
+    enable:    yes
+    namespace: opendc-infra
+    use_ceph:  yes
+    replicas:  1
+    images:
+      opendj:
+        image:    opendatacentre/opendj
+        tag:      latest
+        vol_size: 300
+      keycloak:
+        image:    jboss/keycloak
+        tag:      3.0.0.Final
+        vol_size: 1000
+        fqdn:     keycloak.opendc.io
+
+  hrp1_https_reverse_proxy:
+    enable:     yes
+    namespace:  opendc-infra
+    images:
+      traefik:
+        image: traefik
+        tag:   v1.2.1
+    keepalived: 
+      enable: no
+      vip:    10.0.0.100
+
+  m1_metrics:
+    enable:    yes
+    namespace: opendc-infra
+    use_ceph:  yes
+    replicas:  1
+    images:
+      prometheus:
+        image:    prom/prometheus
+        tag:      v1.5.0
+        vol_size: 5000
+        fqdn:     prometheus.opendc.io
+      prom_node_exporter:
+        image:    prom/node-exporter
+        tag:      v0.14.0
+      kube_state_metrics:
+        image:    gcr.io/google_containers/kube-state-metrics
+        tag:      v0.4.1
+        replicas: 1
+      grafana:
+        image:    grafana/grafana
+        tag:      4.1.1
+        vol_size: 1000
+        fqdn:     grafana.opendc.io
+
+  l1_logging:
+    enable:     yes
+    namespace:  opendc-infra
+    use_ceph:  yes
+    replicas:  1
+    images:
+      elasticsearch:
+        image:    elasticsearch
+        tag:      5.2.0
+        vol_size: 30000
+        fqdn:     elasticsearch.opendc.io
+      filebeat:
+        image:    giantswarm/filebeat
+        tag:      5.2.0
+      logstash:
+        image:    logstash
+        tag:      5.2.0
+        replicas: 1
+      kibana:
+        image:    kibana
+        tag:      5.2.0
+        vol_size: 5000
+        fqdn:     kibana.opendc.io
+
+  # as1_artifact_storage
+
+  ir1_image_repository:
+    enable:    yes
+    namespace: opendc-infra
+    use_ceph:  yes
+    replicas:  1
+    images:
+      registry:
+        image:    registry
+        tag:      2.6.0
+        vol_size: 20000
+      nginx:
+        image: gcr.io/google_containers/nginx-ingress-controller
+        tag:   0.8.3
+        fqdn:  registry.opendc.io
+
+
+  #
+  # opendc-development
+  #
+
+  jm1_job_management:
+    enable:    yes
+    namespace: opendc-development
+    use_ceph:  yes
+    replicas:  1
+    images:
+      jenkins:
+        image:    jenkins
+        tag:      2.32.1
+        vol_size: 10000
+        fqdn:     jenkins.opendc.io
+
+
+# Docker
+docker_registry_mirror_ip:    "{{ hostvars[groups['docker-registry-mirror'][0]]['ansible_' + interface].ipv4.address }}"
+docker_registry_mirror_image: registry
+docker_registry_mirror_tag:   2.4.1
+docker_registry_mirror_http_proxy:  ''
+docker_registry_mirror_https_proxy: ''
+docker_insecure_registries:
+  - "{{ docker_registry_mirror_ip }}:5000"
+  - "{{ solutions.ir1_image_repository.images.nginx.fqdn }}:5000"
+

@@ -1,21 +1,21 @@
 ---
 bare:
   masters:
-    - hostname: master.bare.k8sdc.io
+    - hostname: master.bare.opendc.io
       ip:       192.168.101.100
   nodes:
-    - hostname: node1.bare.k8sdc.io
+    - hostname: node1.bare.opendc.io
       ip:       192.168.101.110
-    - hostname: node2.bare.k8sdc.io
+    - hostname: node2.bare.opendc.io
       ip:       192.168.101.111
-    - hostname: node3.bare.k8sdc.io
+    - hostname: node3.bare.opendc.io
       ip:       192.168.101.112
   etcd:
-    - master.bare.k8sdc.io
-    - node1.bare.k8sdc.io
-    - node2.bare.k8sdc.io
-    - node3.bare.k8sdc.io
+    - master.bare.opendc.io
+    - node1.bare.opendc.io
+    - node2.bare.opendc.io
+    - node3.bare.opendc.io
   fileserver:
-    - master.bare.k8sdc.io
-  k8sdc_ca:
-    - master.bare.k8sdc.io
+    - master.bare.opendc.io
+  opendc_ca:
+    - master.bare.opendc.io

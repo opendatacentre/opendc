@@ -1,16 +1,16 @@
 name: cs1_cluster_services
-description: The k8sdc 'cs1_cluster_services' solution
+description: The opendc 'cs1_cluster_services' solution
 version: 0.0.1
 keywords:
-  - k8sdc
+  - opendc
   - kubernetes
   - cluster
   - services
   - cs1
-home: http://k8sdc.io/
+home: http://opendatacentre.io/
 sources:
-  - https://github.com/desdrury/k8sdc
+  - https://github.com/opendatacentre/opendc
 maintainers:
   - name:  Des Drury
-    email: des@drury-family.com
+    email: des@citopro.com
 #icon: 

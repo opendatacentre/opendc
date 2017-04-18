@@ -13,18 +13,18 @@
 - block:
 
   - name: jm1_job_management | Check for Jenkins Ceph block storage
-    command: rbd ls k8sdc-development
+    command: rbd ls opendc-development
     register: rbd
 
   - name: jm1_job_management | Create Jenkins Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-development
-      image=k8sdc-jenkins
+      pool=opendc-development
+      image=opendc-jenkins
       size={{ solutions.jm1_job_management.images.jenkins.vol_size }} 
       solution=jm1_job_management 
       product=jenkins
-    when: "'k8sdc-jenkins' not in rbd.stdout"
+    when: "'opendc-jenkins' not in rbd.stdout"
 
   delegate_to: "{{ groups['mon_hosts'][0] }}"
   run_once:    yes

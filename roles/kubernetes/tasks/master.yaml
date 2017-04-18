@@ -164,17 +164,17 @@
   # Certificates
   - block:
 
-    # k8sdc CA
-    - name: master | Get k8sdc-ca certificate
+    # opendc CA
+    - name: master | Get opendc-ca certificate
       slurp:
-        src: /etc/k8sdc-ca/k8sdc-ca.crt
-      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
-      register: k8sdc_ca_cert
+        src: /etc/opendc-ca/opendc-ca.crt
+      delegate_to: "{{ groups['opendc-ca'][0] }}"
+      register: opendc_ca_cert
 
-    - name: master | Create k8sdc-ca certificate
+    - name: master | Create opendc-ca certificate
       copy:
-        dest: /etc/kubernetes/certs/k8sdc-ca.crt
-        content: "{{ k8sdc_ca_cert.content | b64decode }}"
+        dest: /etc/kubernetes/certs/opendc-ca.crt
+        content: "{{ opendc_ca_cert.content | b64decode }}"
         mode:  0440
         owner: kube
         group: kube
@@ -182,8 +182,8 @@
     # kube-apiserver
     - name: master | Get kube-apiserver private key
       slurp:
-        src: /etc/k8sdc-ca/kube_apiserver.key
-      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+        src: /etc/opendc-ca/kube_apiserver.key
+      delegate_to: "{{ groups['opendc-ca'][0] }}"
       register: kube_apiserver_key
 
     - name: master | Create kube-apiserver private key
@@ -196,8 +196,8 @@
 
     - name: master | Get kube-apiserver certificate
       slurp:
-        src: /etc/k8sdc-ca/kube_apiserver.crt
-      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+        src: /etc/opendc-ca/kube_apiserver.crt
+      delegate_to: "{{ groups['opendc-ca'][0] }}"
       register: kube_apiserver_cert
 
     - name: master | Create kube-apiserver certificate
@@ -211,8 +211,8 @@
     # kube-controller-manager
     - name: master | Get kube-controller-manager private key
       slurp:
-        src: /etc/k8sdc-ca/kube_controller_manager.key
-      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+        src: /etc/opendc-ca/kube_controller_manager.key
+      delegate_to: "{{ groups['opendc-ca'][0] }}"
       register: kube_controller_manager_key
 
     - name: master | Create kube-controller-manager private key
@@ -225,8 +225,8 @@
 
     - name: master | Get kube-controller-manager certificate
       slurp:
-        src: /etc/k8sdc-ca/kube_controller_manager.crt
-      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+        src: /etc/opendc-ca/kube_controller_manager.crt
+      delegate_to: "{{ groups['opendc-ca'][0] }}"
       register: kube_controller_manager_cert
 
     - name: master | Create kube-controller-manager certificate
@@ -301,7 +301,7 @@
     tags: k8s_users
 
   tags:
-    - k8sdc_security 
+    - opendc_security 
     - k8s_security
 
 

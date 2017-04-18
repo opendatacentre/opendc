@@ -12,34 +12,34 @@
 - block:
 
   - name: m1_metrics | Check for Prometheus Ceph block storage
-    command: rbd ls k8sdc-infra
+    command: rbd ls opendc-infra
     register: rbd
 
   - name: m1_metrics | Create Prometheus Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-infra 
-      image=k8sdc-prometheus
+      pool=opendc-infra 
+      image=opendc-prometheus
       size={{ solutions.m1_metrics.images.prometheus.vol_size }} 
       solution=m1_metrics 
       product=prometheus
-    when: "'k8sdc-prometheus' not in rbd.stdout"
+    when: "'opendc-prometheus' not in rbd.stdout"
     run_once: yes
     delegate_to: "{{ groups['mon_hosts'][0] }}"
   
   - name: m1_metrics | Check for Grafana Ceph block storage
-    command: rbd ls k8sdc-infra
+    command: rbd ls opendc-infra
     register: rbd
 
   - name: m1_metrics | Create Grafana Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-infra 
-      image=k8sdc-grafana 
+      pool=opendc-infra 
+      image=opendc-grafana 
       size={{ solutions.m1_metrics.images.grafana.vol_size }} 
       solution=m1_metrics 
       product=grafana
-    when: "'k8sdc-grafana' not in rbd.stdout"
+    when: "'opendc-grafana' not in rbd.stdout"
     run_once: yes
     delegate_to: "{{ groups['mon_hosts'][0] }}"
 

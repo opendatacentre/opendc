@@ -124,17 +124,17 @@
   # Certificates
   - block:
 
-    # k8sdc CA
-    - name: node | Get k8sdc-ca certificate
+    # opendc CA
+    - name: node | Get opendc-ca certificate
       slurp:
-        src: /etc/k8sdc-ca/k8sdc-ca.crt
-      delegate_to: "{{ groups['k8sdc-ca'][0] }}"
-      register: k8sdc_ca_cert
+        src: /etc/opendc-ca/opendc-ca.crt
+      delegate_to: "{{ groups['opendc-ca'][0] }}"
+      register: opendc_ca_cert
 
-    - name: node | Create k8sdc-ca certificate
+    - name: node | Create opendc-ca certificate
       copy:
-        dest: /etc/kubernetes/certs/k8sdc-ca.crt
-        content: "{{ k8sdc_ca_cert.content | b64decode }}"
+        dest: /etc/kubernetes/certs/opendc-ca.crt
+        content: "{{ opendc_ca_cert.content | b64decode }}"
         mode:  0440
         owner: kube
         group: kube
@@ -169,7 +169,7 @@
     tags: k8s_tokens
 
   tags:
-    - k8sdc_security 
+    - opendc_security 
     - k8s_security
 
 

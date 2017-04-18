@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opendc-jenkins
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: jm1_job_management
+    product:  jenkins
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    solution: jm1_job_management
+    product:  jenkins
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP
+    - name: jnlp
+      port: 50000
+      targetPort: jnlp
+      protocol: TCP

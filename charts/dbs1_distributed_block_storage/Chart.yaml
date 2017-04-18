@@ -1,16 +1,16 @@
 name: dbs1_distributed_block_storage
-description: The k8sdc 'dbs1_distributed_block_storage' solution
+description: The opendc 'dbs1_distributed_block_storage' solution
 version: 0.0.1
 keywords:
-  - k8sdc
+  - opendc
   - distributed
   - block
   - storage
   - dbs1
-home: http://k8sdc.io/
+home: http://opendatacentre.io/
 sources:
-  - https://github.com/desdrury/k8sdc
+  - https://github.com/opendatacentre/opendc
 maintainers:
   - name:  Des Drury
-    email: des@drury-family.com
+    email: des@citopro.com
 #icon: 

@@ -1,41 +1,41 @@
 ---
 # Generate Kubernetes certificates
-- name: certificates | Set fact for k8sdc masters FQDN 
+- name: certificates | Set fact for opendc masters FQDN 
   set_fact:
-    k8sdc_fqdn: "kubernetes.default.svc.{{ solutions.cs1_cluster_services.domain }}"
+    opendc_fqdn: "kubernetes.default.svc.{{ solutions.cs1_cluster_services.domain }}"
 
-- name: certificates | Set fact for k8sdc masters DNS values
+- name: certificates | Set fact for opendc masters DNS values
   set_fact:
-    k8sdc_master_dns_values: >-
+    opendc_master_dns_values: >-
       kubernetes,
       kubernetes.default,
       kubernetes.default.svc,
-      {%- for apiserver in groups['k8sdc-masters'] -%}
+      {%- for apiserver in groups['opendc-masters'] -%}
         {{ apiserver }},
       {%- endfor -%}
-      {{ k8sdc_fqdn }}
+      {{ opendc_fqdn }}
 
-- name: certificates | Convert fact for k8sdc masters DNS values to a list
+- name: certificates | Convert fact for opendc masters DNS values to a list
   set_fact:
-    k8sdc_master_dns_values: >-
-      {{ k8sdc_master_dns_values.split(',') | map('regex_replace', ' ', '') | list }}
+    opendc_master_dns_values: >-
+      {{ opendc_master_dns_values.split(',') | map('regex_replace', ' ', '') | list }}
 
-- name: certificates | Set fact for k8sdc masters IP addresses
+- name: certificates | Set fact for opendc masters IP addresses
   set_fact:
-    k8sdc_master_ip_values: >-
+    opendc_master_ip_values: >-
       10.254.0.1,
-      {%- for apiserver in groups['k8sdc-masters'] -%}
+      {%- for apiserver in groups['opendc-masters'] -%}
       {{ hostvars[apiserver]['ansible_' + interface].ipv4.address }}
       {%- if not loop.last -%},{%- endif -%}
       {%- endfor -%}
 
-- name: certificates | Convert fact for k8sdc masters IP addresses to a list
+- name: certificates | Convert fact for opendc masters IP addresses to a list
   set_fact:
-    k8sdc_master_ip_values: >-
-      {{ k8sdc_master_ip_values.split(',') | list }}
+    opendc_master_ip_values: >-
+      {{ opendc_master_ip_values.split(',') | list }}
 
 - name: certificates | Generate certificates
-  include: ../../k8sdc-ca/tasks/certificate.yaml
+  include: ../../opendc-ca/tasks/certificate.yaml
   vars:
     cn:         "{{ item.cn }}"
     cert_name:  "{{ item.cert_name }}"
@@ -44,13 +44,13 @@
   with_items:
     - { cn:         'kube-apiserver', 
         cert_name:  'kube_apiserver', 
-        dns_values: "{{ k8sdc_master_dns_values }}", 
-        ip_values:  "{{ k8sdc_master_ip_values }}" }
+        dns_values: "{{ opendc_master_dns_values }}", 
+        ip_values:  "{{ opendc_master_ip_values }}" }
     - { cn:         'kube-controller-manager', 
         cert_name:  'kube_controller_manager', 
-        dns_values: "{{ k8sdc_master_dns_values }}", 
-        ip_values:  "{{ k8sdc_master_ip_values }}" }
-  delegate_to: "{{ groups['k8sdc-ca'][0] }}"
+        dns_values: "{{ opendc_master_dns_values }}", 
+        ip_values:  "{{ opendc_master_ip_values }}" }
+  delegate_to: "{{ groups['opendc-ca'][0] }}"
   run_once: yes
 
 

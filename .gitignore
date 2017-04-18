@@ -14,4 +14,5 @@ site/
 build/
 dist/
 k8sdc.egg-info/
+opendc.egg-info/
 *.pyc

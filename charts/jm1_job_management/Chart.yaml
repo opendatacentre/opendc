@@ -1,4 +1,16 @@
-apiVersion: v1
-description: A Helm chart for Kubernetes
 name: jm1_job_management
-version: 0.1.0
+description: The opendc 'jm1_job_management' solution
+version: 0.0.1
+keywords:
+  - opendc
+  - job
+  - management
+  - jenkins
+  - jm1
+home: http://opendatacentre.io/
+sources:
+  - https://github.com/opendatacentre/opendc
+maintainers:
+  - name:  Des Drury
+    email: des@citopro.com
+#icon: 

@@ -5,7 +5,7 @@ do_token:         XXXXXXXXXXXX
 do_region:        sgp1
 do_image:         17384153
 do_generate_keys: yes
-do_ssh_key_name:  k8sdc_do_admin_key
+do_ssh_key_name:  opendc_do_admin_key
 do_admin_user:    doadmin
 do_admin_uid:     4000 
 do_admin_group:   doadmin
@@ -14,36 +14,36 @@ do_admin_gid:     4000
 
 # Inventory
 masters:
-  - hostname: master.do.k8sdc.io
+  - hostname: master.do.opendc.io
     do_size:  2gb
 nodes:
-  - hostname: node1.do.k8sdc.io
+  - hostname: node1.do.opendc.io
     do_size: 4gb
-  - hostname: node2.do.k8sdc.io
+  - hostname: node2.do.opendc.io
     do_size: 4gb
-  - hostname: node3.do.k8sdc.io
+  - hostname: node3.do.opendc.io
     do_size: 4gb
 etcd:
-  - master.do.k8sdc.io
-  - node1.do.k8sdc.io
-  - node2.do.k8sdc.io
-  - node3.do.k8sdc.io
-fileserver:             master.do.k8sdc.io
-k8sdc_ca:               master.do.k8sdc.io
-timeserver:             master.do.k8sdc.io
-docker_registry_mirror: master.do.k8sdc.io
+  - master.do.opendc.io
+  - node1.do.opendc.io
+  - node2.do.opendc.io
+  - node3.do.opendc.io
+fileserver:             master.do.opendc.io
+opendc_ca:              master.do.opendc.io
+timeserver:             master.do.opendc.io
+docker_registry_mirror: master.do.opendc.io
 
 
-# Kubernetes (overrides values in k8sdc.yaml)
+# Kubernetes (overrides values in opendc.yaml)
 cluster_name: opendc-do
 
 
-# Node (overrides values in k8sdc.yaml)
+# Node (overrides values in opendc.yaml)
 interface: eth0
 timezone:  "Australia/Melbourne"
 
 
-# Solutions (overrides values in k8sdc.yaml)
+# Solutions (overrides values in opendc.yaml)
 do_solutions:
   
   cs1_cluster_services:
@@ -53,7 +53,7 @@ do_solutions:
     enable: yes
     images:
       kube_dashboard:
-        fqdn:  dashboard.do.k8sdc.io
+        fqdn:  dashboard.do.opendc.io
 
   dbs1_distributed_block_storage:
     enable: yes
@@ -62,7 +62,7 @@ do_solutions:
     enable: yes
     images:
       keycloak:
-        fqdn: keycloak.do.k8sdc.io
+        fqdn: keycloak.do.opendc.io
 
   hrp1_https_reverse_proxy:
     enable: yes
@@ -71,29 +71,29 @@ do_solutions:
     enable: yes
     images:
       prometheus:
-        fqdn: prometheus.do.k8sdc.io
+        fqdn: prometheus.do.opendc.io
       grafana:
-        fqdn: grafana.do.k8sdc.io
+        fqdn: grafana.do.opendc.io
 
   l1_logging:
     enable: yes
     images:
       elasticsearch:
-        fqdn: elasticsearch.do.k8sdc.io
+        fqdn: elasticsearch.do.opendc.io
       kibana:
-        fqdn: kibana.do.k8sdc.io
+        fqdn: kibana.do.opendc.io
 
   ir1_image_repository:
     enable: yes
     images:
       nginx:
-        fqdn: registry.do.k8sdc.io
+        fqdn: registry.do.opendc.io
         vip:  128.199.245.220
 
   jm1_job_management:
     enable: yes
     images:
       jenkins:
-        fqdn: jenkins.do.k8sdc.io
+        fqdn: jenkins.do.opendc.io
 
 solutions: "{{ base_solutions | combine(do_solutions, recursive=true) }}"

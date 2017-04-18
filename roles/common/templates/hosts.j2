@@ -1,8 +1,8 @@
 127.0.0.1  localhost
 {{ solutions.ir1_image_repository.images.nginx.vip }} {{ solutions.ir1_image_repository.images.nginx.fqdn }} 
-{% for host in groups['k8sdc-masters'] %}
+{% for host in groups['opendc-masters'] %}
 {{ hostvars[host]['ansible_' + interface]['ipv4']['address'] }} {{ host }} {{ hostvars[host]['ansible_hostname'] }}
 {% endfor %}
-{% for host in groups['k8sdc-nodes'] %}
+{% for host in groups['opendc-nodes'] %}
 {{ hostvars[host]['ansible_' + interface]['ipv4']['address'] }} {{ host }} {{ hostvars[host]['ansible_hostname'] }}
 {% endfor %}

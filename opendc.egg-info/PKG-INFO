@@ -1,0 +1,28 @@
+Metadata-Version: 1.1
+Name: opendc
+Version: 0.0.21a22
+Summary: opendc
+Home-page: https://github.com/desdrury/opendc
+Author: Des Drury
+Author-email: des@drury-family.com
+License: GNU General Public License v2 (GPLv2)
+Description: opendc
+        =====
+        
+        An entire datacenters worth of infrastructure running atop Kubernetes.
+        
+        Website http://opendatacentre.io
+        
+        Documentation https://opendc.github.io
+        
+        
+        
+Keywords: opendc
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: System Administrators
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: GNU General Public License v2 (GPLv2)
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 2.7

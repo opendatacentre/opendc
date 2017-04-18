@@ -1,0 +1,69 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: opendc-dbs1-ceph-osd
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: dbs1_distributed_block_storage
+    product:  ceph
+    type:     osd
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      solution: dbs1_distributed_block_storage
+      product:  ceph
+      type:     osd
+  template:
+    metadata:
+      name: opendc-dbs1-ceph-osd
+      labels:
+        solution: dbs1_distributed_block_storage
+        product:  ceph
+        type:     osd
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        opendc_dbs1_osd: "True"
+      containers:
+      - name: opendc-dbs1-ceph-osd
+        image: {{ .Values.image }}:{{ .Values.tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        securityContext:
+          privileged: true
+        args:
+          - osd
+        env:
+          - name:  OSD_TYPE
+            value: "directory"
+          - name:  OSD_FORCE_ZAP
+            value: "1"
+          - name:  KV_TYPE
+            value: "etcd"
+          - name:  KV_IP
+            value: "127.0.0.1"
+          - name:  KV_PORT
+            value: "2379" 
+        volumeMounts:
+          - name: etc
+            mountPath: /etc/ceph
+          - name: var
+            mountPath: /var/lib/ceph
+          - name: osd
+            mountPath: /var/lib/ceph/osd
+      volumes:
+        - name: etc
+          hostPath:
+            path: /etc/ceph
+        - name: var
+          hostPath:
+            path: /var/lib/ceph
+        - name: osd
+          hostPath:
+            path: /mnt/ceph_d0
+        

@@ -1,0 +1,55 @@
+---
+# Generate a private key and certificate
+- name: Create certificate temp directory
+  file:
+    path:  /tmp/opendc-ca/
+    state: directory
+    mode:  0750
+
+- block:
+
+  - name: Create openssl.conf
+    template:
+      src: "{{ role_path }}/../opendc-ca/templates/openssl.conf.j2"
+      dest: /tmp/opendc-ca/openssl.conf
+
+  - name: Generate private key
+    command: openssl genrsa -out {{ cert_name }}.key 2048
+    args:
+      chdir: /tmp/opendc-ca/
+
+  - name: Copy private key
+    command: cp /tmp/opendc-ca/{{ cert_name }}.key /etc/opendc-ca/
+
+  - name: Generate certificate signing request
+    command: >
+        openssl req -new 
+                    -key {{ cert_name }}.key 
+                    -out {{ cert_name }}.csr 
+                    -subj "/CN={{ cn }}" 
+                    -config openssl.conf
+    args:
+      chdir: /tmp/opendc-ca/
+
+  - name: Generate certificate
+    command: >
+        openssl x509 -req 
+                     -in {{ cert_name }}.csr 
+                     -CA /etc/opendc-ca/opendc-ca.crt 
+                     -CAkey /etc/opendc-ca/opendc-ca.key 
+                     -CAcreateserial 
+                     -out {{ cert_name }}.crt
+                     -days 1095 -extensions v3_req 
+                     -extfile openssl.conf
+    args:
+      chdir: /tmp/opendc-ca/
+
+  - name: Copy certificate
+    command: cp /tmp/opendc-ca/{{ cert_name }}.crt /etc/opendc-ca/
+
+  always:
+
+  - name: Remove certificate temp directory
+    file:
+      path:  /tmp/opendc-ca/
+      state: absent

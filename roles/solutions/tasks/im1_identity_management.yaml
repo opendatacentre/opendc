@@ -13,34 +13,34 @@
 - block:
 
   - name: im1_identity_management | Check for OpenDJ Ceph block storage
-    command: rbd ls k8sdc-infra
+    command: rbd ls opendc-infra
     register: rbd_opendj
 
   - name: im1_identity_management | Create OpenDJ Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-infra 
-      image=k8sdc-opendj 
+      pool=opendc-infra 
+      image=opendc-opendj 
       size={{ solutions.im1_identity_management.images.opendj.vol_size }} 
       solution=im1_identity_management 
       product=opendj
-    when: "'k8sdc-opendj' not in rbd_opendj.stdout"
+    when: "'opendc-opendj' not in rbd_opendj.stdout"
     run_once: yes
     delegate_to: "{{ groups['mon_hosts'][0] }}"
   
   - name: im1_identity_management | Check for Keycloak Ceph block storage
-    command: rbd ls k8sdc-infra
+    command: rbd ls opendc-infra
     register: rbd_keycloak
 
   - name: im1_identity_management | Create Keycloak Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-infra 
-      image=k8sdc-keycloak 
+      pool=opendc-infra 
+      image=opendc-keycloak 
       size={{ solutions.im1_identity_management.images.keycloak.vol_size }} 
       solution=im1_identity_management 
       product=keycloak
-    when: "'k8sdc-keycloak' not in rbd_keycloak.stdout"
+    when: "'opendc-keycloak' not in rbd_keycloak.stdout"
     run_once: yes
     delegate_to: "{{ groups['mon_hosts'][0] }}"
 

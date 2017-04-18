@@ -3,7 +3,7 @@
 - name: main | Get Kubernetes Namespaces
   command: /bin/kubectl get ns
   register: k8s_current_namespaces
-  delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
+  delegate_to:   "{{ groups['opendc-masters'][0] }}"
   run_once:      yes
   tags: k8s_ns
 
@@ -11,7 +11,7 @@
   command:       /bin/kubectl create ns {{ item }}
   environment:
     KUBECONFIG:  /etc/kubernetes/kubeconfig/kubectl.kubeconfig
-  delegate_to:   "{{ groups['k8sdc-masters'][0] }}"
+  delegate_to:   "{{ groups['opendc-masters'][0] }}"
   run_once:      yes
   ignore_errors: yes
   with_items:    "{{ k8s_namespaces }}"
@@ -37,7 +37,7 @@
 
 
 #
-# k8sdc-infra
+# opendc-infra
 #
 
 # dbs1_distributed_block_storage
@@ -72,15 +72,15 @@
 
 # as1_artifact_storage
 
-# ir1_image_repository
-- include: ir1_image_repository.yaml
-  when: solutions.ir1_image_repository.enable is defined and 
-        solutions.ir1_image_repository.enable 
-  tags: ir1_image_repository
+# ir1_image_registry
+- include: ir1_image_registry.yaml
+  when: solutions.ir1_image_registry.enable is defined and 
+        solutions.ir1_image_registry.enable 
+  tags: ir1_image_registry
 
 
 #
-# k8sdc-development
+# opendc-development
 #
 
 # jm1_job_management

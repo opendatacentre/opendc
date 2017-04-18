@@ -1,0 +1,36 @@
+---
+# Create opendc-ca certificate authority
+- name: Install openssl
+  yum:
+    name:  openssl
+    state: installed
+
+- name: Create CA directory
+  file:
+    path:  /etc/opendc-ca/
+    state: directory
+    mode:  0750
+
+- name: Stat opendc-ca.key
+  stat:
+    path: /etc/opendc-ca/opendc-ca.key
+  register: opendc_ca_key_file
+
+- block:
+
+  - name: Generate CA private key
+    command: openssl genrsa -out opendc-ca.key 2048
+    args:
+      chdir: /etc/opendc-ca/
+
+  - name: Generate CA self signed certificate
+    command: >
+        openssl req -x509 -new -nodes 
+                    -key opendc-ca.key 
+                    -days 10000 
+                    -out opendc-ca.crt 
+                    -subj "/CN=opendc-ca"
+    args:
+      chdir: /etc/opendc-ca/
+
+  when: not opendc_ca_key_file.stat.exists or k8s_regen_certs

@@ -1,0 +1,17 @@
+name: ir1_image_registry
+description: The opendc 'ir1_image_registry' solution
+version: 0.0.1
+keywords:
+  - opendc
+  - docker
+  - image
+  - registry
+  - nginx
+  - ir1
+home: http://opendatacentre.io/
+sources:
+  - https://github.com/opendatacentre/opendc
+maintainers:
+  - name:  Des Drury
+    email: des@citopro.com
+#icon: 

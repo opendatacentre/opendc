@@ -1,4 +1,19 @@
-apiVersion: v1
-description: A Helm chart for Kubernetes
 name: l1_logging
-version: 0.1.0
+description: The opendc 'l1_logging' solution
+version: 0.0.1
+keywords:
+  - opendc
+  - logging
+  - elasticsearch
+  - kibana
+  - filebeat
+  - logstash
+  - curator
+  - l1
+home: http://opendatacentre.io/
+sources:
+  - https://github.com/opendatacentre/opendc
+maintainers:
+  - name:  Des Drury
+    email: des@citopro.com
+#icon: 

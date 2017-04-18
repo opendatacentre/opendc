@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: opendc-jenkins
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: jm1_job_management
+    product:  jenkins
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  rules:
+  - host: {{ .Values.fqdn }}
+    http:
+      paths:
+      - backend:
+          serviceName: opendc-jenkins
+          servicePort: 8080

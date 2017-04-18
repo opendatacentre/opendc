@@ -68,7 +68,7 @@
 # Label nodes
 - name: dbs1_distributed_block_storage | Label mon hosts
   command: >
-    bin/kubectl label --overwrite node {{ item }} k8sdc_dbs1_mon=True
+    bin/kubectl label --overwrite node {{ item }} opendc_dbs1_mon=True
   args:
     chdir: "{{ inventory_dir }}"
   environment:
@@ -82,7 +82,7 @@
 
 - name: dbs1_distributed_block_storage | Label osd hosts
   command: >
-    bin/kubectl label --overwrite node {{ item }} k8sdc_dbs1_osd=True
+    bin/kubectl label --overwrite node {{ item }} opendc_dbs1_osd=True
   args:
     chdir: "{{ inventory_dir }}"
   environment:
@@ -125,17 +125,17 @@
     command: ceph osd lspools
     register: ceph_pools
 
-  - name: dbs1_distributed_block_storage | Create k8sdc-infra pool
-    command: ceph osd pool create k8sdc-infra 64 replicated
-    when: "'k8sdc-infra' not in ceph_pools.stdout"
+  - name: dbs1_distributed_block_storage | Create opendc-infra pool
+    command: ceph osd pool create opendc-infra 64 replicated
+    when: "'opendc-infra' not in ceph_pools.stdout"
 
-  - name: dbs1_distributed_block_storage | Create k8sdc-development pool
-    command: ceph osd pool create k8sdc-development 64 replicated
-    when: "'k8sdc-development' not in ceph_pools.stdout"
+  - name: dbs1_distributed_block_storage | Create opendc-development pool
+    command: ceph osd pool create opendc-development 64 replicated
+    when: "'opendc-development' not in ceph_pools.stdout"
 
-  - name: dbs1_distributed_block_storage | Create k8sdc-productivity pool
-    command: ceph osd pool create k8sdc-productivity 64 replicated
-    when: "'k8sdc-productivity' not in ceph_pools.stdout"
+  - name: dbs1_distributed_block_storage | Create opendc-productivity pool
+    command: ceph osd pool create opendc-productivity 64 replicated
+    when: "'opendc-productivity' not in ceph_pools.stdout"
 
   delegate_to: "{{ groups['mon_hosts'][0] }}"
   run_once:    yes

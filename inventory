@@ -1,57 +1,57 @@
 
-[k8sdc:children]
-k8sdc-masters
-k8sdc-nodes
+[opendc:children]
+opendc-masters
+opendc-nodes
 etcd
 fileserver
-k8sdc-ca
+opendc-ca
 timeserver
 docker-registry-mirror
 
-[k8sdc:vars]
+[opendc:vars]
 ansible_user=XXXXX
 ansible_ssh_pass=XXXXX
 ansible_connection=ssh
 
 [k8s:children]
-k8sdc-masters
-k8sdc-nodes
+opendc-masters
+opendc-nodes
 
 
-[k8sdc-masters]
-master.k8sdc.io
+[opendc-masters]
+master.opendc.io
 
-[k8sdc-nodes]
-node1.k8sdc.io
-node2.k8sdc.io
-node3.k8sdc.io
-node4.k8sdc.io
-node5.k8sdc.io
-node6.k8sdc.io
-node7.k8sdc.io
+[opendc-nodes]
+node1.opendc.io
+node2.opendc.io
+node3.opendc.io
+node4.opendc.io
+node5.opendc.io
+node6.opendc.io
+node7.opendc.io
 
 # Need to have etcd master and etcd slaves as seperate groups
 #[etcd-peers]
 #[etcd-proxies]
 
 [etcd]
-master.k8sdc.io
-node1.k8sdc.io
-node2.k8sdc.io
-node3.k8sdc.io
-node4.k8sdc.io
-node5.k8sdc.io
-node6.k8sdc.io
-node7.k8sdc.io
+master.opendc.io
+node1.opendc.io
+node2.opendc.io
+node3.opendc.io
+node4.opendc.io
+node5.opendc.io
+node6.opendc.io
+node7.opendc.io
 
 [fileserver]
-master.k8sdc.io
+master.opendc.io
 
-[k8sdc-ca]
-master.k8sdc.io
+[opendc-ca]
+master.opendc.io
 
 [timeserver]
-master.k8sdc.io
+master.opendc.io
 
 [docker-registry-mirror]
-master.k8sdc.io
+master.opendc.io

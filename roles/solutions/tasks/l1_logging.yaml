@@ -12,18 +12,18 @@
 - block:
 
   - name: l1_logging | Check for Elasticsearch Ceph block storage
-    command: rbd ls k8sdc-infra
+    command: rbd ls opendc-infra
     register: rbd
 
   - name: l1_logging | Create Elasticsearch Ceph block storage
     include: >
       ceph.yaml 
-      pool=k8sdc-infra 
-      image=k8sdc-elasticsearch
+      pool=opendc-infra 
+      image=opendc-elasticsearch
       size={{ solutions.l1_logging.images.elasticsearch.vol_size }} 
       solution=l1_logging 
       product=elasticsearch
-    when: "'k8sdc-elasticsearch' not in rbd.stdout"
+    when: "'opendc-elasticsearch' not in rbd.stdout"
 
   delegate_to: "{{ groups['mon_hosts'][0] }}"
   run_once:    yes

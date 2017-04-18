@@ -21,21 +21,21 @@
       TOKEN_DIR: /tmp/tokens/
     with_nested:
       - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
-      - "{{ groups['k8sdc-masters'] }}"
+      - "{{ groups['opendc-masters'] }}"
 
   - name: tokens | Get master token values
     slurp:
       src: "/tmp/tokens/{{ item[0] }}-{{ item[1] }}.token"
     with_nested:
       - [ "system:controller_manager", "system:scheduler", "system:kubectl" ]
-      - "{{ groups['k8sdc-masters'] }}"
+      - "{{ groups['opendc-masters'] }}"
     register: master_tokens
 
   - name: tokens | Set master token facts
     set_fact:
       master_token_values: >-
         {%- set master_token_values = {} -%}
-        {%- for node in groups['k8sdc-masters'] -%}
+        {%- for node in groups['opendc-masters'] -%}
           {%- set types = [ "system_controller_manager", "system_scheduler", "system_kubectl" ] -%}
           {%- set types_values = {} -%}
           {%- for type in types -%}
@@ -59,21 +59,21 @@
       TOKEN_DIR: /tmp/tokens/
     with_nested:
       - [ "system:kubelet", "system:proxy" ]
-      - "{{ groups['k8sdc-nodes'] }}"
+      - "{{ groups['opendc-nodes'] }}"
 
   - name: tokens | Get node token values
     slurp:
       src: "/tmp/tokens/{{ item[0] }}-{{ item[1] }}.token"
     with_nested:
       - [ "system:kubelet", "system:proxy" ]
-      - "{{ groups['k8sdc-nodes'] }}"
+      - "{{ groups['opendc-nodes'] }}"
     register: node_tokens
 
   - name: tokens | Set node token facts
     set_fact:
       node_token_values: >-
         {%- set node_token_values = {} -%}
-        {%- for node in groups['k8sdc-nodes'] -%}
+        {%- for node in groups['opendc-nodes'] -%}
           {%- set types = [ "system_kubelet", "system_proxy" ] -%}
           {%- set types_values = {} -%}
           {%- for type in types -%}

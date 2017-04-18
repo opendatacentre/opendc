@@ -1,5 +1,5 @@
 # Default values for im1_identity_management.
-namespace: k8sdc-infra
+namespace: opendc-infra
 
 opendj_image:     opendatacentre/opendj
 opendj_tag:       latest

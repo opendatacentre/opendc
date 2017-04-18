@@ -5,25 +5,25 @@
 {{ node.hostname }} ansible_host={{ node.ip }} ansible_private_key_file='{{ inventory_dir }}/.vagrant/machines/{{ node.hostname }}/virtualbox/private_key'
 {% endfor %}
 
-[k8sdc:children]
-k8sdc-masters
-k8sdc-nodes
+[opendc:children]
+opendc-masters
+opendc-nodes
 etcd
 fileserver
-k8sdc-ca
+opendc-ca
 timeserver
 docker-registry-mirror
 
-[k8sdc:vars]
+[opendc:vars]
 ansible_ssh_user=vagrant
 ansible_connection=ssh
 
-[k8sdc-masters]
+[opendc-masters]
 {% for master in masters -%}
 {{ master.hostname }}
 {% endfor %}
 
-[k8sdc-nodes]
+[opendc-nodes]
 {% for node in nodes -%}
 {{ node.hostname }}
 {% endfor %}
@@ -36,8 +36,8 @@ ansible_connection=ssh
 [fileserver]
 {{ fileserver }}
 
-[k8sdc-ca]
-{{ k8sdc_ca }}
+[opendc-ca]
+{{ opendc_ca }}
 
 [timeserver]
 {{ timeserver }}

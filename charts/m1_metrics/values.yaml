@@ -1,9 +1,9 @@
 # Default values for m1_metrics.
-namespace: k8sdc-infra
+namespace: opendc-infra
 
 prometheus_image: prom/prometheus
 prometheus_tag:   v1.5.0
-prometheus_fqdn:  prometheus.k8sdc.io
+prometheus_fqdn:  prometheus.opendc.io
 
 prom_node_exporter_image: prom/node-exporter
 prom_node_exporter_tag:   v0.14.0
@@ -14,6 +14,6 @@ kube_state_metrics_replicas: 1
 
 grafana_image: grafana/grafana
 grafana_tag:   4.1.1
-grafana_fqdn:  grafana.k8sdc.io
+grafana_fqdn:  grafana.opendc.io
 
 replicaCount: 1

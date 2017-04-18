@@ -1,10 +1,10 @@
 ---
-- name: Update the local /etc/hosts with k8sdc hosts and services
+- name: Update the local /etc/hosts with opendc hosts and services
   hosts:
     - localhost
   become: yes
   vars_files:
-    - "{{ inventory_dir }}/group_vars/k8sdc.yaml"
+    - "{{ inventory_dir }}/group_vars/opendc.yaml"
     - "{{ inventory_dir }}/provider.yaml"
   tasks:
     - name: Get hostnames from Solutions
@@ -23,6 +23,6 @@
       lineinfile:
         dest:   /etc/hosts
         state:  present
-        line:   "{{ hostvars[groups['k8sdc-nodes'][0]]['ansible_' + interface].ipv4.address }} {{ item }}"
+        line:   "{{ hostvars[groups['opendc-nodes'][0]]['ansible_' + interface].ipv4.address }} {{ item }}"
         regexp: "{{ item }}$"
       with_items: "{{ hostnames.split(',')[:-1] }}"

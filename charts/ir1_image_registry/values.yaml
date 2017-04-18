@@ -1,0 +1,11 @@
+# Default values for ir1_image_registry.
+namespace: opendc-infra
+
+docker_registry_image: registry
+docker_registry_tag:   2.6.0
+
+nginx_image: gcr.io/google_containers/nginx-ingress-controller
+nginx_tag:   0.8.3
+nginx_fqdn:  registry.opendc.io
+
+replicaCount: 1

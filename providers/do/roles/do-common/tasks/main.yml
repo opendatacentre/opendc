@@ -10,7 +10,7 @@
     name:    "{{ do_admin_user }}"
     uid:     "{{ do_admin_uid }}"
     group:   "{{ do_admin_group }}"
-    comment: "k8sdc Digital Ocean admin user"
+    comment: "opendc Digital Ocean admin user"
     state:   present
 
 - name: Make .ssh directory
@@ -49,5 +49,5 @@
 # TODO: Update inventory file to use doadmin user
 
 # TODO: Disable root login 
-#         (remember that this will be an issue if k8sdc machine is rerun as
+#         (remember that this will be an issue if opendc machine is rerun as
 #          the inventory template contains the root user)

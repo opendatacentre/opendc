@@ -57,4 +57,4 @@
       path:  /tmp/pv.yaml
       state: absent
 
-  delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+  delegate_to: "{{ groups['opendc-masters'][0] }}"

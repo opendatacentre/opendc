@@ -12,10 +12,10 @@ help:
 clean:
 	rm -Rf build/
 	rm -Rf dist/
-	rm -Rf k8sdc.egg-info/
+	rm -Rf opendc.egg-info/
 
 lint:
-	flake8 setup.py k8sdc
+	flake8 setup.py opendc
 
 docs:
 

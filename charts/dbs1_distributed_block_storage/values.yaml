@@ -1,4 +1,4 @@
 # Default values for dbs1_distributed_block_storage.
-namespace: k8sdc-infra
+namespace: opendc-infra
 image:     ceph/daemon
 tag:       tag-build-master-jewel-centos-7

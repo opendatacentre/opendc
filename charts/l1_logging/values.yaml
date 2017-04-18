@@ -1,5 +1,5 @@
 # Default values for l1_logging.
-namespace: k8sdc-infra
+namespace: opendc-infra
 
 elasticsearch_image: elasticsearch
 elasticsearch_tag:   5.2.0

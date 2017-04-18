@@ -1,7 +1,7 @@
 # Default values for cs1_cluster_services.
 #  https://raw.githubusercontent.com/kubernetes/kubernetes/master/cluster/addons/dns/kubedns-controller.yaml.base
 namespace:  kube-system
-domain:     k8sdc.io
+domain:     opendc.io
 cluster_ip: 10.254.1.1
 
 kubedns_image: gcr.io/google_containers/k8s-dns-kube-dns-amd64

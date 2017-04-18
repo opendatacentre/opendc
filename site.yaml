@@ -1,7 +1,7 @@
 ---
 - name: Test distribution
   hosts:
-    - k8sdc
+    - opendc
   tasks:
     - assert:
         that: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
@@ -10,7 +10,7 @@
 
 - name: Common components setup
   hosts:
-    - k8sdc
+    - opendc
   become:  yes
   vars_files:
     - "{{ inventory_dir }}/provider.yaml"
@@ -19,17 +19,17 @@
   tags: common_setup
 
 
-- name: k8sdc-ca certificate authority setup
+- name: opendc-ca certificate authority setup
   hosts:
-    - k8sdc-ca
+    - opendc-ca
   become: yes
   vars_files:
     - "{{ inventory_dir }}/provider.yaml"
   roles:
-    - k8sdc-ca
+    - opendc-ca
   tags: 
-    - k8sdc_ca_setup
-    - k8sdc_security
+    - opendc_ca_setup
+    - opendc_security
 
 
 - name: Etcd setup
@@ -45,8 +45,8 @@
 
 - name: Flannel setup
   hosts: 
-    - k8sdc-masters
-    - k8sdc-nodes
+    - opendc-masters
+    - opendc-nodes
   become:  yes
   vars_files:
     - "{{ inventory_dir }}/provider.yaml"
@@ -57,8 +57,8 @@
 
 - name: Docker setup
   hosts: 
-    - k8sdc-masters
-    - k8sdc-nodes
+    - opendc-masters
+    - opendc-nodes
   become:  yes
   vars_files:
     - "{{ inventory_dir }}/provider.yaml"
@@ -80,8 +80,8 @@
 
 - name: Kubernetes setup
   hosts: 
-    - k8sdc-masters
-    - k8sdc-nodes
+    - opendc-masters
+    - opendc-nodes
   become: yes
   vars_files:
     - "{{ inventory_dir }}/provider.yaml"

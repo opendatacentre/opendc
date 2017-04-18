@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: opendc-jenkins
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: jm1_job_management
+    product:  jenkins
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      solution: jm1_job_management
+      product:  jenkins
+  strategy: {'type': 'Recreate'}
+  template:
+    metadata:
+      labels:
+        solution: jm1_job_management
+        product:  jenkins
+        heritage: {{ .Release.Service | quote }}
+        release:  {{ .Release.Name | quote }}
+        chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      containers:
+        - name: opendc-jenkins
+          image: {{ .Values.image }}:{{ .Values.tag }}
+          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: jnlp
+              containerPort: 50000
+              protocol: TCP
+          volumeMounts:
+            - name: opendc-jenkins
+              readOnly: false
+              mountPath: /var/jenkins_home/
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+            requests:
+              cpu: 600m
+              memory: 600Mi
+      volumes:
+        - name: opendc-jenkins
+          persistentVolumeClaim:
+            claimName: opendc-jenkins
+
+        

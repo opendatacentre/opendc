@@ -9,7 +9,7 @@
     ssh-keygen 
       -b 2048 
       -t rsa 
-      -C "k8sdc" 
+      -C "opendc" 
       -N "" 
       -f "{{ inventory_dir }}/keys/{{ do_ssh_key_name }}"
   when: do_generate_keys and not public_key.stat.exists

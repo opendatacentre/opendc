@@ -3,26 +3,26 @@
   hosts:
     - localhost
   vars_files:
-    - "{{ inventory_dir }}/group_vars/k8sdc.yaml"
+    - "{{ inventory_dir }}/group_vars/opendc.yaml"
     - "{{ inventory_dir }}/provider.yaml"
   tasks:
-    - name: Fetch k8sdc-ca.crt
+    - name: Fetch opendc-ca.crt
       slurp:
-        src: /etc/kubernetes/certs/k8sdc-ca.crt
-      delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+        src: /etc/kubernetes/certs/opendc-ca.crt
+      delegate_to: "{{ groups['opendc-masters'][0] }}"
       become: true
-      register: k8sdc_ca_cert
+      register: opendc_ca_cert
 
-    - name: Create local k8sdc-ca.crt
+    - name: Create local opendc-ca.crt
       copy:
-        dest:    "{{ inventory_dir }}/certs/k8sdc-ca.crt"
-        content: "{{ k8sdc_ca_cert.content | b64decode }}"
+        dest:    "{{ inventory_dir }}/certs/opendc-ca.crt"
+        content: "{{ opendc_ca_cert.content | b64decode }}"
         mode:  0400
 
     - name: Fetch kubectl.kubeconfig
       slurp:
         src: /etc/kubernetes/kubeconfig/kubectl.kubeconfig
-      delegate_to: "{{ groups['k8sdc-masters'][0] }}"
+      delegate_to: "{{ groups['opendc-masters'][0] }}"
       become: true
       register: kubectl_kubeconfig
 
@@ -36,7 +36,7 @@
     - name: Modify CA in kubectl.kubeconfig
       lineinfile:
         dest: "{{ inventory_dir }}/config/kubectl.kubeconfig"
-        line: "    certificate-authority: {{ inventory_dir }}/certs/k8sdc-ca.crt"
+        line: "    certificate-authority: {{ inventory_dir }}/certs/opendc-ca.crt"
         regexp: "certificate-authority:"
         state: present
 

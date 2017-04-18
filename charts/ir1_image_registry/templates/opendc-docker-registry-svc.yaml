@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opendc-docker-registry
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: ir1_image_registry
+    product:  docker-registry
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    solution: ir1_image_registry
+    product:  docker-registry
+  ports:
+    - name: http
+      port: 5000
+      targetPort: http
+      protocol: TCP

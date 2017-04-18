@@ -1,1 +1,1 @@
-The `kubeconfig` file will be installed into this directory if `k8sdc config` is run without any options.
+The `kubeconfig` file will be installed into this directory if `opendc config` is run without any options.
