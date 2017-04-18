@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: k8sdc-keycloak
+  name: opendc-keycloak
   namespace: {{ .Values.namespace }}
   labels:
     solution: im1_identity_management

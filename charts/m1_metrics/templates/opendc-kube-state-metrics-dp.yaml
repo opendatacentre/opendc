@@ -24,7 +24,7 @@ spec:
       containers:
       - name: kube-state-metrics
         image: {{ .Values.kube_state_metrics_image }}:{{ .Values.kube_state_metrics_tag }}
-          imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
         ports:
         - name: http-metrics
           containerPort: 8080

@@ -1,17 +1,17 @@
 name: im1_identity_management
-description: The k8sdc 'im1_identity_management' solution
+description: The opendc 'im1_identity_management' solution
 version: 0.0.1
 keywords:
-  - k8sdc
+  - opendc
   - identity
   - management
   - opendj
   - keycloak
   - im1
-home: http://k8sdc.io/
+home: http://opendatacentre.io/
 sources:
-  - https://github.com/desdrury/k8sdc
+  - https://github.com/opendatacentre/opendc
 maintainers:
   - name:  Des Drury
-    email: des@drury-family.com
+    email: des@citopro.com
 #icon: 

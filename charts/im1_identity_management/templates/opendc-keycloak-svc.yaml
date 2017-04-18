@@ -1,7 +1,7 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  name: k8sdc-keycloak
+  name: opendc-keycloak
   namespace: {{ .Values.namespace }}
   labels:
     solution: im1_identity_management
@@ -10,10 +10,11 @@ metadata:
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-  rules:
-  - host: {{ .Values.keycloak_fqdn }}
-    http:
-      paths:
-      - backend:
-          serviceName: k8sdc-keycloak
-          servicePort: 8080
+  selector:
+    solution: im1_identity_management
+    product:  keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP

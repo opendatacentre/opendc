@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: k8sdc-keycloak
+  name: opendc-keycloak
   namespace: {{ .Values.namespace }}
   labels:
     solution: im1_identity_management
@@ -27,7 +27,7 @@ spec:
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-      - name: k8sdc-keycloak
+      - name: opendc-keycloak
         image: {{ .Values.keycloak_image }}:{{ .Values.keycloak_tag }}
         imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
         ports:
@@ -40,16 +40,16 @@ spec:
           - name: KEYCLOAK_PASSWORD
             value: admin
         args:
-          - -Dkeycloak.migration.realmName=k8sdc
+          - -Dkeycloak.migration.realmName=master
           - -Dkeycloak.migration.action=import
           - -Dkeycloak.migration.strategy=IGNORE_EXISTING
           - -Dkeycloak.migration.provider=singleFile
-          - -Dkeycloak.migration.file=/opt/jboss/keycloak/k8sdc/k8sdc-realm.json
+          - -Dkeycloak.migration.file=/opt/jboss/keycloak/opendc/master-realm.json
           - -Djboss.bind.address=0.0.0.0
         volumeMounts:
-          - name: k8sdc-realm-json
-            mountPath: /opt/jboss/keycloak/k8sdc/
-          - name: k8sdc-keycloak
+          - name: opendc-realm-json
+            mountPath: /opt/jboss/keycloak/opendc/
+          - name: opendc-keycloak
             readOnly: false
             mountPath: /opt/jboss/keycloak/standalone/data/
         resources:
@@ -60,9 +60,9 @@ spec:
             cpu: 400m
             memory: 500Mi
       volumes:
-        - name: k8sdc-realm-json
+        - name: opendc-realm-json
           configMap:
-            name: k8sdc-keycloak
-        - name: k8sdc-keycloak
+            name: opendc-keycloak
+        - name: opendc-keycloak
           persistentVolumeClaim:
-            claimName: k8sdc-keycloak
+            claimName: opendc-keycloak

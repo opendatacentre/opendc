@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: k8sdc-opendj
+  name: opendc-opendj
   namespace: {{ .Values.namespace }}
   labels:
     solution: im1_identity_management
@@ -10,81 +10,81 @@ metadata:
     release:  {{ .Release.Name | quote }}
     chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
 data:
-  k8sdc.ldif: |
-    dn: dc=k8sdc,dc=io
+  opendc.ldif: |
+    dn: dc=opendc,dc=io
     objectclass: dcObject
     objectclass: organization
-    o: k8sdc
-    dc: k8sdc
-    aci: (target ="ldap:///dc=k8sdc,dc=io")(targetattr !=
+    o: opendc
+    dc: opendc
+    aci: (target ="ldap:///dc=opendc,dc=io")(targetattr !=
      "userPassword")(version 3.0;acl "Anonymous read-search access";
      allow (read, search, compare)(userdn = "ldap:///anyone");)
-    aci: (target="ldap:///dc=k8sdc,dc=io") (targetattr =
+    aci: (target="ldap:///dc=opendc,dc=io") (targetattr =
      "*")(version 3.0; acl "allow all Admin group"; allow(all) groupdn =
-     "ldap:///cn=Directory Administrators,ou=Groups,dc=k8sdc,dc=io";)
+     "ldap:///cn=Directory Administrators,ou=Groups,dc=opendc,dc=io";)
 
-    dn: ou=Groups,dc=k8sdc,dc=io
+    dn: ou=Groups,dc=opendc,dc=io
     objectClass: organizationalunit
     objectClass: top
     ou: Groups
 
-    dn: ou=System Accounts,dc=k8sdc,dc=io
+    dn: ou=System Accounts,dc=opendc,dc=io
     objectClass: organizationalunit
     objectClass: top
     ou: System Accounts
 
-    dn: ou=People,dc=k8sdc,dc=io
+    dn: ou=People,dc=opendc,dc=io
     objectClass: organizationalunit
     objectClass: top
     ou: People
-    aci: (target ="ldap:///ou=People,dc=k8sdc,dc=io")(targetattr =
+    aci: (target ="ldap:///ou=People,dc=opendc,dc=io")(targetattr =
      "userPassword || telephonenumber || facsimiletelephonenumber")(version 3.0;
      acl "Allow self entry modification";allow (write)(userdn = "ldap:///self");)
 
-    dn: ou=Administrators,dc=k8sdc,dc=io
+    dn: ou=Administrators,dc=opendc,dc=io
     objectClass: organizationalunit
     objectClass: top
     ou: Administrators
-    aci: (target ="ldap:///ou=Administrators,dc=k8sdc,dc=io")(targetattr =
+    aci: (target ="ldap:///ou=Administrators,dc=opendc,dc=io")(targetattr =
      "userPassword || telephonenumber || facsimiletelephonenumber")(version 3.0;
      acl "Allow self entry modification";allow (write)(userdn = "ldap:///self");)
 
-    dn: cn=Directory Administrators,ou=Groups,dc=k8sdc,dc=io
+    dn: cn=Directory Administrators,ou=Groups,dc=opendc,dc=io
     objectClass: groupOfNames
     objectClass: top
     ou: Groups
     cn: Directory Administrators
-    member: uid=k8sdc,ou=Administrators,dc=k8sdc,dc=io
+    member: uid=opendc,ou=Administrators,dc=opendc,dc=io
 
-    dn: cn=grafana-users,ou=Groups,dc=k8sdc,dc=io
+    dn: cn=grafana-users,ou=Groups,dc=opendc,dc=io
     objectClass: groupOfNames
     objectClass: top
     ou: Groups
     cn: grafana-users
-    member: uid=user1,ou=People,dc=k8sdc,dc=io
-    member: uid=user2,ou=People,dc=k8sdc,dc=io
+    member: uid=user1,ou=People,dc=opendc,dc=io
+    member: uid=user2,ou=People,dc=opendc,dc=io
 
-    dn: cn=grafana-admins,ou=Groups,dc=k8sdc,dc=io
+    dn: cn=grafana-admins,ou=Groups,dc=opendc,dc=io
     objectClass: groupOfNames
     objectClass: top
     ou: Groups
     cn: grafana-admins
-    member: uid=k8sdc,ou=Administrators,dc=k8sdc,dc=io
+    member: uid=opendc,ou=Administrators,dc=opendc,dc=io
 
-    dn: uid=k8sdc,ou=Administrators,dc=k8sdc,dc=io
+    dn: uid=opendc,ou=Administrators,dc=opendc,dc=io
     objectClass: top
     objectClass: person
     objectClass: inetOrgPerson
     objectClass: organizationalPerson
-    uid: k8sdc
+    uid: opendc
     userPassword: password
     ds-privilege-name: config-read
     ds-privilege-name: password-reset
-    cn: k8sdc
-    sn: k8sdc
+    cn: opendc
+    sn: opendc
     ou: Administrators
 
-    dn: uid=user1,ou=People,dc=k8sdc,dc=io
+    dn: uid=user1,ou=People,dc=opendc,dc=io
     objectclass: top
     objectclass: person
     objectclass: inetOrgPerson
@@ -94,9 +94,9 @@ data:
     cn: User
     sn: 1
     ou: People
-    mail: user1@k8sdc.io
+    mail: user1@opendc.io
 
-    dn: uid=user2,ou=People,dc=k8sdc,dc=io
+    dn: uid=user2,ou=People,dc=opendc,dc=io
     objectclass: top
     objectclass: person
     objectclass: inetOrgPerson
@@ -106,5 +106,5 @@ data:
     cn: User
     sn: 2
     ou: People
-    mail: user2@k8sdc.io
+    mail: user2@opendc.io
 

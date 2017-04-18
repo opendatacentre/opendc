@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: k8sdc-opendj
+  name: opendc-opendj
   namespace: {{ .Values.namespace }}
   labels:
     solution: im1_identity_management
@@ -27,7 +27,7 @@ spec:
         chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
     spec:
       containers:
-        - name: k8sdc-opendj
+        - name: opendc-opendj
           image: {{ .Values.opendj_image }}:{{ .Values.opendj_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
@@ -38,11 +38,11 @@ spec:
               containerPort: 636
               protocol: TCP
           volumeMounts:
-            - name: k8sdc-opendj
+            - name: opendc-opendj
               readOnly: false
               mountPath: /opt/opendj/instance/
-            - name: k8sdc-opendj-configmap
-              mountPath: /tmp/k8sdc/
+            - name: opendc-opendj-configmap
+              mountPath: /tmp/opendc/
           resources:
             limits:
               cpu: 500m
@@ -51,9 +51,9 @@ spec:
               cpu: 200m
               memory: 200Mi
       volumes:
-        - name: k8sdc-opendj-configmap
+        - name: opendc-opendj-configmap
           configMap:
-            name: k8sdc-opendj
-        - name: k8sdc-opendj
+            name: opendc-opendj
+        - name: opendc-opendj
           persistentVolumeClaim:
-            claimName: k8sdc-opendj
+            claimName: opendc-opendj

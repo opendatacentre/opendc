@@ -18,6 +18,11 @@ data:
 
     scrape_configs:
 
+      - job_name: prometheus
+        static_configs:
+          - targets:
+            - localhost:9090
+
       # https://github.com/prometheus/prometheus/blob/master/documentation/examples/prometheus-kubernetes.yml#L37
       - job_name: 'kubernetes-nodes'
         tls_config:

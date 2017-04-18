@@ -113,12 +113,12 @@ base_solutions:
     replicas:  1
     images:
       opendj:
-        image:    k8sdc/opendj
+        image:    opendatacentre/opendj
         tag:      latest
         vol_size: 300
       keycloak:
         image:    jboss/keycloak
-        tag:      1.9.3.Final
+        tag:      3.0.0.Final
         vol_size: 1000
         fqdn:     keycloak.k8sdc.io
 
