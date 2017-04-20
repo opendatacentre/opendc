@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: opendc
-Version: 0.0.21a22
+Version: 0.0.21
 Summary: opendc
 Home-page: https://github.com/desdrury/opendc
 Author: Des Drury
@@ -13,9 +13,9 @@ Description: opendc
         
         Website http://opendatacentre.io
         
-        Documentation https://opendc.github.io
+        Documentation http://docs.opendatacentre.io
         
-        
+        Presentation https://www.slideshare.net/DesDrury/open-datacentre
         
 Keywords: opendc
 Platform: UNKNOWN
