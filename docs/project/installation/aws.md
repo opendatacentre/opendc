@@ -1,5 +1,0 @@
-# AWS Installation
-
-<hr>
-
-TODO

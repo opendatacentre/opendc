@@ -1,4 +1,0 @@
-# Logging
-___
-
-*TODO*

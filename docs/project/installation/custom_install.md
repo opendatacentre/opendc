@@ -1,5 +1,0 @@
-# Customising Installation
-
-<hr>
-
-TODO
