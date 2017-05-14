@@ -18,3 +18,24 @@ spec:
     port:       9200
     targetPort: api
     protocol:   TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opendc-elasticsearch-discovery
+  namespace: {{ .Values.namespace }}
+  labels:
+    solution: l1_logging
+    product:  elasticsearch
+    heritage: {{ .Release.Service | quote }}
+    release:  {{ .Release.Name | quote }}
+    chart:    "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    solution: l1_logging
+    product:  elasticsearch
+  ports:
+  - name:       transport
+    port:       9300
+    targetPort: transport
+    protocol:   TCP

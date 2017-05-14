@@ -1,6 +1,6 @@
 name: l1_logging
 description: The opendc 'l1_logging' solution
-version: 0.0.1
+version: 0.1.0
 keywords:
   - opendc
   - logging
@@ -10,6 +10,7 @@ keywords:
   - logstash
   - curator
   - l1
+  - l1_logging
 home: http://opendatacentre.io/
 sources:
   - https://github.com/opendatacentre/opendc

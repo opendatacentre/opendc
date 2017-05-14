@@ -1,19 +1,19 @@
 # Default values for l1_logging.
 namespace: opendc-infra
 
-elasticsearch_image: elasticsearch
-elasticsearch_tag:   5.2.0
+elasticsearch_image: quay.io/pires/docker-elasticsearch-kubernetes
+elasticsearch_tag:   5.4.0
 elasticsearch_fqdn:  elasticsearch.opendc.io
 
 filebeat_image: giantswarm/filebeat
 filebeat_tag:   5.2.0
 
 logstash_image:    logstash
-logstash_tag:      5.2.0
+logstash_tag:      5.4.0
 logstash_replicas: 1
 
 kibana_image: kibana
-kibana_tag:   5.2.0
+kibana_tag:   5.4.0
 kibana_fqdn:  kibana.opendc.io
 
 replicaCount: 1

@@ -46,10 +46,10 @@ spec:
           resources:
             limits:
               cpu:    500m
-              memory: 800Mi
+              memory: 1000Mi
             requests:
               cpu:    500m
-              memory: 800Mi
+              memory: 1000Mi
       volumes:
         - name: opendc-prometheus-configmap
           configMap:

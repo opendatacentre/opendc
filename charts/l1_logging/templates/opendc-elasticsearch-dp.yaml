@@ -37,10 +37,11 @@ spec:
       containers:
         - name:  opendc-elasticsearch
           securityContext:
-            privileged: true
+            privileged: false
             capabilities:
               add:
                 - IPC_LOCK
+                - SYS_RESOURCE
           image: {{ .Values.elasticsearch_image }}:{{ .Values.elasticsearch_tag }}
           imagePullPolicy: {{ default "IfNotPresent" .Values.pullPolicy }}
           ports:
@@ -52,27 +53,41 @@ spec:
               protocol:      TCP
           env:          
             - name:  "ES_JAVA_OPTS"
-              value: "-Xms1g -Xmx1g"
-            - name:  NAMESPACE
+              value: "-Xms1800M -Xmx1800M"
+            - name:  "NAMESPACE"
               value: {{ .Values.namespace }}
+            - name:  "NODE_NAME"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name:  "NETWORK_HOST"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: "DISCOVERY_SERVICE"
+              value: "opendc-elasticsearch-discovery"
             - name:  "CLUSTER_NAME"
               value: "opendc"
-            - name:  NODE_MASTER
+            - name:  "NUMBER_OF_MASTERS"
+              value: "1"
+            - name:  "NODE_MASTER"
               value: "true"
-            - name:  NODE_DATA
+            - name:  "NODE_DATA"
               value: "true"
-            - name:  HTTP_ENABLE
+            - name:  "NODE_INGEST"
+              value: "true"
+            - name:  "HTTP_ENABLE"
               value: "true"
           volumeMounts:
             - name:      opendc-elasticsearch
               mountPath: /data
           resources:
             limits:
-              cpu:    1000m
-              memory: 1200Mi
+              cpu:    1200m
+              memory: 2200Mi
             requests:
-              cpu:    1000m
-              memory: 1200Mi
+              cpu:    1200m
+              memory: 2200Mi
       volumes:
         - name: opendc-elasticsearch
           persistentVolumeClaim:
