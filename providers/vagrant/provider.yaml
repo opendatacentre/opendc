@@ -12,18 +12,21 @@ masters:
     memory:   2048
     cpus:     2
 nodes:
-  - hostname: node1.vb.opendc.io
-    ip:       192.168.101.110
-    memory:   3072
-    cpus:     4
-  - hostname: node2.vb.opendc.io
-    ip:       192.168.101.111
-    memory:   3072
-    cpus:     4
-  - hostname: node3.vb.opendc.io
-    ip:       192.168.101.112
-    memory:   3072
-    cpus:     4
+  - hostname:  node1.vb.opendc.io
+    ip:        192.168.101.110
+    memory:    3072
+    cpus:      4
+    disk_size: 20
+  - hostname:  node2.vb.opendc.io
+    ip:        192.168.101.111
+    memory:    3072
+    cpus:      4
+    disk_size: 20
+  - hostname:  node3.vb.opendc.io
+    ip:        192.168.101.112
+    memory:    3072
+    cpus:      4
+    disk_size: 20
 etcd:
   - master.vb.opendc.io
   - node1.vb.opendc.io

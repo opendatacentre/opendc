@@ -26,6 +26,11 @@ Vagrant.configure(2) do |config|
       vbox.cpus = {{ node.cpus }}
       vbox.customize ["modifyvm", :id, "--nictype1", "virtio"]
       vbox.customize ["modifyvm", :id, "--nictype2", "virtio"]
+      diskname = File.join(File.dirname(File.expand_path(__FILE__)), ".virtualbox", "{{ node.hostname }}-storage.vdi")
+      unless File.exist?(diskname)
+        vbox.customize ['createhd', '--filename', diskname, '--size', {{ node.disk_size }} * 1024]
+      end
+      vbox.customize ['storageattach', :id, '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', diskname]
     end
   end
   {% endfor %}
