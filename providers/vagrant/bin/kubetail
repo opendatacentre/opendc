@@ -1,0 +1,218 @@
+#!/bin/bash
+
+readonly PROGNAME=$(basename $0)
+
+default_since="10s"
+default_namespace="default"
+default_line_buffered=""
+default_colored_output="line"
+default_timestamps=""
+
+line_buffered="${default_line_buffered}"
+colored_output="${default_colored_output}"
+timestamps="${default_timestamps}"
+
+if [[ ${1} != -* ]]
+then
+    pod="${1}"
+fi
+containers=()
+selector=()
+regex='substring'
+since="${default_since}"
+version="1.3.0"
+
+usage="${PROGNAME} <search term> [-h] [-c] [-n] [-t] [-l] [-s] [-b] [-k] [-v] -- tail multiple Kubernetes pod logs at the same time
+
+where:
+    -h, --help           Show this help text
+    -c, --container      The name of the container to tail in the pod (if multiple containers are defined in the pod).
+                         Defaults to all containers in the pod. Can be used multiple times.
+    -t, --context        The k8s context. ex. int1-context. Relies on ~/.kube/config for the contexts.
+    -l, --selector       Label selector. If used the pod name is ignored.
+    -n, --namespace      The Kubernetes namespace where the pods are located (defaults to \"default\")
+    -s, --since          Only return logs newer than a relative duration like 5s, 2m, or 3h. Defaults to 10s.
+    -b, --line-buffered  This flags indicates to use line-buffered. Defaults to false.
+    -e, --regex          The type of name matching to use (regex|substring)
+    -k, --colored-output Use colored output (pod|line|false).
+                         pod = only color podname, line = color entire line, false = don't use any colors.
+                         Defaults to line.
+        --timestamps     Show timestamps for each log line
+    -v, --version        Prints the kubetail version
+
+examples:
+    ${PROGNAME} my-pod-v1
+    ${PROGNAME} my-pod-v1 -c my-container
+    ${PROGNAME} my-pod-v1 -t int1-context -c my-container
+    ${PROGNAME} '(service|consumer|thing)' -e regex
+    ${PROGNAME} -l service=my-service
+    ${PROGNAME} --selector service=my-service --since 10m"
+
+if [ $# -eq 0 ]; then
+	echo "$usage"
+	exit 1
+fi
+
+if [ "$#" -ne 0 ]; then
+	while [ "$#" -gt 0 ]
+	do
+		case "$1" in
+		-h|--help)
+			echo "$usage"
+			exit 0
+			;;
+		-v|--version)
+			echo "$version"
+			exit 0
+			;;
+		-c|--container)
+			containers+=("$2")
+			;;
+		-e|--regex)
+			regex="$2"
+			;;
+		-t|--context)
+			context="$2"
+			;;
+		-l|--selector)
+			selector=(--selector "$2")
+			pod=""
+			;;
+		-s|--since)
+			if [ -z "$2" ]; then
+				since="${default_since}"
+			else
+				since="$2"
+			fi
+			;;
+		-n|--namespace)
+			if [ -z "$2" ]; then
+				namespace="${default_namespace}"
+			else
+				namespace="$2"
+			fi
+			;;
+		-b|--line-buffered)
+			if [ "$2" = "true" ]; then
+				line_buffered="| grep - --line-buffered"
+			fi
+			;;
+		-k|--colored-output)
+			if [ -z "$2" ]; then
+				colored_output="${default_colored_output}"
+			else
+				colored_output="$2"
+			fi
+			;;
+		--timestamps)
+			if [ "$2" = "false" ]; then
+			    timestamps="$1=$2"
+			else
+			    timestamps="$1"
+			fi
+			;;
+		--)
+			break
+			;;
+		-*)
+			echo "Invalid option '$1'. Use --help to see the valid options" >&2
+			exit 1
+			;;
+		# an option argument, continue
+		*)  ;;
+		esac
+		shift
+	done
+fi
+
+# Join function that supports a multi-character seperator (copied from http://stackoverflow.com/a/23673883/398441)
+function join() {
+	# $1 is return variable name
+	# $2 is sep
+	# $3... are the elements to join
+	local retname=$1 sep=$2 ret=$3
+	shift 3 || shift $(($#))
+	printf -v "$retname" "%s" "$ret${@/#/$sep}"
+}
+
+grep_matcher=''
+if [ "${regex}" == 'regex' ]; then
+	echo "Using regex '${pod}' to match pods"
+	grep_matcher='-E'
+fi
+
+# Get all pods matching the input and put them in an array. If no input then all pods are matched.
+matching_pods=(`kubectl get pods --context=${context} "${selector[@]}" --namespace=${namespace} --output=jsonpath='{.items[*].metadata.name}' | xargs -n1 | grep $grep_matcher "${pod}"`)
+matching_pods_size=${#matching_pods[@]}
+
+if [ ${matching_pods_size} -eq 0 ]; then
+	echo "No pods exists that matches ${pod}"
+	exit 1
+fi
+
+color_end=$(tput sgr0)
+
+# Wrap all pod names in the "kubectl logs <name> -f" command
+display_names_preview=()
+pod_logs_commands=()
+i=0
+
+# Allows for more colors, this is useful if one tails a lot pods
+if [ ${colored_output} != "false" ]; then
+	export TERM=xterm-256color
+fi
+
+for pod in ${matching_pods[@]}; do
+	if [ ${#containers[@]} -eq 0 ]; then
+		pod_containers=($(kubectl get pod ${pod} --context=${context} --output=jsonpath='{.spec.containers[*].name}' --namespace=${namespace} | xargs -n1))
+	else
+		pod_containers=("${containers[@]}")
+	fi
+
+	for container in ${pod_containers[@]}; do
+		if [ ${colored_output} == "false" ] || [ ${matching_pods_size} -eq 1 -a ${#pod_containers[@]} -eq 1 ]; then
+			color_start=$(tput sgr0)
+		else
+			if [ $i -gt 5 ]; then
+				# If index is more than 5 we skip the next two colors since color 6 is beige 
+				# (which is hard to see when using white or solarized background) and 7 is black
+				# (which is hard to see when using black background)
+				color_index=$(($i+3))
+			else
+				color_index=$(($i+1))
+			fi
+			color_start=$(tput setaf $color_index)
+		fi
+
+		if [ ${#pod_containers[@]} -eq 1 ]; then
+			display_name="${pod}"
+		else
+			display_name="${pod} ${container}"
+		fi
+		display_names_preview+=("${color_start}${display_name}${color_end}")
+
+		if [ ${colored_output} == "pod" ]; then
+			colored_line="${color_start}[${display_name}]${color_end} \$line"
+		else
+			colored_line="${color_start}[${display_name}] \$line ${color_end}"
+		fi
+
+		logs_commands+=("kubectl --context=${context} logs ${pod} ${container} -f --since=${since} --namespace=${namespace} ${timestamps} | while read line; do echo \"$colored_line\"; done");
+
+		# There are only 11 usable colors
+		i=$(( ($i+1)%13 ))
+	done
+done
+
+# Preview pod colors
+echo "Will tail ${i} logs..."
+for preview in "${display_names_preview[@]}"; do
+	echo "$preview"
+done
+
+# Join all log commands into one string seperated by " & "
+join command_to_tail " & " "${logs_commands[@]}"
+
+# Aggreate all logs and print to stdout
+CMD="cat <( eval "${command_to_tail}" ) $line_buffered"
+eval "$CMD"
