@@ -1,7 +1,7 @@
-{% for master in bare.masters -%}
+{% for master in masters -%}
 {{ master.hostname }} ansible_host={{ master.ip }} ansible_ssh_private_key_file='keys/{{ master.hostname }}/private_key'
 {% endfor -%}
-{% for node in bare.nodes -%}
+{% for node in nodes -%}
 {{ node.hostname }} ansible_host={{ node.ip }} ansible_ssh_private_key_file='keys/{{ node.hostname }}/private_key'
 {% endfor %}
 [opendc:children]
@@ -16,19 +16,28 @@ ansible_ssh_user=opendc
 ansible_connection=ssh
 
 [opendc-masters]
-{% for master in bare.masters -%}
+{% for master in masters -%}
 {{ master.hostname }}
 {% endfor %}
+
 [opendc-nodes]
-{% for node in bare.nodes -%}
+{% for node in nodes -%}
 {{ node.hostname }}
 {% endfor %}
+
 [etcd]
-{% for etcd in bare.etcd -%}
+{% for etcd in etcd -%}
 {{ etcd }}
 {% endfor %}
+
 [fileserver]
-{{ bare.fileserver[0] }}
+{{ fileserver }}
 
 [opendc-ca]
-{{ bare.opendc_ca[0] }}
+{{ opendc_ca }}
+
+[timeserver]
+{{ timeserver }}
+
+[docker-registry-mirror]
+{{ docker_registry_mirror }}

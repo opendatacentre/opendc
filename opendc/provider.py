@@ -32,6 +32,8 @@ def get_provider():
 class Provider(object):
   """This Class is the parent for all Provider Classes"""
 
+  templates = {}
+
   def __init__(self, provider_data):
     provider_data['cwd'] = os.path.realpath(os.path.curdir)
     self.provider_data = provider_data
@@ -100,7 +102,6 @@ class VagrantProvider(Provider):
     # Call machine playbook
     call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/machine.yaml')))
 
-
   def destroy_machines(self):
     """Destroy Vagrant machines"""
     pass
@@ -127,11 +128,10 @@ class DOProvider(Provider):
         dopy_found = True
     if not dopy_found:
       logger.error("Unable to find Python module \'dopy\'")
-      sys.exit(1)    
+      sys.exit(1)
 
     # Call machine playbook
     call_ansible(os.path.realpath(os.path.join(os.path.curdir, 'playbooks/machine.yaml')))
-
 
   def destroy_machines(self):
     """Destroy Droplets"""

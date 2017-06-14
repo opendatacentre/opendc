@@ -1,6 +1,7 @@
 .vagrant
 .DS_Store
 .python-version
+.vscode/
 *.retry
 facts/
 roles/etcd/vars/

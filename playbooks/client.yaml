@@ -30,3 +30,5 @@
       file:
         path: "{{ client_dir }}/helm"
         mode: 0755
+
+    # TODO: Add kubetail

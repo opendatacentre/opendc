@@ -1,21 +1,24 @@
 ---
-bare:
-  masters:
-    - hostname: master.bare.opendc.io
-      ip:       192.168.101.100
-  nodes:
-    - hostname: node1.bare.opendc.io
-      ip:       192.168.101.110
-    - hostname: node2.bare.opendc.io
-      ip:       192.168.101.111
-    - hostname: node3.bare.opendc.io
-      ip:       192.168.101.112
-  etcd:
-    - master.bare.opendc.io
-    - node1.bare.opendc.io
-    - node2.bare.opendc.io
-    - node3.bare.opendc.io
-  fileserver:
-    - master.bare.opendc.io
-  opendc_ca:
-    - master.bare.opendc.io
+# Bare Provider
+provider: bare
+
+# Inventory
+masters:
+  - hostname: master.bare.opendc.io
+    ip:       192.168.101.100
+nodes:
+  - hostname: node1.bare.opendc.io
+    ip:       192.168.101.110
+  - hostname: node2.bare.opendc.io
+    ip:       192.168.101.111
+  - hostname: node3.bare.opendc.io
+    ip:       192.168.101.112
+etcd:
+  - master.bare.opendc.io
+  - node1.bare.opendc.io
+  - node2.bare.opendc.io
+  - node3.bare.opendc.io
+fileserver:             master.bare.opendc.io
+opendc_ca:              master.bare.opendc.io
+timeserver:             master.bare.opendc.io
+docker_registry_mirror: master.bare.opendc.io
