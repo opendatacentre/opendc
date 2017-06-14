@@ -22,3 +22,67 @@ fileserver:             master.bare.opendc.io
 opendc_ca:              master.bare.opendc.io
 timeserver:             master.bare.opendc.io
 docker_registry_mirror: master.bare.opendc.io
+
+# Kubernetes (overrides values in opendc.yaml)
+cluster_name: opendc-bare
+
+
+# Node (overrides values in opendc.yaml)
+interface: eth0
+timezone:  "Australia/Melbourne"
+
+
+# Solutions (overrides values in opendc.yaml)
+bare_solutions:
+  
+  cs1_cluster_services:
+    enable: yes
+
+  cm1_cluster_management:
+    enable: yes
+    images:
+      kube_dashboard:
+        fqdn:  dashboard.bare.opendc.io
+
+  dbs1_distributed_block_storage:
+    enable: yes
+
+  im1_identity_management:
+    enable: yes
+    images:
+      keycloak:
+        fqdn: keycloak.bare.opendc.io
+
+  hrp1_https_reverse_proxy:
+    enable: yes
+
+  m1_metrics:
+    enable: yes
+    images:
+      prometheus:
+        fqdn: prometheus.bare.opendc.io
+      grafana:
+        fqdn: grafana.bare.opendc.io
+
+  l1_logging:
+    enable: yes
+    images:
+      elasticsearch:
+        fqdn: elasticsearch.bare.opendc.io
+      kibana:
+        fqdn: kibana.bare.opendc.io
+
+  ir1_image_repository:
+    enable: yes
+    images:
+      nginx:
+        fqdn: registry.bare.opendc.io
+        vip:  128.199.245.220
+
+  jm1_job_management:
+    enable: yes
+    images:
+      jenkins:
+        fqdn: jenkins.bare.opendc.io
+
+solutions: "{{ base_solutions | combine(bare_solutions, recursive=true) }}"
