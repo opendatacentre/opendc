@@ -1,0 +1,1 @@
+The `kubeconfig` file will be installed into this directory if `opendc config` is run without any options.
